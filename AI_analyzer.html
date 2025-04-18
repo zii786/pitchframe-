@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dark-mode.css">
     <style>
         .analyzer-container {
             min-height: 100vh;
@@ -115,7 +116,11 @@
                                 </button>
                             </div>
                             <div class="progress mt-3 d-none" id="uploadProgress">
-                                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <div class="alert alert-info mt-3 d-none" id="processingAlert">
+                                <i class="fas fa-spinner fa-spin me-2"></i>
+                                Analyzing your pitch deck... This may take a few minutes.
                             </div>
                         </div>
                         
@@ -125,9 +130,12 @@
                                 <div class="col-md-6">
                                     <div class="card mb-4">
                                         <div class="card-body">
-                                            <h5 class="card-title">Clarity Score</h5>
+                                            <h5 class="card-title d-flex justify-content-between align-items-center">
+                                                Clarity Score
+                                                <span class="badge bg-primary" id="clarityBadge">0/10</span>
+                                            </h5>
                                             <div class="progress mb-2">
-                                                <div class="progress-bar" role="progressbar" style="width: 0%" id="clarityScore"></div>
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: 0%" id="clarityScore"></div>
                                             </div>
                                             <p class="card-text" id="clarityFeedback"></p>
                                         </div>
@@ -136,9 +144,12 @@
                                 <div class="col-md-6">
                                     <div class="card mb-4">
                                         <div class="card-body">
-                                            <h5 class="card-title">Engagement Score</h5>
+                                            <h5 class="card-title d-flex justify-content-between align-items-center">
+                                                Engagement Score
+                                                <span class="badge bg-primary" id="engagementBadge">0/10</span>
+                                            </h5>
                                             <div class="progress mb-2">
-                                                <div class="progress-bar" role="progressbar" style="width: 0%" id="engagementScore"></div>
+                                                <div class="progress-bar bg-warning" role="progressbar" style="width: 0%" id="engagementScore"></div>
                                             </div>
                                             <p class="card-text" id="engagementFeedback"></p>
                                         </div>
@@ -149,14 +160,23 @@
                             <div class="card mb-4">
                                 <div class="card-body">
                                     <h5 class="card-title">Key Recommendations</h5>
+                                    <div class="alert alert-info mb-3">
+                                        <i class="fas fa-lightbulb me-2"></i>
+                                        These recommendations are based on our AI analysis of your pitch deck.
+                                    </div>
                                     <ul class="list-group list-group-flush" id="recommendationsList">
                                         <!-- Recommendations will be added here -->
                                     </ul>
                                 </div>
                             </div>
                             
-                            <div class="text-center">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button class="btn btn-outline-primary" id="downloadReportBtn">
+                                    <i class="fas fa-download me-2"></i>
+                                    Download Report
+                                </button>
                                 <button class="btn btn-primary" id="saveAnalysisBtn">
+                                    <i class="fas fa-save me-2"></i>
                                     Save Analysis
                                 </button>
                             </div>
@@ -176,6 +196,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     <!-- Custom JS -->
     <script src="firebase-config.js"></script>
+    <script src="dark-mode.js"></script>
     <script src="AI_analyzer.js"></script>
 </body>
 </html> 
