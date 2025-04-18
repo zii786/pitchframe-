@@ -179,7 +179,7 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 alert('You are already logged in! Redirecting to settings...');
-                window.location.href = 'settings.html';
+                window.location.href = 'index.html';
             }
         });
 
@@ -263,7 +263,7 @@
             try {
                 errorMessage.classList.add('d-none');
                 await signInWithPopup(auth, googleProvider);
-                window.location.href = 'settings.html';
+                window.location.href = 'index.html';
             } catch (error) {
                 console.error('Google login error:', error);
                 errorMessage.textContent = 'Failed to sign in with Google. Please try again.';

@@ -11,48 +11,41 @@ service cloud.firestore {
       return request.auth.uid == userId;
     }
 
-    function isStartup() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'startup';
-    }
-
-    function isMentor() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'mentor';
-    }
-
-    function isInvestor() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'investor';
-    }
-
-    // Users collection
+    // Allow users to create their own profile
     match /users/{userId} {
-      allow read: if isAuthenticated();
       allow create: if isAuthenticated() && isOwner(userId);
+      allow read: if isAuthenticated();
       allow update: if isAuthenticated() && isOwner(userId);
-      allow delete: if false; // Prevent user deletion
+      allow delete: if isAuthenticated() && isOwner(userId);
     }
 
-    // Startups collection
-    match /startups/{startupId} {
+    // Startup profiles
+    match /startups/{userId} {
+      allow create: if isAuthenticated() && isOwner(userId);
       allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && isOwner(startupId) && isStartup();
-      allow update: if isAuthenticated() && isOwner(startupId);
-      allow delete: if false; // Prevent startup deletion
+      allow update: if isAuthenticated() && isOwner(userId);
+      allow delete: if isAuthenticated() && isOwner(userId);
     }
 
-    // Mentors collection
-    match /mentors/{mentorId} {
+    // Mentor profiles
+    match /mentors/{userId} {
+      allow create: if isAuthenticated() && isOwner(userId);
       allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && isOwner(mentorId) && isMentor();
-      allow update: if isAuthenticated() && isOwner(mentorId);
-      allow delete: if false; // Prevent mentor deletion
+      allow update: if isAuthenticated() && isOwner(userId);
+      allow delete: if isAuthenticated() && isOwner(userId);
     }
 
-    // Investors collection
-    match /investors/{investorId} {
+    // Investor profiles
+    match /investors/{userId} {
+      allow create: if isAuthenticated() && isOwner(userId);
       allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && isOwner(investorId) && isInvestor();
-      allow update: if isAuthenticated() && isOwner(investorId);
-      allow delete: if false; // Prevent investor deletion
+      allow update: if isAuthenticated() && isOwner(userId);
+      allow delete: if isAuthenticated() && isOwner(userId);
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 } 

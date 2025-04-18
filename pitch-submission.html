@@ -4,75 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Pitch - PitchFrame</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
     <style>
-        .pitch-submission-container {
-            min-height: 100vh;
-            background-color: #f8f9fa;
-            padding: 2rem 0;
-        }
-        .pitch-card {
+        .pitch-form-container {
             max-width: 800px;
-            width: 100%;
-            margin: 0 auto;
+            margin: 2rem auto;
             padding: 2rem;
             background: white;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .pitch-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .pitch-header h1 {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-        .form-control, .form-select {
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-        }
-        .btn {
-            padding: 0.75rem;
-            border-radius: 8px;
-        }
-        .back-button {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: white;
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            color: #6c757d;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        .back-button:hover {
-            background-color: #f8f9fa;
-            color: #0d6efd;
-            transform: translateX(-2px);
-        }
-        .form-section {
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            border-radius: 8px;
-            background-color: #f8f9fa;
-        }
-        .form-section h3 {
-            margin-bottom: 1.5rem;
-            color: #0d6efd;
-        }
-        .file-upload {
+        .file-upload-area {
             border: 2px dashed #dee2e6;
             border-radius: 8px;
             padding: 2rem;
@@ -80,295 +24,242 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        .file-upload:hover {
+        .file-upload-area:hover {
             border-color: #0d6efd;
             background-color: rgba(13, 110, 253, 0.05);
         }
-        .file-upload i {
-            font-size: 2rem;
-            color: #6c757d;
-            margin-bottom: 1rem;
-        }
-        .progress {
-            height: 0.5rem;
-            margin-top: 1rem;
-        }
     </style>
 </head>
-<body>
-    <div class="pitch-submission-container">
-        <div class="container">
-            <a href="index.html" class="back-button">
-                <i class="fas fa-arrow-left"></i>
-            </a>
-            <div class="pitch-card">
-                <div class="pitch-header">
-                    <h1><strong>Submit Your <span class="text-primary">Pitch</span></strong></h1>
-                    <p class="text-muted">Fill in your pitch details below</p>
+<body class="bg-light">
+    <div class="container">
+        <div class="pitch-form-container">
+            <h2 class="text-center mb-4">Submit Your Pitch</h2>
+            <form id="pitchSubmissionForm">
+                <div class="mb-3">
+                    <label for="pitchTitle" class="form-label">Pitch Title</label>
+                    <input type="text" class="form-control" id="pitchTitle" required>
                 </div>
-                <form id="pitchForm" class="pitch-form">
-                    <!-- Basic Information Section -->
-                    <div class="form-section">
-                        <h3><i class="fas fa-info-circle me-2"></i>Basic Information</h3>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="companyName" class="form-label">Company Name</label>
-                                <input type="text" class="form-control" id="companyName" name="companyName" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="industry" class="form-label">Industry</label>
-                                <select class="form-select" id="industry" name="industry" required>
-                                    <option value="">Select Industry</option>
-                                    <option value="tech">Technology</option>
-                                    <option value="healthcare">Healthcare</option>
-                                    <option value="finance">Finance</option>
-                                    <option value="education">Education</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="tagline" class="form-label">Company Tagline</label>
-                            <input type="text" class="form-control" id="tagline" name="tagline" required>
-                        </div>
+                <div class="mb-3">
+                    <label for="pitchDescription" class="form-label">Brief Description</label>
+                    <textarea class="form-control" id="pitchDescription" rows="3" required></textarea>
+                </div>
+                <div class="mb-4">
+                    <div class="file-upload-area" id="dropZone">
+                        <i class="fas fa-cloud-upload-alt fs-1 text-primary mb-3"></i>
+                        <p class="mb-2">Drag and drop your pitch deck here</p>
+                        <p class="text-muted small">or</p>
+                        <input type="file" id="pitchFile" accept=".pdf,.ppt,.pptx" class="d-none" required>
+                        <button type="button" class="btn btn-outline-primary" id="browseButton">Browse Files</button>
                     </div>
-
-                    <!-- Pitch Details Section -->
-                    <div class="form-section">
-                        <h3><i class="fas fa-lightbulb me-2"></i>Pitch Details</h3>
-                        <div class="mb-3">
-                            <label for="problem" class="form-label">Problem Statement</label>
-                            <textarea class="form-control" id="problem" name="problem" rows="3" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="solution" class="form-label">Your Solution</label>
-                            <textarea class="form-control" id="solution" name="solution" rows="3" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="marketSize" class="form-label">Market Size</label>
-                            <input type="text" class="form-control" id="marketSize" name="marketSize" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="businessModel" class="form-label">Business Model</label>
-                            <textarea class="form-control" id="businessModel" name="businessModel" rows="3" required></textarea>
-                        </div>
+                    <small class="text-muted d-block mt-2">Accepted formats: PDF, PowerPoint (PPT, PPTX)</small>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isPublic">
+                        <label class="form-check-label" for="isPublic">
+                            Make this pitch deck public
+                        </label>
                     </div>
-
-                    <!-- Team Information Section -->
-                    <div class="form-section">
-                        <h3><i class="fas fa-users me-2"></i>Team Information</h3>
-                        <div class="mb-3">
-                            <label for="teamSize" class="form-label">Team Size</label>
-                            <input type="number" class="form-control" id="teamSize" name="teamSize" min="1" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="teamBackground" class="form-label">Team Background</label>
-                            <textarea class="form-control" id="teamBackground" name="teamBackground" rows="3" required></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Financial Information Section -->
-                    <div class="form-section">
-                        <h3><i class="fas fa-chart-line me-2"></i>Financial Information</h3>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="fundingStage" class="form-label">Funding Stage</label>
-                                <select class="form-select" id="fundingStage" name="fundingStage" required>
-                                    <option value="">Select Stage</option>
-                                    <option value="pre-seed">Pre-seed</option>
-                                    <option value="seed">Seed</option>
-                                    <option value="series-a">Series A</option>
-                                    <option value="series-b">Series B</option>
-                                    <option value="series-c">Series C</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="fundingAmount" class="form-label">Funding Amount Sought</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    <input type="number" class="form-control" id="fundingAmount" name="fundingAmount" min="0" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="revenue" class="form-label">Current Revenue (if any)</label>
-                            <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <input type="number" class="form-control" id="revenue" name="revenue" min="0">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pitch Deck Upload Section -->
-                    <div class="form-section">
-                        <h3><i class="fas fa-file-powerpoint me-2"></i>Pitch Deck</h3>
-                        <div class="file-upload" id="fileUpload">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <p class="mb-2">Drag and drop your pitch deck here</p>
-                            <p class="text-muted small">or</p>
-                            <button type="button" class="btn btn-outline-primary">Browse Files</button>
-                            <input type="file" id="pitchDeck" name="pitchDeck" accept=".pdf,.ppt,.pptx" style="display: none;">
-                        </div>
-                        <div class="progress d-none" id="uploadProgress">
-                            <div class="progress-bar" role="progressbar" style="width: 0%"></div>
-                        </div>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg">Submit Pitch</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Success Modal -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
-                    </div>
-                    <h4 class="mb-3">Pitch Submitted Successfully!</h4>
-                    <p class="text-muted">Thank you for submitting your pitch. We'll review it and get back to you soon.</p>
-                    <div class="progress mt-3" style="height: 4px;">
-                        <div class="progress-bar" role="progressbar" style="width: 0%"></div>
-                    </div>
+                </div>
+                <div class="progress mb-3 d-none" id="uploadProgress">
+                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                </div>
+                <div id="uploadStatus" class="alert d-none"></div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary" id="submitButton">Submit Pitch</button>
+                </div>
+            </form>
+            <div id="previewContainer" class="mt-4 d-none">
+                <h4>Preview</h4>
+                <div class="ratio ratio-16x9">
+                    <iframe id="filePreview" class="w-100 border rounded" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>
+                </div>
+                <div class="mt-3">
+                    <a id="downloadButton" class="btn btn-secondary" download>
+                        <i class="fas fa-download me-2"></i>Download Pitch Deck
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Firebase SDK -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js';
         import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-        import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js';
-        import { firebaseConfig } from './firebase-config.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { app } from './firebase-config.js';
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
         const storage = getStorage(app);
+        const db = getFirestore(app);
 
-        // Check authentication state
-        onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                alert('Please log in to submit a pitch');
-                window.location.href = 'login.html';
+        const form = document.getElementById('pitchSubmissionForm');
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('pitchFile');
+        const browseButton = document.getElementById('browseButton');
+        const progressBar = document.querySelector('#uploadProgress .progress-bar');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const previewContainer = document.getElementById('previewContainer');
+        const filePreview = document.getElementById('filePreview');
+        const downloadButton = document.getElementById('downloadButton');
+        const submitButton = document.getElementById('submitButton');
+
+        // File selection handling
+        browseButton.addEventListener('click', () => fileInput.click());
+
+        // Drag and drop handling
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#0d6efd';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = '#dee2e6';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#dee2e6';
+            const file = e.dataTransfer.files[0];
+            if (isValidFile(file)) {
+                fileInput.files = e.dataTransfer.files;
+                showFilePreview(file);
             }
         });
 
-        // File upload handling
-        let selectedFile = null;
-        document.getElementById('fileUpload').addEventListener('click', function() {
-            document.getElementById('pitchDeck').click();
-        });
-
-        document.getElementById('pitchDeck').addEventListener('change', async function(e) {
+        fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (file) {
-                selectedFile = file;
-                const progressBar = document.getElementById('uploadProgress');
-                progressBar.classList.remove('d-none');
-                const progress = progressBar.querySelector('.progress-bar');
-                
-                try {
-                    // Show upload progress
-                    progress.style.width = '50%';
-                    
-                    // Validate file type
-                    const validTypes = ['.pdf', '.ppt', '.pptx'];
-                    const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
-                    if (!validTypes.includes(fileExtension)) {
-                        throw new Error('Invalid file type. Please upload PDF or PowerPoint files only.');
-                    }
-                    
-                    progress.style.width = '100%';
-                } catch (error) {
-                    console.error('Error with file:', error);
-                    alert(error.message);
-                    selectedFile = null;
-                    progress.style.width = '0%';
-                    progressBar.classList.add('d-none');
-                }
+            if (file && isValidFile(file)) {
+                showFilePreview(file);
             }
         });
 
-        // Form submission handling
-        document.getElementById('pitchForm').addEventListener('submit', async function(e) {
+        function isValidFile(file) {
+            const validTypes = ['application/pdf', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
+            if (!validTypes.includes(file.type)) {
+                showError('Please upload a PDF or PowerPoint file');
+                return false;
+            }
+            if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                showError('File size must be less than 10MB');
+                return false;
+            }
+            return true;
+        }
+
+        function showFilePreview(file) {
+            if (file.type === 'application/pdf') {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    filePreview.src = e.target.result;
+                    previewContainer.classList.remove('d-none');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.classList.add('d-none');
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            if (!auth.currentUser) {
+                showError('Please sign in to submit a pitch deck');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            if (!file || !isValidFile(file)) {
+                return;
+            }
+
+            const title = document.getElementById('pitchTitle').value;
+            const description = document.getElementById('pitchDescription').value;
+            const isPublic = document.getElementById('isPublic').checked;
+
+            submitButton.disabled = true;
+            showProgress();
+
             try {
-                const submitButton = this.querySelector('button[type="submit"]');
-                submitButton.disabled = true;
-                submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
+                const fileName = `${Date.now()}_${file.name}`;
+                const fileRef = ref(storage, `pitch-decks/${auth.currentUser.uid}/${fileName}`);
                 
-                // Get form data
-                const pitchData = {
-                    companyName: document.getElementById('companyName').value,
-                    industry: document.getElementById('industry').value,
-                    tagline: document.getElementById('tagline').value,
-                    problem: document.getElementById('problem').value,
-                    solution: document.getElementById('solution').value,
-                    marketSize: document.getElementById('marketSize').value,
-                    businessModel: document.getElementById('businessModel').value,
-                    teamSize: parseInt(document.getElementById('teamSize').value),
-                    teamBackground: document.getElementById('teamBackground').value,
-                    fundingStage: document.getElementById('fundingStage').value,
-                    fundingAmount: parseFloat(document.getElementById('fundingAmount').value),
-                    revenue: parseFloat(document.getElementById('revenue').value) || 0,
-                    userId: auth.currentUser.uid,
-                    status: 'pending',
-                    createdAt: new Date(),
-                    updatedAt: new Date()
+                const metadata = {
+                    contentType: file.type,
+                    customMetadata: {
+                        title,
+                        description,
+                        isPublic: isPublic.toString(),
+                        originalName: file.name,
+                        uploadedBy: auth.currentUser.uid
+                    }
                 };
 
-                // Upload pitch deck if selected
-                if (selectedFile) {
-                    const storageRef = ref(storage, `pitch-decks/${auth.currentUser.uid}/${selectedFile.name}`);
-                    await uploadBytes(storageRef, selectedFile);
-                    pitchData.pitchDeckUrl = await getDownloadURL(storageRef);
-                }
+                const uploadTask = uploadBytesResumable(fileRef, file, metadata);
 
-                // Save to Firestore
-                const docRef = await addDoc(collection(db, 'pitches'), pitchData);
-                console.log('Pitch submitted with ID:', docRef.id);
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        updateProgress(progress);
+                    },
+                    (error) => {
+                        showError('Upload failed: ' + error.message);
+                        submitButton.disabled = false;
+                    },
+                    async () => {
+                        try {
+                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                            
+                            // Save pitch metadata to Firestore
+                            await addDoc(collection(db, 'pitches'), {
+                                title,
+                                description,
+                                fileUrl: downloadURL,
+                                fileName,
+                                isPublic,
+                                userId: auth.currentUser.uid,
+                                createdAt: new Date(),
+                                status: 'pending'
+                            });
 
-                // Show success modal
-                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                successModal.show();
-                
-                // Start progress bar animation
-                const progressBar = document.querySelector('#successModal .progress-bar');
-                let width = 0;
-                const interval = setInterval(() => {
-                    if (width >= 100) {
-                        clearInterval(interval);
-                        // Redirect to home page after completion
-                        window.location.href = 'index.html';
-                    } else {
-                        width += 1;
-                        progressBar.style.width = width + '%';
+                            showSuccess('Pitch deck uploaded successfully!');
+                            downloadButton.href = downloadURL;
+                            setTimeout(() => {
+                                window.location.href = 'dashboard.html';
+                            }, 2000);
+                        } catch (error) {
+                            showError('Failed to save pitch metadata: ' + error.message);
+                            submitButton.disabled = false;
+                        }
                     }
-                }, 30);
-
+                );
             } catch (error) {
-                console.error('Error submitting pitch:', error);
-                alert('Error submitting pitch: ' + error.message);
-            } finally {
-                const submitButton = this.querySelector('button[type="submit"]');
+                showError('Upload failed: ' + error.message);
                 submitButton.disabled = false;
-                submitButton.innerHTML = 'Submit Pitch';
             }
         });
+
+        function showProgress() {
+            document.getElementById('uploadProgress').classList.remove('d-none');
+            uploadStatus.classList.add('d-none');
+        }
+
+        function updateProgress(progress) {
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = Math.round(progress) + '%';
+        }
+
+        function showError(message) {
+            uploadStatus.classList.remove('d-none', 'alert-success');
+            uploadStatus.classList.add('alert-danger');
+            uploadStatus.textContent = message;
+        }
+
+        function showSuccess(message) {
+            uploadStatus.classList.remove('d-none', 'alert-danger');
+            uploadStatus.classList.add('alert-success');
+            uploadStatus.textContent = message;
+        }
     </script>
 </body>
 </html> 

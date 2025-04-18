@@ -1,0 +1,12 @@
+specVersion: "v1"
+serviceId: "pitches"
+location: "asia-south1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "pitch"
+      cloudSql:
+        instanceId: "pitches1"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]

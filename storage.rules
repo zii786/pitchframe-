@@ -10,25 +10,25 @@ service firebase.storage {
     function isOwner(userId) {
       return request.auth.uid == userId;
     }
-
-    // Profile pictures
-    match /profile-pictures/{userId}/{fileName} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && isOwner(userId) &&
-        request.resource.size < 5 * 1024 * 1024 && // 5MB max file size
-        request.resource.contentType.matches('image/.*');
-      allow update: if isAuthenticated() && isOwner(userId);
-      allow delete: if isAuthenticated() && isOwner(userId);
+    
+    function isValidFileType() {
+      return request.resource.contentType.matches('application/pdf') 
+          || request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.presentationml.presentation')
+          || request.resource.contentType.matches('application/vnd.ms-powerpoint');
     }
 
-    // Company logos
-    match /company-logos/{userId}/{fileName} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && isOwner(userId) &&
-        request.resource.size < 2 * 1024 * 1024 && // 2MB max file size
-        request.resource.contentType.matches('image/.*');
-      allow update: if isAuthenticated() && isOwner(userId);
-      allow delete: if isAuthenticated() && isOwner(userId);
+    // Pitch deck rules
+    match /pitch-decks/{userId}/{fileName} {
+      allow read: if isAuthenticated() 
+                  && (isOwner(userId) || resource.metadata.isPublic == true);
+      allow write: if isAuthenticated() 
+                   && isOwner(userId) 
+                   && isValidFileType()
+                   && request.resource.size < 10 * 1024 * 1024; // 10MB limit
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if request.auth != null;
     }
   }
 } 

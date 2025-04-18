@@ -221,17 +221,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Firebase Authentication -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-        import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-        import { firebaseConfig } from './firebase-config.js';
+        import { registerUser } from './firebase-config.js';
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Password validation
+        const form = document.getElementById('registerForm');
+        const errorMessage = document.getElementById('errorMessage');
         const password = document.getElementById('password');
         const requirements = {
             length: document.getElementById('lengthReq'),
@@ -240,10 +233,9 @@
             special: document.getElementById('specialReq')
         };
 
+        // Password validation
         password.addEventListener('input', () => {
             const value = password.value;
-            
-            // Check requirements
             requirements.length.classList.toggle('valid', value.length >= 8);
             requirements.upper.classList.toggle('valid', /[A-Z]/.test(value));
             requirements.number.classList.toggle('valid', /[0-9]/.test(value));
@@ -251,10 +243,7 @@
         });
 
         // Form submission
-        const registerForm = document.getElementById('registerForm');
-        const errorMessage = document.getElementById('errorMessage');
-
-        registerForm.addEventListener('submit', async (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const email = document.getElementById('email').value;
@@ -281,47 +270,7 @@
 
             try {
                 errorMessage.classList.add('d-none');
-                
-                // Create user account
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                
-                // Create user profile
-                await setDoc(doc(db, 'users', userCredential.user.uid), {
-                    firstName: firstName,
-                    lastName: lastName,
-                    email: email,
-                    userType: userType,
-                    createdAt: new Date(),
-                    profileComplete: false
-                });
-
-                // Create type-specific profile
-                if (userType === 'startup') {
-                    await setDoc(doc(db, 'startups', userCredential.user.uid), {
-                        founderId: userCredential.user.uid,
-                        companyName: '',
-                        industry: '',
-                        stage: '',
-                        description: '',
-                        createdAt: new Date()
-                    });
-                } else if (userType === 'mentor') {
-                    await setDoc(doc(db, 'mentors', userCredential.user.uid), {
-                        mentorId: userCredential.user.uid,
-                        expertise: [],
-                        availability: true,
-                        createdAt: new Date()
-                    });
-                } else if (userType === 'investor') {
-                    await setDoc(doc(db, 'investors', userCredential.user.uid), {
-                        investorId: userCredential.user.uid,
-                        investmentFocus: [],
-                        preferredStages: [],
-                        createdAt: new Date()
-                    });
-                }
-
-                // Redirect to settings page
+                await registerUser(email, password, firstName, lastName, userType);
                 window.location.href = 'settings.html';
             } catch (error) {
                 console.error('Registration error:', error);

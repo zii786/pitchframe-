@@ -16,63 +16,78 @@ import {
     getDoc, 
     updateDoc
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+import { getStorage } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js';
 
 // Your web app's Firebase configuration
-export const firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
     authDomain: "pitchframe-6967a.firebaseapp.com",
     projectId: "pitchframe-6967a",
-    storageBucket: "pitchframe-6967a.firebasestorage.app",
+    storageBucket: "pitchframe-6967a.appspot.com",
     messagingSenderId: "801200566992",
     appId: "1:801200566992:web:9dc20d8ad085577eb724d5"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// Initialize Firebase services
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 // Function to handle user registration
 async function registerUser(email, password, firstName, lastName, userType) {
     try {
+        // First create the user authentication
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
         
-        await setDoc(doc(db, 'users', userCredential.user.uid), {
+        // Then create the user profile
+        const userProfile = {
             firstName: firstName,
             lastName: lastName,
             email: email,
             userType: userType,
             createdAt: new Date(),
-            profileComplete: false
-        });
+            profileComplete: false,
+            uid: user.uid
+        };
+
+        // Create user document
+        await setDoc(doc(db, 'users', user.uid), userProfile);
+
+        // Create type-specific profile
+        const typeSpecificProfile = {
+            createdAt: new Date(),
+            userId: user.uid
+        };
 
         if (userType === 'startup') {
-            await setDoc(doc(db, 'startups', userCredential.user.uid), {
-                founderId: userCredential.user.uid,
+            await setDoc(doc(db, 'startups', user.uid), {
+                ...typeSpecificProfile,
                 companyName: '',
                 industry: '',
                 stage: '',
-                description: '',
-                createdAt: new Date()
+                description: ''
             });
         } else if (userType === 'mentor') {
-            await setDoc(doc(db, 'mentors', userCredential.user.uid), {
-                mentorId: userCredential.user.uid,
+            await setDoc(doc(db, 'mentors', user.uid), {
+                ...typeSpecificProfile,
                 expertise: [],
-                availability: true,
-                createdAt: new Date()
+                availability: true
             });
         } else if (userType === 'investor') {
-            await setDoc(doc(db, 'investors', userCredential.user.uid), {
-                investorId: userCredential.user.uid,
+            await setDoc(doc(db, 'investors', user.uid), {
+                ...typeSpecificProfile,
                 investmentFocus: [],
-                preferredStages: [],
-                createdAt: new Date()
+                preferredStages: []
             });
         }
 
         return userCredential;
     } catch (error) {
+        console.error('Registration error:', error);
         throw error;
     }
 }
@@ -142,13 +157,11 @@ async function getInvestorProfile(userId) {
     return investorDoc.exists() ? investorDoc.data() : null;
 }
 
-// Make auth and db available globally
-window.auth = auth;
-window.db = db;
-
 export {
     auth,
     db,
+    storage,
+    firebaseConfig,
     registerUser,
     loginUser,
     resetPassword,

@@ -4,7 +4,12 @@ import { db } from './firebase-config.js';
 const COLLECTIONS = {
     PITCH_DECKS: 'pitch_decks',
     ANALYSIS_RESULTS: 'analysis_results',
-    USER_HISTORY: 'user_history'
+    USER_HISTORY: 'user_history',
+    PITCHES: 'pitches',
+    USERS: 'users',
+    STARTUPS: 'startups',
+    MENTORS: 'mentors',
+    INVESTORS: 'investors'
 };
 
 // Pitch Deck Status
@@ -13,6 +18,13 @@ const PITCH_STATUS = {
     PROCESSING: 'processing',
     COMPLETED: 'completed',
     ERROR: 'error'
+};
+
+// User Roles
+const USER_ROLES = {
+    STARTUP: 'startup',
+    MENTOR: 'mentor',
+    INVESTOR: 'investor'
 };
 
 // Create a new pitch deck document
@@ -145,5 +157,52 @@ export async function getUserAnalysisHistory(userId) {
     }
 }
 
-// Export collections and status constants
-export { COLLECTIONS, PITCH_STATUS }; 
+// Create user profile
+export async function createUserProfile(userId, userData) {
+    try {
+        const { role, ...profileData } = userData;
+        
+        // Create user document
+        await db.collection(COLLECTIONS.USERS).doc(userId).set({
+            role,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        });
+
+        // Create role-specific profile
+        const roleCollection = COLLECTIONS[role.toUpperCase() + 'S'];
+        await db.collection(roleCollection).doc(userId).set({
+            ...profileData,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        });
+    } catch (error) {
+        console.error('Error creating user profile:', error);
+        throw error;
+    }
+}
+
+// Get user profile
+export async function getUserProfile(userId) {
+    try {
+        const userDoc = await db.collection(COLLECTIONS.USERS).doc(userId).get();
+        if (!userDoc.exists) {
+            throw new Error('User not found');
+        }
+
+        const userData = userDoc.data();
+        const roleCollection = COLLECTIONS[userData.role.toUpperCase() + 'S'];
+        const profileDoc = await db.collection(roleCollection).doc(userId).get();
+
+        return {
+            ...userData,
+            ...profileDoc.data()
+        };
+    } catch (error) {
+        console.error('Error getting user profile:', error);
+        throw error;
+    }
+}
+
+// Export collections and constants
+export { COLLECTIONS, PITCH_STATUS, USER_ROLES }; 
