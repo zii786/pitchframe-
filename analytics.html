@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pitch Analytics - PitchFrame</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><strong>Pitch<span class="text-primary">Frame</span></strong></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#submit-pitch">Submit Pitch</a></li>
+                    <li class="nav-item"><a class="nav-link" href="mentor-dashboard.html">Mentor Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="analytics.html">Analytics</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary ms-2 text-white px-4" href="login.html">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Analytics Dashboard -->
+    <section class="analytics-dashboard py-5">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h1 class="display-5 fw-bold">Pitch Analytics</h1>
+                    <p class="lead">Track your pitch performance and growth metrics</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="btn-group">
+                        <button class="btn btn-outline-primary">Last 7 Days</button>
+                        <button class="btn btn-outline-primary active">Last 30 Days</button>
+                        <button class="btn btn-outline-primary">All Time</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3>1,234</h3>
+                            <p>Total Views</p>
+                            <span class="trend positive"><i class="fas fa-arrow-up"></i> 12%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3>89</h3>
+                            <p>Feedback Received</p>
+                            <span class="trend positive"><i class="fas fa-arrow-up"></i> 8%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3>4.5</h3>
+                            <p>Average Rating</p>
+                            <span class="trend positive"><i class="fas fa-arrow-up"></i> 0.3</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3>15</h3>
+                            <p>Mentor Connections</p>
+                            <span class="trend positive"><i class="fas fa-arrow-up"></i> 5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="row g-4 mb-5">
+                <div class="col-lg-8">
+                    <div class="chart-card">
+                        <h4>Pitch Performance Over Time</h4>
+                        <div class="chart-container">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="chart-card">
+                        <h4>Feedback Distribution</h4>
+                        <div class="chart-container">
+                            <canvas id="feedbackChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Analytics -->
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="analytics-card">
+                        <h4>Mentor Engagement</h4>
+                        <div class="mentor-list">
+                            <div class="mentor-item">
+                                <div class="mentor-info">
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Mentor" class="mentor-avatar">
+                                    <div>
+                                        <h6>John Smith</h6>
+                                        <p>Tech Industry Expert</p>
+                                    </div>
+                                </div>
+                                <div class="engagement-metrics">
+                                    <span class="metric">3 Reviews</span>
+                                    <span class="metric">4.8 Rating</span>
+                                    <span class="metric">2 Follow-ups</span>
+                                </div>
+                            </div>
+                            <div class="mentor-item">
+                                <div class="mentor-info">
+                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Mentor" class="mentor-avatar">
+                                    <div>
+                                        <h6>Sarah Johnson</h6>
+                                        <p>Startup Advisor</p>
+                                    </div>
+                                </div>
+                                <div class="engagement-metrics">
+                                    <span class="metric">2 Reviews</span>
+                                    <span class="metric">4.5 Rating</span>
+                                    <span class="metric">1 Follow-up</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="analytics-card">
+                        <h4>Feedback Categories</h4>
+                        <div class="feedback-categories">
+                            <div class="category-item">
+                                <div class="category-header">
+                                    <h6>Problem Statement</h6>
+                                    <span class="score">4.8/5</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: 96%"></div>
+                                </div>
+                            </div>
+                            <div class="category-item">
+                                <div class="category-header">
+                                    <h6>Solution & Value</h6>
+                                    <span class="score">4.5/5</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: 90%"></div>
+                                </div>
+                            </div>
+                            <div class="category-item">
+                                <div class="category-header">
+                                    <h6>Market Opportunity</h6>
+                                    <span class="score">4.2/5</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: 84%"></div>
+                                </div>
+                            </div>
+                            <div class="category-item">
+                                <div class="category-header">
+                                    <h6>Business Model</h6>
+                                    <span class="score">3.8/5</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: 76%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5>PitchFrame</h5>
+                    <p>Connecting startups with mentors to accelerate growth and success.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5>For Startups</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">Submit Pitch</a></li>
+                        <li><a href="#">Analytics</a></li>
+                        <li><a href="#">Resource Hub</a></li>
+                        <li><a href="#">Success Stories</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5>For Mentors</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">Join as Mentor</a></li>
+                        <li><a href="#">Mentor Dashboard</a></li>
+                        <li><a href="#">Mentorship Guide</a></li>
+                        <li><a href="#">Recognition Program</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5>Company</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2">
+                    <h5>Legal</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="small mb-0">© 2023 PitchFrame. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="small mb-0">Made with <i class="fas fa-heart text-danger"></i> for startup growth</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom JS -->
+    <script src="analytics.js"></script>
+</body>
+</html> 
