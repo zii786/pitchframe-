@@ -149,7 +149,6 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<<<<<<< HEAD
     <!-- Firebase Config -->
     <script src="firebase-config.js"></script>
     <!-- Custom JS -->
@@ -171,7 +170,7 @@
                     // Set persistence to SESSION
                     await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
                 }
-                window.location.href = 'dashboard.html'; // Redirect to dashboard after successful login
+                window.location.href = 'AI_analyzer.html'; // Redirect to AI analyzer after successful login
             } catch (error) {
                 alert('Error: ' + error.message);
             }
@@ -189,79 +188,6 @@
                     alert('Error: ' + error.message);
                 }
             }
-=======
-    
-    <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    
-    <!-- Add Firebase products that you want to use -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    
-    <!-- Initialize Firebase -->
-    <script>
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
-            authDomain: "pitchframe-6967a.firebaseapp.com",
-            projectId: "pitchframe-6967a",
-            storageBucket: "pitchframe-6967a.firebasestorage.app",
-            messagingSenderId: "801200566992",
-            appId: "1:801200566992:web:9dc20d8ad085577eb724d5"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-    </script>
-    
-    <!-- Login JS -->
-    <script>
-        // Wait for DOM to load
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginForm = document.getElementById('loginForm');
-            const errorMessage = document.getElementById('errorMessage');
-
-            if (!loginForm) {
-                console.error('Login form not found!');
-                return;
-            }
-
-            loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-
-                // Hide any previous error messages
-                errorMessage.classList.add('d-none');
-
-                console.log('Attempting to sign in...'); // Debug log
-
-                // Sign in with Firebase
-                firebase.auth().signInWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        // Login successful
-                        console.log('Logged in successfully!');
-                        // Redirect to dashboard or home page
-                        window.location.href = 'index.html';
-                    })
-                    .catch((error) => {
-                        // Show error message
-                        console.error('Login error:', error); // Debug log
-                        errorMessage.textContent = error.message;
-                        errorMessage.classList.remove('d-none');
-                    });
-            });
-
-            // Check if user is already logged in
-            firebase.auth().onAuthStateChanged((user) => {
-                if (user) {
-                    // User is signed in
-                    console.log('User is already signed in:', user.email);
-                    // You can redirect to dashboard here if needed
-                }
-            });
->>>>>>> 667e81044d9910353e78bbe9b6a15f1ce5aed828
         });
     </script>
 </body>

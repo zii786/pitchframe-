@@ -92,13 +92,16 @@ async function handleFileUpload(file) {
                 const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
 
                 // Save file metadata to Firestore
-                await firebase.firestore().collection('pitch_decks').add({
+                const docRef = await firebase.firestore().collection('pitch_decks').add({
                     userId: auth.currentUser.uid,
                     filename: file.name,
                     downloadURL: downloadURL,
                     uploadDate: firebase.firestore.FieldValue.serverTimestamp(),
                     status: 'processing'
                 });
+
+                // Start AI analysis
+                await analyzePitchDeck(downloadURL, docRef.id);
 
                 // Hide progress bar
                 uploadProgress.classList.add('d-none');
@@ -107,7 +110,7 @@ async function handleFileUpload(file) {
                 bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
 
                 // Show success message
-                alert('File uploaded successfully! Analysis will begin shortly.');
+                alert('File uploaded successfully! AI analysis in progress.');
             }
         );
     } catch (error) {
@@ -118,10 +121,9 @@ async function handleFileUpload(file) {
 }
 
 // Function to analyze pitch deck
-async function analyzePitchDeck(fileUrl) {
+async function analyzePitchDeck(fileUrl, docId) {
     try {
-        // Here you would integrate with your AI analysis service
-        // For now, we'll simulate the analysis with a timeout
+        // Call your AI analysis service
         const response = await fetch('YOUR_AI_SERVICE_ENDPOINT', {
             method: 'POST',
             headers: {
@@ -129,14 +131,32 @@ async function analyzePitchDeck(fileUrl) {
             },
             body: JSON.stringify({
                 fileUrl: fileUrl,
-                userId: auth.currentUser.uid
+                userId: auth.currentUser.uid,
+                docId: docId
             })
         });
 
+        if (!response.ok) {
+            throw new Error('AI analysis service failed');
+        }
+
         const analysis = await response.json();
+
+        // Update Firestore with analysis results
+        await firebase.firestore().collection('pitch_decks').doc(docId).update({
+            status: 'completed',
+            analysis: analysis,
+            analysisDate: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
         return analysis;
     } catch (error) {
         console.error('Analysis error:', error);
+        // Update Firestore with error status
+        await firebase.firestore().collection('pitch_decks').doc(docId).update({
+            status: 'error',
+            error: error.message
+        });
         throw error;
     }
 }
@@ -176,6 +196,8 @@ firebase.firestore().collection('pitch_decks')
                 const doc = change.doc;
                 if (doc.data().status === 'completed') {
                     updateAnalysisResults(doc.data().analysis);
+                } else if (doc.data().status === 'error') {
+                    alert('Error during AI analysis: ' + doc.data().error);
                 }
             }
         });
