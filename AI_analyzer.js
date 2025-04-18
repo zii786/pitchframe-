@@ -123,16 +123,27 @@ async function handleFileUpload(file) {
 // Function to analyze pitch deck
 async function analyzePitchDeck(fileUrl, docId) {
     try {
-        // Call your AI analysis service
-        const response = await fetch('YOUR_AI_SERVICE_ENDPOINT', {
+        // Show processing alert
+        document.getElementById('processingAlert').classList.remove('d-none');
+        
+        // Call the AI analysis service
+        const response = await fetch('https://api.pitchframe.ai/analyze', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${await auth.currentUser.getIdToken()}`
             },
             body: JSON.stringify({
                 fileUrl: fileUrl,
                 userId: auth.currentUser.uid,
-                docId: docId
+                docId: docId,
+                analysisType: 'pitch_deck',
+                options: {
+                    analyzeClarity: true,
+                    analyzeEngagement: true,
+                    generateRecommendations: true,
+                    language: 'en'
+                }
             })
         });
 
@@ -145,13 +156,36 @@ async function analyzePitchDeck(fileUrl, docId) {
         // Update Firestore with analysis results
         await firebase.firestore().collection('pitch_decks').doc(docId).update({
             status: 'completed',
-            analysis: analysis,
+            analysis: {
+                clarityScore: analysis.clarityScore,
+                engagementScore: analysis.engagementScore,
+                clarityFeedback: analysis.clarityFeedback,
+                engagementFeedback: analysis.engagementFeedback,
+                recommendations: analysis.recommendations,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            },
             analysisDate: firebase.firestore.FieldValue.serverTimestamp()
         });
+
+        // Hide processing alert
+        document.getElementById('processingAlert').classList.add('d-none');
+        
+        // Update UI with analysis results
+        updateAnalysisResults(analysis);
 
         return analysis;
     } catch (error) {
         console.error('Analysis error:', error);
+        // Hide processing alert
+        document.getElementById('processingAlert').classList.add('d-none');
+        // Show error alert
+        const errorAlert = document.createElement('div');
+        errorAlert.className = 'alert alert-danger mt-3';
+        errorAlert.innerHTML = `
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Error during analysis: ${error.message}
+        `;
+        document.querySelector('.upload-section').appendChild(errorAlert);
         // Update Firestore with error status
         await firebase.firestore().collection('pitch_decks').doc(docId).update({
             status: 'error',
@@ -163,16 +197,27 @@ async function analyzePitchDeck(fileUrl, docId) {
 
 // Function to update analysis results in the UI
 function updateAnalysisResults(analysis) {
+    // Show analysis results section
+    document.getElementById('analysisResults').style.display = 'block';
+
     // Update clarity score
-    document.querySelector('.metric-value').textContent = `${analysis.clarityScore}/10`;
-    document.querySelector('.progress-bar.bg-success').style.width = `${analysis.clarityScore * 10}%`;
+    const clarityScore = document.getElementById('clarityScore');
+    const clarityBadge = document.getElementById('clarityBadge');
+    clarityScore.style.width = `${analysis.clarityScore * 10}%`;
+    clarityScore.setAttribute('aria-valuenow', analysis.clarityScore);
+    clarityBadge.textContent = `${analysis.clarityScore}/10`;
+    document.getElementById('clarityFeedback').textContent = analysis.clarityFeedback;
 
     // Update engagement score
-    document.querySelectorAll('.metric-value')[1].textContent = `${analysis.engagementScore}/10`;
-    document.querySelector('.progress-bar.bg-warning').style.width = `${analysis.engagementScore * 10}%`;
+    const engagementScore = document.getElementById('engagementScore');
+    const engagementBadge = document.getElementById('engagementBadge');
+    engagementScore.style.width = `${analysis.engagementScore * 10}%`;
+    engagementScore.setAttribute('aria-valuenow', analysis.engagementScore);
+    engagementBadge.textContent = `${analysis.engagementScore}/10`;
+    document.getElementById('engagementFeedback').textContent = analysis.engagementFeedback;
 
     // Update recommendations
-    const recommendationsList = document.querySelector('.list-group');
+    const recommendationsList = document.getElementById('recommendationsList');
     recommendationsList.innerHTML = '';
     analysis.recommendations.forEach(rec => {
         const li = document.createElement('li');
@@ -201,4 +246,64 @@ firebase.firestore().collection('pitch_decks')
                 }
             }
         });
-    }); 
+    });
+
+// Add event listener for download report button
+document.getElementById('downloadReportBtn').addEventListener('click', async () => {
+    try {
+        const docId = sessionStorage.getItem('currentAnalysisId');
+        if (!docId) {
+            throw new Error('No analysis found to download');
+        }
+
+        const doc = await firebase.firestore().collection('pitch_decks').doc(docId).get();
+        if (!doc.exists) {
+            throw new Error('Analysis not found');
+        }
+
+        const analysis = doc.data().analysis;
+        const report = {
+            clarityScore: analysis.clarityScore,
+            engagementScore: analysis.engagementScore,
+            clarityFeedback: analysis.clarityFeedback,
+            engagementFeedback: analysis.engagementFeedback,
+            recommendations: analysis.recommendations,
+            timestamp: analysis.timestamp.toDate().toLocaleString()
+        };
+
+        // Create and download PDF report
+        const response = await fetch('https://api.pitchframe.ai/generate-report', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${await auth.currentUser.getIdToken()}`
+            },
+            body: JSON.stringify(report)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to generate report');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `pitch-analysis-report-${docId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    } catch (error) {
+        console.error('Download error:', error);
+        alert('Error downloading report: ' + error.message);
+    }
+});
+
+// Add tooltips to help users understand the scores
+document.addEventListener('DOMContentLoaded', () => {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+}); 
