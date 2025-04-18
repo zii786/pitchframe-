@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pitch Analyzer Dashboard - PitchFrame</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .dashboard-container {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            padding: 2rem 0;
+        }
+        .sidebar {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            height: calc(100vh - 4rem);
+            position: sticky;
+            top: 2rem;
+        }
+        .main-content {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        .nav-link {
+            color: #6c757d;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            background-color: #e9ecef;
+            color: #0d6efd;
+        }
+        .nav-link i {
+            width: 20px;
+            margin-right: 0.5rem;
+        }
+        .upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            border-color: #0d6efd;
+            background-color: #f8f9fa;
+        }
+        .analysis-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+        }
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+        .metric-label {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="container">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-md-3">
+                    <div class="sidebar">
+                        <div class="mb-4">
+                            <h4 class="mb-0"><strong>Pitch<span class="text-primary">Frame</span></strong></h4>
+                            <p class="text-muted mb-0">AI Pitch Analyzer</p>
+                        </div>
+                        <nav class="nav flex-column">
+                            <a class="nav-link active" href="#">
+                                <i class="fas fa-chart-line"></i>
+                                Dashboard
+                            </a>
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-file-upload"></i>
+                                Upload Pitch
+                            </a>
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-history"></i>
+                                History
+                            </a>
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-cog"></i>
+                                Settings
+                            </a>
+                            <a class="nav-link" href="#" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-md-9">
+                    <div class="main-content">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2 class="mb-0">Pitch Analysis Dashboard</h2>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                                <i class="fas fa-plus"></i> New Analysis
+                            </button>
+                        </div>
+                        
+                        <!-- Upload Modal -->
+                        <div class="modal fade" id="uploadModal" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Upload Pitch Deck</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="upload-area" id="dropZone">
+                                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-primary"></i>
+                                            <h5>Drag & Drop your pitch deck here</h5>
+                                            <p class="text-muted">or</p>
+                                            <input type="file" id="fileInput" class="d-none" accept=".pdf,.ppt,.pptx">
+                                            <button class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                                                Browse Files
+                                            </button>
+                                        </div>
+                                        <div class="progress mt-3 d-none" id="uploadProgress">
+                                            <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Analysis Results -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="analysis-card">
+                                    <h5 class="mb-3">Clarity Score</h5>
+                                    <div class="metric-value">8.5/10</div>
+                                    <div class="progress mt-2">
+                                        <div class="progress-bar bg-success" style="width: 85%"></div>
+                                    </div>
+                                    <p class="mt-2 text-muted">Your pitch is clear and easy to understand</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="analysis-card">
+                                    <h5 class="mb-3">Engagement Score</h5>
+                                    <div class="metric-value">7.2/10</div>
+                                    <div class="progress mt-2">
+                                        <div class="progress-bar bg-warning" style="width: 72%"></div>
+                                    </div>
+                                    <p class="mt-2 text-muted">Good engagement, could be more compelling</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="analysis-card mt-4">
+                            <h5 class="mb-3">Key Recommendations</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Strengthen your value proposition in slide 3
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Add more market size data in slide 5
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Include competitive analysis in slide 7
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <!-- Custom JS -->
+    <script src="firebase-config.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html> 
