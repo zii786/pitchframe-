@@ -191,16 +191,25 @@
                                         </ul>
                                         <div class="tab-content p-3 border border-top-0 rounded-bottom" id="pitchTabsContent">
                                             <div class="tab-pane fade show active" id="pdf-content" role="tabpanel">
-                                                <input type="file" class="form-control" id="pdf-upload" accept=".pdf">
-                                                <small class="form-text">Upload your pitch deck as PDF (max 10MB)</small>
+                                                <div class="mb-3">
+                                                    <label for="pdf-link" class="form-label">PDF Link</label>
+                                                    <input type="url" class="form-control" id="pdf-link" placeholder="Enter Google Drive or Dropbox link to your PDF">
+                                                    <small class="form-text">Share a public link to your pitch deck (Google Drive, Dropbox, etc.)</small>
+                                                </div>
                                             </div>
                                             <div class="tab-pane fade" id="video-content" role="tabpanel">
-                                                <input type="url" class="form-control" id="video-link" placeholder="YouTube or Vimeo URL">
-                                                <small class="form-text">Paste your YouTube or Vimeo video link</small>
+                                                <div class="mb-3">
+                                                    <label for="video-link" class="form-label">Video Link</label>
+                                                    <input type="url" class="form-control" id="video-link" placeholder="YouTube or Vimeo URL">
+                                                    <small class="form-text">Paste your YouTube or Vimeo video link</small>
+                                                </div>
                                             </div>
                                             <div class="tab-pane fade" id="slide-content" role="tabpanel">
-                                                <input type="url" class="form-control" id="slide-link" placeholder="SlideShare URL">
-                                                <small class="form-text">Paste your SlideShare presentation link</small>
+                                                <div class="mb-3">
+                                                    <label for="slide-link" class="form-label">SlideShare Link</label>
+                                                    <input type="url" class="form-control" id="slide-link" placeholder="SlideShare URL">
+                                                    <small class="form-text">Paste your SlideShare presentation link</small>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -546,6 +555,16 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <!-- Firebase Configuration -->
+    <script src="firebase-config.js"></script>
+    
     <!-- Custom JS -->
     <script src="scripts.js"></script>
 </body>
