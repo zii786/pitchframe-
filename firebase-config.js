@@ -12,15 +12,13 @@ import {
     getFirestore, 
     collection, 
     doc, 
-    setDoc, 
+    setDoc,
     getDoc, 
-    updateDoc 
+    updateDoc
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
-const firebaseConfig = {
+export const firebaseConfig = {
     apiKey: "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
     authDomain: "pitchframe-6967a.firebaseapp.com",
     projectId: "pitchframe-6967a",
@@ -35,7 +33,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // Function to handle user registration
-export async function registerUser(email, password, firstName, lastName, userType) {
+async function registerUser(email, password, firstName, lastName, userType) {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         
@@ -80,7 +78,7 @@ export async function registerUser(email, password, firstName, lastName, userTyp
 }
 
 // Function to handle user login
-export async function loginUser(email, password) {
+async function loginUser(email, password) {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         return userCredential;
@@ -90,7 +88,7 @@ export async function loginUser(email, password) {
 }
 
 // Function to handle password reset
-export async function resetPassword(email) {
+async function resetPassword(email) {
     try {
         await sendPasswordResetEmail(auth, email);
     } catch (error) {
@@ -99,7 +97,7 @@ export async function resetPassword(email) {
 }
 
 // Function to handle user logout
-export async function logoutUser() {
+async function logoutUser() {
     try {
         await signOut(auth);
     } catch (error) {
@@ -108,18 +106,18 @@ export async function logoutUser() {
 }
 
 // Function to check if user is logged in
-export function checkAuthState(callback) {
+function checkAuthState(callback) {
     return onAuthStateChanged(auth, callback);
 }
 
 // Function to get user profile data
-export async function getUserProfile(userId) {
+async function getUserProfile(userId) {
     const userDoc = await getDoc(doc(db, 'users', userId));
     return userDoc.exists() ? userDoc.data() : null;
 }
 
 // Function to update user profile
-export async function updateUserProfile(userId, data) {
+async function updateUserProfile(userId, data) {
     await updateDoc(doc(db, 'users', userId), {
         ...data,
         updatedAt: new Date()
@@ -127,19 +125,19 @@ export async function updateUserProfile(userId, data) {
 }
 
 // Function to get startup profile
-export async function getStartupProfile(userId) {
+async function getStartupProfile(userId) {
     const startupDoc = await getDoc(doc(db, 'startups', userId));
     return startupDoc.exists() ? startupDoc.data() : null;
 }
 
 // Function to get mentor profile
-export async function getMentorProfile(userId) {
+async function getMentorProfile(userId) {
     const mentorDoc = await getDoc(doc(db, 'mentors', userId));
     return mentorDoc.exists() ? mentorDoc.data() : null;
 }
 
 // Function to get investor profile
-export async function getInvestorProfile(userId) {
+async function getInvestorProfile(userId) {
     const investorDoc = await getDoc(doc(db, 'investors', userId));
     return investorDoc.exists() ? investorDoc.data() : null;
 }
@@ -147,3 +145,18 @@ export async function getInvestorProfile(userId) {
 // Make auth and db available globally
 window.auth = auth;
 window.db = db;
+
+export {
+    auth,
+    db,
+    registerUser,
+    loginUser,
+    resetPassword,
+    logoutUser,
+    checkAuthState,
+    getUserProfile,
+    updateUserProfile,
+    getStartupProfile,
+    getMentorProfile,
+    getInvestorProfile
+};

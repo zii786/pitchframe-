@@ -1,4 +1,5 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
     // Helper functions
@@ -9,49 +10,49 @@ service cloud.firestore {
     function isOwner(userId) {
       return request.auth.uid == userId;
     }
-    
-    function isValidUserType() {
-      return request.resource.data.userType in ['startup', 'mentor', 'investor'];
-    }
-    
-    // Users collection rules
-    match /users/{userId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && isOwner(userId) && isValidUserType();
-      allow update: if isAuthenticated() && isOwner(userId);
-      allow delete: if false; // Prevent user deletion through Firestore
-    }
-    
-    // Startups collection rules
-    match /startups/{startupId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && isOwner(startupId);
-      allow update: if isAuthenticated() && isOwner(startupId);
-      allow delete: if false;
-    }
-    
-    // Mentors collection rules
-    match /mentors/{mentorId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && isOwner(mentorId);
-      allow update: if isAuthenticated() && isOwner(mentorId);
-      allow delete: if false;
-    }
-    
-    // Investors collection rules
-    match /investors/{investorId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && isOwner(investorId);
-      allow update: if isAuthenticated() && isOwner(investorId);
-      allow delete: if false;
+
+    function isStartup() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'startup';
     }
 
-    // Pitch decks collection rules
-    match /pitch_decks/{deckId} {
-      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
-      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
-      allow update: if isAuthenticated() && request.auth.uid == resource.data.userId;
-      allow delete: if isAuthenticated() && request.auth.uid == resource.data.userId;
+    function isMentor() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'mentor';
+    }
+
+    function isInvestor() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'investor';
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isOwner(userId);
+      allow update: if isAuthenticated() && isOwner(userId);
+      allow delete: if false; // Prevent user deletion
+    }
+
+    // Startups collection
+    match /startups/{startupId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isOwner(startupId) && isStartup();
+      allow update: if isAuthenticated() && isOwner(startupId);
+      allow delete: if false; // Prevent startup deletion
+    }
+
+    // Mentors collection
+    match /mentors/{mentorId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isOwner(mentorId) && isMentor();
+      allow update: if isAuthenticated() && isOwner(mentorId);
+      allow delete: if false; // Prevent mentor deletion
+    }
+
+    // Investors collection
+    match /investors/{investorId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isOwner(investorId) && isInvestor();
+      allow update: if isAuthenticated() && isOwner(investorId);
+      allow delete: if false; // Prevent investor deletion
     }
   }
 } 

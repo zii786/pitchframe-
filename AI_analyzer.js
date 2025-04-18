@@ -1,3 +1,6 @@
+import { auth, db, storage } from './firebase-config.js';
+import { performAnalysis, generateAnalysisReport } from './ai-service.js';
+
 // Check authentication state
 auth.onAuthStateChanged((user) => {
     if (!user) {
@@ -17,11 +20,12 @@ document.getElementById('logoutBtn').addEventListener('click', async (e) => {
     }
 });
 
-// File upload handling
-const dropZone = document.getElementById('dropZone');
+// Initialize Firebase
 const fileInput = document.getElementById('fileInput');
+const dropZone = document.getElementById('dropZone');
 const uploadProgress = document.getElementById('uploadProgress');
 const progressBar = uploadProgress.querySelector('.progress-bar');
+const processingAlert = document.getElementById('processingAlert');
 
 // Drag and drop handlers
 dropZone.addEventListener('dragover', (e) => {
@@ -32,17 +36,16 @@ dropZone.addEventListener('dragover', (e) => {
 
 dropZone.addEventListener('dragleave', () => {
     dropZone.style.borderColor = '#dee2e6';
-    dropZone.style.backgroundColor = 'white';
+    dropZone.style.backgroundColor = 'transparent';
 });
 
 dropZone.addEventListener('drop', (e) => {
     e.preventDefault();
     dropZone.style.borderColor = '#dee2e6';
-    dropZone.style.backgroundColor = 'white';
+    dropZone.style.backgroundColor = 'transparent';
     
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        handleFileUpload(files[0]);
+    if (e.dataTransfer.files.length > 0) {
+        handleFileUpload(e.dataTransfer.files[0]);
     }
 });
 
@@ -53,27 +56,21 @@ fileInput.addEventListener('change', (e) => {
     }
 });
 
-// Handle file upload
 async function handleFileUpload(file) {
-    // Validate file type
-    const validTypes = ['application/pdf', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
-    if (!validTypes.includes(file.type)) {
-        alert('Please upload a PDF or PowerPoint file');
-        return;
-    }
-
     try {
-        // Show progress bar
+        // Validate file type
+        const validTypes = ['application/pdf', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
+        if (!validTypes.includes(file.type)) {
+            throw new Error('Please upload a PDF or PowerPoint file');
+        }
+
+        // Show upload progress
         uploadProgress.classList.remove('d-none');
         progressBar.style.width = '0%';
 
-        // Create a unique filename
-        const timestamp = new Date().getTime();
-        const filename = `${auth.currentUser.uid}/${timestamp}_${file.name}`;
-
         // Upload file to Firebase Storage
-        const storageRef = firebase.storage().ref();
-        const fileRef = storageRef.child(filename);
+        const storageRef = storage.ref();
+        const fileRef = storageRef.child(`pitch_decks/${auth.currentUser.uid}/${Date.now()}_${file.name}`);
         const uploadTask = fileRef.put(file);
 
         // Monitor upload progress
@@ -92,106 +89,28 @@ async function handleFileUpload(file) {
                 const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
 
                 // Save file metadata to Firestore
-                const docRef = await firebase.firestore().collection('pitch_decks').add({
+                const docRef = await db.collection('pitch_decks').add({
                     userId: auth.currentUser.uid,
                     filename: file.name,
                     downloadURL: downloadURL,
-                    uploadDate: firebase.firestore.FieldValue.serverTimestamp(),
+                    uploadDate: new Date(),
                     status: 'processing'
                 });
 
                 // Start AI analysis
-                await analyzePitchDeck(downloadURL, docRef.id);
+                await performAnalysis(downloadURL, auth.currentUser.uid, docRef.id);
 
                 // Hide progress bar
                 uploadProgress.classList.add('d-none');
 
-                // Close modal
-                bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
-
                 // Show success message
-                alert('File uploaded successfully! AI analysis in progress.');
+                alert('File uploaded successfully! AI analysis completed.');
             }
         );
     } catch (error) {
         console.error('Error:', error);
         alert('Error: ' + error.message);
         uploadProgress.classList.add('d-none');
-    }
-}
-
-// Function to analyze pitch deck
-async function analyzePitchDeck(fileUrl, docId) {
-    try {
-        // Show processing alert
-        document.getElementById('processingAlert').classList.remove('d-none');
-        
-        // Call the AI analysis service
-        const response = await fetch('https://api.pitchframe.ai/analyze', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${await auth.currentUser.getIdToken()}`
-            },
-            body: JSON.stringify({
-                fileUrl: fileUrl,
-                userId: auth.currentUser.uid,
-                docId: docId,
-                analysisType: 'pitch_deck',
-                options: {
-                    analyzeClarity: true,
-                    analyzeEngagement: true,
-                    generateRecommendations: true,
-                    language: 'en'
-                }
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('AI analysis service failed');
-        }
-
-        const analysis = await response.json();
-
-        // Update Firestore with analysis results
-        await firebase.firestore().collection('pitch_decks').doc(docId).update({
-            status: 'completed',
-            analysis: {
-                clarityScore: analysis.clarityScore,
-                engagementScore: analysis.engagementScore,
-                clarityFeedback: analysis.clarityFeedback,
-                engagementFeedback: analysis.engagementFeedback,
-                recommendations: analysis.recommendations,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            },
-            analysisDate: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        // Hide processing alert
-        document.getElementById('processingAlert').classList.add('d-none');
-        
-        // Update UI with analysis results
-        updateAnalysisResults(analysis);
-
-        return analysis;
-    } catch (error) {
-        console.error('Analysis error:', error);
-        // Hide processing alert
-        document.getElementById('processingAlert').classList.add('d-none');
-        // Show error alert
-        const errorAlert = document.createElement('div');
-        errorAlert.className = 'alert alert-danger mt-3';
-        errorAlert.innerHTML = `
-            <i class="fas fa-exclamation-circle me-2"></i>
-            Error during analysis: ${error.message}
-        `;
-        document.querySelector('.upload-section').appendChild(errorAlert);
-        // Update Firestore with error status
-        await firebase.firestore().collection('pitch_decks').doc(docId).update({
-            status: 'error',
-            error: error.message
-        });
-        throw error;
     }
 }
 
@@ -231,7 +150,7 @@ function updateAnalysisResults(analysis) {
 }
 
 // Listen for real-time updates on pitch deck analysis
-firebase.firestore().collection('pitch_decks')
+db.collection('pitch_decks')
     .where('userId', '==', auth.currentUser.uid)
     .orderBy('uploadDate', 'desc')
     .limit(1)
@@ -256,40 +175,20 @@ document.getElementById('downloadReportBtn').addEventListener('click', async () 
             throw new Error('No analysis found to download');
         }
 
-        const doc = await firebase.firestore().collection('pitch_decks').doc(docId).get();
+        const doc = await db.collection('pitch_decks').doc(docId).get();
         if (!doc.exists) {
             throw new Error('Analysis not found');
         }
 
         const analysis = doc.data().analysis;
-        const report = {
-            clarityScore: analysis.clarityScore,
-            engagementScore: analysis.engagementScore,
-            clarityFeedback: analysis.clarityFeedback,
-            engagementFeedback: analysis.engagementFeedback,
-            recommendations: analysis.recommendations,
-            timestamp: analysis.timestamp.toDate().toLocaleString()
-        };
+        const report = await generateAnalysisReport(analysis);
 
-        // Create and download PDF report
-        const response = await fetch('https://api.pitchframe.ai/generate-report', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${await auth.currentUser.getIdToken()}`
-            },
-            body: JSON.stringify(report)
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to generate report');
-        }
-
-        const blob = await response.blob();
+        // Create and download HTML report
+        const blob = new Blob([report], { type: 'text/html' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `pitch-analysis-report-${docId}.pdf`;
+        a.download = `pitch-analysis-report-${docId}.html`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -297,6 +196,32 @@ document.getElementById('downloadReportBtn').addEventListener('click', async () 
     } catch (error) {
         console.error('Download error:', error);
         alert('Error downloading report: ' + error.message);
+    }
+});
+
+// Add event listener for save analysis button
+document.getElementById('saveAnalysisBtn').addEventListener('click', async () => {
+    try {
+        const docId = sessionStorage.getItem('currentAnalysisId');
+        if (!docId) {
+            throw new Error('No analysis found to save');
+        }
+
+        const doc = await db.collection('pitch_decks').doc(docId).get();
+        if (!doc.exists) {
+            throw new Error('Analysis not found');
+        }
+
+        // Update the document to mark it as saved
+        await db.collection('pitch_decks').doc(docId).update({
+            saved: true,
+            savedDate: new Date()
+        });
+
+        alert('Analysis saved successfully!');
+    } catch (error) {
+        console.error('Save error:', error);
+        alert('Error saving analysis: ' + error.message);
     }
 });
 

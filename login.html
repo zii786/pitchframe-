@@ -34,11 +34,11 @@
             font-size: 2rem;
             font-weight: bold;
         }
-        .login-form .form-control {
+        .form-control {
             padding: 0.75rem 1rem;
             border-radius: 8px;
         }
-        .login-form .btn {
+        .btn {
             padding: 0.75rem;
             border-radius: 8px;
         }
@@ -69,6 +69,7 @@
         .divider span {
             padding: 0 1rem;
             color: #6c757d;
+            background-color: white;
         }
         .login-footer {
             text-align: center;
@@ -95,6 +96,9 @@
             color: #0d6efd;
             transform: translateX(-2px);
         }
+        #errorMessage {
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -108,7 +112,7 @@
                     <h1 class="mb-0"><strong>Pitch<span class="text-primary">Frame</span></strong></h1>
                     <p class="text-muted">Welcome back! Please login to your account.</p>
                 </div>
-                <form id="loginForm" class="login-form">
+                <form id="loginForm">
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" required>
@@ -116,6 +120,10 @@
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control" id="password" required>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember">
+                        <label class="form-check-label" for="remember">Remember me</label>
                     </div>
                     <div id="errorMessage" class="alert alert-danger d-none"></div>
                     <button type="submit" class="btn btn-primary w-100">Login</button>
@@ -149,10 +157,26 @@
     
     <!-- Firebase Authentication -->
     <script type="module">
-        import { loginUser, resetPassword, checkAuthState } from './firebase-config.js';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword,
+            sendPasswordResetEmail,
+            onAuthStateChanged,
+            setPersistence,
+            browserLocalPersistence,
+            browserSessionPersistence,
+            GoogleAuthProvider,
+            signInWithPopup
+        } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { firebaseConfig } from './firebase-config.js';
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
         // Check if user is already logged in
-        checkAuthState((user) => {
+        onAuthStateChanged(auth, (user) => {
             if (user) {
                 alert('You are already logged in! Redirecting to settings...');
                 window.location.href = 'settings.html';
@@ -163,55 +187,94 @@
         const loginForm = document.getElementById('loginForm');
         const errorMessage = document.getElementById('errorMessage');
 
-        if (loginForm) {
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            
+            try {
+                errorMessage.classList.add('d-none');
                 
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
+                // Set persistence based on remember me checkbox
+                await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
                 
-                try {
-                    await loginUser(email, password);
-                    window.location.href = 'settings.html';
-                } catch (error) {
-                    errorMessage.textContent = error.message;
-                    errorMessage.classList.remove('d-none');
+                // Sign in user
+                await signInWithEmailAndPassword(auth, email, password);
+                
+                // Redirect to settings page
+                window.location.href = 'settings.html';
+            } catch (error) {
+                console.error('Login error:', error);
+                let message = error.message;
+                
+                // Make error messages more user-friendly
+                if (error.code === 'auth/wrong-password') {
+                    message = 'Incorrect password. Please try again.';
+                } else if (error.code === 'auth/user-not-found') {
+                    message = 'No account found with this email address.';
+                } else if (error.code === 'auth/invalid-email') {
+                    message = 'Please enter a valid email address.';
+                } else if (error.code === 'auth/too-many-requests') {
+                    message = 'Too many failed attempts. Please try again later.';
                 }
-            });
-        }
+                
+                errorMessage.textContent = message;
+                errorMessage.classList.remove('d-none');
+            }
+        });
 
         // Handle forgot password
-        const forgotPasswordLink = document.getElementById('forgotPassword');
-        if (forgotPasswordLink) {
-            forgotPasswordLink.addEventListener('click', async (e) => {
-                e.preventDefault();
-                const email = prompt('Please enter your email address:');
-                if (email) {
-                    try {
-                        await resetPassword(email);
-                        alert('Password reset email sent! Please check your inbox.');
-                    } catch (error) {
-                        alert('Error: ' + error.message);
-                    }
+        document.getElementById('forgotPassword').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            
+            if (!email) {
+                errorMessage.textContent = 'Please enter your email address';
+                errorMessage.classList.remove('d-none');
+                return;
+            }
+            
+            try {
+                errorMessage.classList.add('d-none');
+                await sendPasswordResetEmail(auth, email);
+                alert('Password reset email sent! Please check your inbox.');
+            } catch (error) {
+                console.error('Password reset error:', error);
+                let message = error.message;
+                
+                if (error.code === 'auth/user-not-found') {
+                    message = 'No account found with this email address.';
+                } else if (error.code === 'auth/invalid-email') {
+                    message = 'Please enter a valid email address.';
                 }
-            });
-        }
+                
+                errorMessage.textContent = message;
+                errorMessage.classList.remove('d-none');
+            }
+        });
 
-        // Social login buttons (to be implemented)
-        const googleLoginBtn = document.getElementById('googleLogin');
-        const linkedinLoginBtn = document.getElementById('linkedinLogin');
+        // Initialize Google Auth Provider
+        const googleProvider = new GoogleAuthProvider();
+        
+        // Handle Google login
+        document.getElementById('googleLogin').addEventListener('click', async () => {
+            try {
+                errorMessage.classList.add('d-none');
+                await signInWithPopup(auth, googleProvider);
+                window.location.href = 'settings.html';
+            } catch (error) {
+                console.error('Google login error:', error);
+                errorMessage.textContent = 'Failed to sign in with Google. Please try again.';
+                errorMessage.classList.remove('d-none');
+            }
+        });
 
-        if (googleLoginBtn) {
-            googleLoginBtn.addEventListener('click', () => {
-                alert('Google login will be implemented soon!');
-            });
-        }
-
-        if (linkedinLoginBtn) {
-            linkedinLoginBtn.addEventListener('click', () => {
-                alert('LinkedIn login will be implemented soon!');
-            });
-        }
+        // Handle LinkedIn login (placeholder)
+        document.getElementById('linkedinLogin').addEventListener('click', () => {
+            alert('LinkedIn login will be implemented soon!');
+        });
     </script>
 </body>
 </html> 

@@ -243,56 +243,131 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
-    <script src="scripts.js"></script>
-    <script>
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js';
+        import { firebaseConfig } from './firebase-config.js';
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // Check authentication state
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                alert('Please log in to submit a pitch');
+                window.location.href = 'login.html';
+            }
+        });
+
         // File upload handling
+        let selectedFile = null;
         document.getElementById('fileUpload').addEventListener('click', function() {
             document.getElementById('pitchDeck').click();
         });
 
-        document.getElementById('pitchDeck').addEventListener('change', function(e) {
+        document.getElementById('pitchDeck').addEventListener('change', async function(e) {
             const file = e.target.files[0];
             if (file) {
-                // Here you would typically handle the file upload
-                // For now, we'll just show a mock progress bar
+                selectedFile = file;
                 const progressBar = document.getElementById('uploadProgress');
                 progressBar.classList.remove('d-none');
                 const progress = progressBar.querySelector('.progress-bar');
                 
-                let width = 0;
-                const interval = setInterval(() => {
-                    if (width >= 100) {
-                        clearInterval(interval);
-                    } else {
-                        width += 10;
-                        progress.style.width = width + '%';
+                try {
+                    // Show upload progress
+                    progress.style.width = '50%';
+                    
+                    // Validate file type
+                    const validTypes = ['.pdf', '.ppt', '.pptx'];
+                    const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                    if (!validTypes.includes(fileExtension)) {
+                        throw new Error('Invalid file type. Please upload PDF or PowerPoint files only.');
                     }
-                }, 200);
+                    
+                    progress.style.width = '100%';
+                } catch (error) {
+                    console.error('Error with file:', error);
+                    alert(error.message);
+                    selectedFile = null;
+                    progress.style.width = '0%';
+                    progressBar.classList.add('d-none');
+                }
             }
         });
 
         // Form submission handling
-        document.getElementById('pitchForm').addEventListener('submit', function(e) {
+        document.getElementById('pitchForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Show success modal
-            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-            successModal.show();
-            
-            // Start progress bar animation
-            const progressBar = document.querySelector('#successModal .progress-bar');
-            let width = 0;
-            const interval = setInterval(() => {
-                if (width >= 100) {
-                    clearInterval(interval);
-                    // Redirect to home page after completion
-                    window.location.href = 'index.html';
-                } else {
-                    width += 1;
-                    progressBar.style.width = width + '%';
+            try {
+                const submitButton = this.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
+                
+                // Get form data
+                const pitchData = {
+                    companyName: document.getElementById('companyName').value,
+                    industry: document.getElementById('industry').value,
+                    tagline: document.getElementById('tagline').value,
+                    problem: document.getElementById('problem').value,
+                    solution: document.getElementById('solution').value,
+                    marketSize: document.getElementById('marketSize').value,
+                    businessModel: document.getElementById('businessModel').value,
+                    teamSize: parseInt(document.getElementById('teamSize').value),
+                    teamBackground: document.getElementById('teamBackground').value,
+                    fundingStage: document.getElementById('fundingStage').value,
+                    fundingAmount: parseFloat(document.getElementById('fundingAmount').value),
+                    revenue: parseFloat(document.getElementById('revenue').value) || 0,
+                    userId: auth.currentUser.uid,
+                    status: 'pending',
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+
+                // Upload pitch deck if selected
+                if (selectedFile) {
+                    const storageRef = ref(storage, `pitch-decks/${auth.currentUser.uid}/${selectedFile.name}`);
+                    await uploadBytes(storageRef, selectedFile);
+                    pitchData.pitchDeckUrl = await getDownloadURL(storageRef);
                 }
-            }, 30); // 3 seconds total for the animation
+
+                // Save to Firestore
+                const docRef = await addDoc(collection(db, 'pitches'), pitchData);
+                console.log('Pitch submitted with ID:', docRef.id);
+
+                // Show success modal
+                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+                
+                // Start progress bar animation
+                const progressBar = document.querySelector('#successModal .progress-bar');
+                let width = 0;
+                const interval = setInterval(() => {
+                    if (width >= 100) {
+                        clearInterval(interval);
+                        // Redirect to home page after completion
+                        window.location.href = 'index.html';
+                    } else {
+                        width += 1;
+                        progressBar.style.width = width + '%';
+                    }
+                }, 30);
+
+            } catch (error) {
+                console.error('Error submitting pitch:', error);
+                alert('Error submitting pitch: ' + error.message);
+            } finally {
+                const submitButton = this.querySelector('button[type="submit"]');
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Submit Pitch';
+            }
         });
     </script>
 </body>
