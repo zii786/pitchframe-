@@ -1,5 +1,22 @@
 import { auth, db, storage } from './firebase-config.js';
 import { performAnalysis, generateAnalysisReport } from './ai-service.js';
+import { 
+    createPitchDeck, 
+    updatePitchDeckStatus, 
+    saveAnalysisResults, 
+    getUserPitchHistory,
+    getAnalysisResults,
+    saveUserHistory,
+    COLLECTIONS,
+    PITCH_STATUS
+} from './firebase-db.js';
+
+// Initialize Firebase
+const fileInput = document.getElementById('fileInput');
+const dropZone = document.getElementById('dropZone');
+const uploadProgress = document.getElementById('uploadProgress');
+const progressBar = uploadProgress.querySelector('.progress-bar');
+const processingAlert = document.getElementById('processingAlert');
 
 // Check authentication state
 auth.onAuthStateChanged((user) => {
@@ -19,13 +36,6 @@ document.getElementById('logoutBtn').addEventListener('click', async (e) => {
         alert('Error logging out: ' + error.message);
     }
 });
-
-// Initialize Firebase
-const fileInput = document.getElementById('fileInput');
-const dropZone = document.getElementById('dropZone');
-const uploadProgress = document.getElementById('uploadProgress');
-const progressBar = uploadProgress.querySelector('.progress-bar');
-const processingAlert = document.getElementById('processingAlert');
 
 // Drag and drop handlers
 dropZone.addEventListener('dragover', (e) => {
@@ -85,26 +95,46 @@ async function handleFileUpload(file) {
                 uploadProgress.classList.add('d-none');
             },
             async () => {
-                // Get download URL
-                const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                try {
+                    // Get download URL
+                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
 
-                // Save file metadata to Firestore
-                const docRef = await db.collection('pitch_decks').add({
-                    userId: auth.currentUser.uid,
-                    filename: file.name,
-                    downloadURL: downloadURL,
-                    uploadDate: new Date(),
-                    status: 'processing'
-                });
+                    // Create pitch deck document
+                    const docId = await createPitchDeck(auth.currentUser.uid, {
+                        name: file.name,
+                        url: downloadURL,
+                        type: file.type,
+                        size: file.size
+                    });
 
-                // Start AI analysis
-                await performAnalysis(downloadURL, auth.currentUser.uid, docRef.id);
+                    // Update status to processing
+                    await updatePitchDeckStatus(docId, PITCH_STATUS.PROCESSING);
 
-                // Hide progress bar
-                uploadProgress.classList.add('d-none');
+                    // Start AI analysis
+                    const analysis = await performAnalysis(downloadURL, auth.currentUser.uid, docId);
 
-                // Show success message
-                alert('File uploaded successfully! AI analysis completed.');
+                    // Save analysis results
+                    await saveAnalysisResults(docId, analysis);
+
+                    // Update pitch deck status to completed
+                    await updatePitchDeckStatus(docId, PITCH_STATUS.COMPLETED, analysis);
+
+                    // Save to user history
+                    await saveUserHistory(auth.currentUser.uid, docId, analysis);
+
+                    // Hide progress bar
+                    uploadProgress.classList.add('d-none');
+
+                    // Show success message
+                    alert('File uploaded successfully! AI analysis completed.');
+
+                    // Update UI with results
+                    updateAnalysisResults(analysis);
+                } catch (error) {
+                    console.error('Analysis error:', error);
+                    await updatePitchDeckStatus(docId, PITCH_STATUS.ERROR, { error: error.message });
+                    alert('Error during analysis: ' + error.message);
+                }
             }
         );
     } catch (error) {
@@ -150,17 +180,17 @@ function updateAnalysisResults(analysis) {
 }
 
 // Listen for real-time updates on pitch deck analysis
-db.collection('pitch_decks')
+db.collection(COLLECTIONS.PITCH_DECKS)
     .where('userId', '==', auth.currentUser.uid)
-    .orderBy('uploadDate', 'desc')
+    .orderBy('createdAt', 'desc')
     .limit(1)
     .onSnapshot((snapshot) => {
         snapshot.docChanges().forEach(change => {
             if (change.type === 'modified') {
                 const doc = change.doc;
-                if (doc.data().status === 'completed') {
+                if (doc.data().status === PITCH_STATUS.COMPLETED) {
                     updateAnalysisResults(doc.data().analysis);
-                } else if (doc.data().status === 'error') {
+                } else if (doc.data().status === PITCH_STATUS.ERROR) {
                     alert('Error during AI analysis: ' + doc.data().error);
                 }
             }
@@ -175,12 +205,11 @@ document.getElementById('downloadReportBtn').addEventListener('click', async () 
             throw new Error('No analysis found to download');
         }
 
-        const doc = await db.collection('pitch_decks').doc(docId).get();
-        if (!doc.exists) {
+        const analysis = await getAnalysisResults(docId);
+        if (!analysis) {
             throw new Error('Analysis not found');
         }
 
-        const analysis = doc.data().analysis;
         const report = await generateAnalysisReport(analysis);
 
         // Create and download HTML report
@@ -207,16 +236,13 @@ document.getElementById('saveAnalysisBtn').addEventListener('click', async () =>
             throw new Error('No analysis found to save');
         }
 
-        const doc = await db.collection('pitch_decks').doc(docId).get();
-        if (!doc.exists) {
+        const analysis = await getAnalysisResults(docId);
+        if (!analysis) {
             throw new Error('Analysis not found');
         }
 
-        // Update the document to mark it as saved
-        await db.collection('pitch_decks').doc(docId).update({
-            saved: true,
-            savedDate: new Date()
-        });
+        // Save to user history
+        await saveUserHistory(auth.currentUser.uid, docId, analysis);
 
         alert('Analysis saved successfully!');
     } catch (error) {
