@@ -112,12 +112,17 @@
                         <div class="settings-section">
                             <h3>Profile</h3>
                             <div class="text-center mb-4">
-                                <img src="https://via.placeholder.com/100" alt="Profile Picture" class="profile-picture" id="profilePicture">
-                                <div>
-                                    <button class="btn btn-outline-primary btn-sm" onclick="document.getElementById('profilePictureInput').click()">
-                                        Change Picture
-                                    </button>
-                                    <input type="file" id="profilePictureInput" class="d-none" accept="image/*">
+                                <div class="position-relative d-inline-block">
+                                    <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" alt="Profile Picture" class="profile-picture" id="profilePicture">
+                                    <div class="position-absolute bottom-0 end-0">
+                                        <button class="btn btn-primary btn-sm rounded-circle" onclick="document.getElementById('profilePictureInput').click()">
+                                            <i class="fas fa-camera"></i>
+                                        </button>
+                                        <input type="file" id="profilePictureInput" class="d-none" accept="image/*">
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <small class="text-muted">Click the camera icon to change your profile picture</small>
                                 </div>
                             </div>
                             <form id="profileForm">
