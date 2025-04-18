@@ -1,18 +1,11 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-<<<<<<< HEAD
 import { getAuth } from "firebase/auth";
 import { getFirestore, collection, doc, setDoc, serverTimestamp, getDoc, updateDoc } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
-=======
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Firebase configuration
->>>>>>> 667e81044d9910353e78bbe9b6a15f1ce5aed828
 const firebaseConfig = {
   apiKey: "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
   authDomain: "pitchframe-6967a.firebaseapp.com",
@@ -24,7 +17,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-<<<<<<< HEAD
 const auth = getAuth(app);
 const db = getFirestore(app);
 
@@ -132,6 +124,10 @@ async function getInvestorProfile(userId) {
     return investorDoc.exists() ? investorDoc.data() : null;
 }
 
+// Make auth and db available globally
+window.auth = auth;
+window.db = db;
+
 export {
     auth,
     db,
@@ -145,17 +141,4 @@ export {
     getStartupProfile,
     getMentorProfile,
     getInvestorProfile
-}; 
-=======
-
-// Get Auth and Firestore instances
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-// Export the auth and db objects
-export { auth, db };
-
-// Make auth and db available globally
-window.auth = auth;
-window.db = db;
->>>>>>> 667e81044d9910353e78bbe9b6a15f1ce5aed828
+};
