@@ -28,49 +28,72 @@ document.addEventListener('DOMContentLoaded', function() {
     const pitchForm = document.getElementById('pitch-form');
     
     if (pitchForm) {
-        pitchForm.addEventListener('submit', function(e) {
+        pitchForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            // Get form values
-            const startupName = document.getElementById('startup-name').value;
-            const pitchCategory = document.getElementById('pitch-category').value;
-            const industry = document.getElementById('industry').value;
-            const description = document.getElementById('pitch-description').value;
-            const tags = document.getElementById('tags').value;
-            
-            // Check which tab is active for pitch materials
+            // Get active tab for pitch materials
             const activeTab = document.querySelector('#pitchTabs .nav-link.active');
-            let pitchMaterial = '';
+            let pitchUrl = '';
             
+            // Validate pitch materials
             if (activeTab.id === 'pdf-tab') {
-                const pdfFile = document.getElementById('pdf-upload').files[0];
-                if (!pdfFile) {
-                    alert('Please upload a PDF file');
+                const pdfLink = document.getElementById('pdf-link').value;
+                if (!pdfLink) {
+                    alert('Please provide a link to your PDF (Google Drive, Dropbox, etc.)');
                     return;
                 }
-                pitchMaterial = 'PDF: ' + pdfFile.name;
+                pitchUrl = pdfLink;
             } else if (activeTab.id === 'video-tab') {
                 const videoLink = document.getElementById('video-link').value;
                 if (!videoLink) {
                     alert('Please provide a video link');
                     return;
                 }
-                pitchMaterial = 'Video: ' + videoLink;
+                pitchUrl = videoLink;
             } else if (activeTab.id === 'slide-tab') {
                 const slideLink = document.getElementById('slide-link').value;
                 if (!slideLink) {
                     alert('Please provide a SlideShare link');
                     return;
                 }
-                pitchMaterial = 'SlideShare: ' + slideLink;
+                pitchUrl = slideLink;
             }
+
+            const pitchData = {
+                startupName: document.getElementById('startup-name').value,
+                stage: document.getElementById('pitch-category').value,
+                industry: document.getElementById('industry').value,
+                description: document.getElementById('pitch-description').value,
+                tags: document.getElementById('tags').value.split(',').map(tag => tag.trim()),
+                pitchUrl: pitchUrl,
+                pitchType: activeTab.id.replace('-tab', ''),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            // Get the current user
+            const user = auth.currentUser;
             
-            // Simulate submission
-            showSuccessMessage('Your pitch has been submitted successfully!');
-            
-            // Reset form
-            pitchForm.reset();
-            charCount.textContent = '140';
+            if (user) {
+                // Add pitch to Firestore
+                db.collection('pitches').add({
+                    ...pitchData,
+                    userId: user.uid,
+                    status: 'pending'
+                })
+                .then(() => {
+                    showSuccessMessage('Pitch submitted successfully!');
+                    pitchForm.reset();
+                    setTimeout(() => {
+                        window.location.href = 'startup-dashboard.html';
+                    }, 2000);
+                })
+                .catch((error) => {
+                    alert('Error submitting pitch: ' + error.message);
+                });
+            } else {
+                alert('Please login to submit a pitch');
+                window.location.href = 'login.html';
+            }
         });
     }
     
@@ -81,14 +104,34 @@ document.addEventListener('DOMContentLoaded', function() {
     if (startupLoginForm) {
         startupLoginForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            simulateLogin('startup');
+            const email = document.getElementById('startup-email').value;
+            const password = document.getElementById('startup-password').value;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Redirect to dashboard
+                    window.location.href = 'startup-dashboard.html';
+                })
+                .catch((error) => {
+                    alert(error.message);
+                });
         });
     }
     
     if (mentorLoginForm) {
         mentorLoginForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            simulateLogin('mentor');
+            const email = document.getElementById('mentor-email').value;
+            const password = document.getElementById('mentor-password').value;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Redirect to mentor dashboard
+                    window.location.href = 'mentor-dashboard.html';
+                })
+                .catch((error) => {
+                    alert(error.message);
+                });
         });
     }
     
@@ -163,6 +206,78 @@ document.addEventListener('DOMContentLoaded', function() {
             showAIAnalysisDemo();
         });
     }
+    
+    // Handle file upload with progress tracking
+    const pdfUpload = document.getElementById('pdf-upload');
+    if (pdfUpload) {
+        pdfUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                // Check file size (10MB limit)
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('File size should be less than 10MB');
+                    return;
+                }
+
+                // Create progress bar
+                const progressBar = document.createElement('div');
+                progressBar.className = 'progress mt-2';
+                progressBar.innerHTML = `
+                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                `;
+                pdfUpload.parentNode.appendChild(progressBar);
+
+                // Create storage reference
+                const storageRef = storage.ref(`pitches/${Date.now()}_${file.name}`);
+                
+                // Upload file
+                const uploadTask = storageRef.put(file);
+
+                // Track upload progress
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        // Update progress bar
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        progressBar.querySelector('.progress-bar').style.width = progress + '%';
+                    },
+                    (error) => {
+                        // Handle error
+                        alert('Error uploading file: ' + error.message);
+                        progressBar.remove();
+                    },
+                    () => {
+                        // Upload complete
+                        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                            console.log('File available at', downloadURL);
+                            // Store the download URL in a hidden input for form submission
+                            const urlInput = document.createElement('input');
+                            urlInput.type = 'hidden';
+                            urlInput.id = 'pdf-url';
+                            urlInput.value = downloadURL;
+                            pdfUpload.parentNode.appendChild(urlInput);
+                            
+                            // Show success message
+                            const successMessage = document.createElement('div');
+                            successMessage.className = 'alert alert-success mt-2';
+                            successMessage.textContent = 'File uploaded successfully!';
+                            progressBar.parentNode.appendChild(successMessage);
+                        });
+                    }
+                );
+            }
+        });
+    }
+    
+    // Auth state observer
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            // User is signed in
+            console.log('User is signed in:', user.email);
+        } else {
+            // User is signed out
+            console.log('User is signed out');
+        }
+    });
 });
 
 // Utility Functions
@@ -192,35 +307,6 @@ function showSuccessMessage(message) {
     setTimeout(function() {
         document.body.removeChild(toastEl);
     }, 3000);
-}
-
-// Simulate login
-function simulateLogin(userType) {
-    // Hide modal
-    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-    loginModal.hide();
-    
-    // Show success message
-    const message = userType === 'startup' 
-        ? 'Logged in successfully as Startup. Redirecting to dashboard...' 
-        : 'Logged in successfully as Mentor. Redirecting to mentor dashboard...';
-    
-    showSuccessMessage(message);
-    
-    // Simulate redirect (in real app would navigate to dashboard)
-    setTimeout(function() {
-        if (userType === 'startup') {
-            window.scrollTo({
-                top: document.getElementById('pitch-analytics').offsetTop - 80,
-                behavior: 'smooth'
-            });
-        } else {
-            window.scrollTo({
-                top: document.getElementById('mentor-dashboard').offsetTop - 80,
-                behavior: 'smooth'
-            });
-        }
-    }, 2000);
 }
 
 // Show AI Analysis Demo
