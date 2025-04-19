@@ -196,7 +196,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-        import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
         import { firebaseConfig } from './firebase-config.js';
 
         // Initialize Firebase
@@ -219,8 +219,17 @@
             try {
                 const file = fileInput.files[0];
                 
-                // Store pitch data in Firestore
+                // Get current user
+                const user = auth.currentUser;
+                if (!user) {
+                    alert('Please login to submit a pitch.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Create pitch data
                 const pitchData = {
+                    userId: user.uid,
                     companyName: document.getElementById('companyName').value,
                     industry: document.getElementById('industry').value,
                     tagline: document.getElementById('tagline').value,
@@ -238,16 +247,13 @@
                     status: 'pending'
                 };
 
-                // Get current user
-                const user = auth.currentUser;
-                if (user) {
-                    await setDoc(doc(db, 'pitches', user.uid), pitchData);
-                    alert('Pitch submitted successfully!');
-                    window.location.href = 'index.html';
-                } else {
-                    alert('Please login to submit a pitch.');
-                    window.location.href = 'login.html';
-                }
+                // Add document to 'pitches' collection
+                const docRef = await addDoc(collection(db, 'pitches'), pitchData);
+                console.log("Pitch document written with ID: ", docRef.id);
+                
+                alert('Pitch submitted successfully!');
+                window.location.href = 'index.html';
+                
             } catch (error) {
                 console.error('Error:', error);
                 alert('Error submitting pitch. Please try again.');
