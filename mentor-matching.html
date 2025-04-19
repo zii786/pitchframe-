@@ -213,43 +213,39 @@
 
                 // Build query
                 let mentorsRef = collection(db, 'mentors');
-                let q = mentorsRef;
-
-                // Add filters
-                if (industry) {
-                    q = query(q, where('industry', '==', industry));
-                }
-                if (expertise) {
-                    q = query(q, where('expertiseLevel', '==', expertise));
-                }
-                if (availability) {
-                    q = query(q, where('availability', '==', availability));
-                }
-
-                // Add sorting
-                switch(sortBy) {
-                    case 'experience':
-                        q = query(q, orderBy('yearsOfExperience', 'desc'));
-                        break;
-                    case 'recent':
-                        q = query(q, orderBy('lastActive', 'desc'));
-                        break;
-                    case 'match':
-                        q = query(q, orderBy('rating', 'desc'));
-                        break;
-                    default:
-                        q = query(q, orderBy('createdAt', 'desc'));
-                }
+                let q = query(mentorsRef, orderBy('createdAt', 'desc'));
 
                 const querySnapshot = await getDocs(q);
+                let mentors = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
 
-                // Add debugging information
-                console.log('Total mentors found:', querySnapshot.size);
-                querySnapshot.forEach(doc => {
-                    console.log('Mentor:', doc.id, doc.data());
-                });
+                // Apply filters client-side
+                if (industry) {
+                    mentors = mentors.filter(mentor => mentor.industry === industry);
+                }
+                if (expertise) {
+                    mentors = mentors.filter(mentor => mentor.expertiseLevel === expertise);
+                }
+                if (availability) {
+                    mentors = mentors.filter(mentor => mentor.availability === availability);
+                }
 
-                if (querySnapshot.empty) {
+                // Apply sorting
+                switch(sortBy) {
+                    case 'experience':
+                        mentors.sort((a, b) => (b.yearsOfExperience || 0) - (a.yearsOfExperience || 0));
+                        break;
+                    case 'recent':
+                        mentors.sort((a, b) => (b.lastActive?.toDate() || 0) - (a.lastActive?.toDate() || 0));
+                        break;
+                    case 'match':
+                        mentors.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+                        break;
+                }
+
+                if (mentors.length === 0) {
                     mentorsGrid.innerHTML = `
                         <div class="col-12">
                             <div class="alert alert-info">
@@ -261,8 +257,7 @@
                     return;
                 }
 
-                mentorsGrid.innerHTML = querySnapshot.docs.map(doc => {
-                    const mentor = doc.data();
+                mentorsGrid.innerHTML = mentors.map(mentor => {
                     return `
                         <div class="col-md-6 col-lg-4 mb-4">
                             <div class="mentor-card position-relative">
@@ -315,7 +310,7 @@
                                 </div>
 
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-primary connect-btn flex-grow-1" onclick="requestMentor('${doc.id}')">
+                                    <button class="btn btn-primary connect-btn flex-grow-1" onclick="requestMentor('${mentor.id}')">
                                         <i class="fas fa-handshake me-2"></i>Connect
                                     </button>
                                     <a href="${mentor.linkedinProfile || '#'}" 
