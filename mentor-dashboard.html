@@ -302,45 +302,57 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
         import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
         import { firebaseConfig } from './firebase-config.js';
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // Update navigation based on auth state
-        onAuthStateChanged(auth, (user) => {
-            const navLoginItem = document.querySelector('.navbar-nav .btn-primary').parentElement;
-            if (user) {
-                // User is logged in, replace login button with profile dropdown
-                navLoginItem.innerHTML = `
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user me-2"></i>Profile
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                            <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Settings</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" id="logoutButton"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                        </ul>
-                    </div>
-                `;
-
-                // Add logout functionality
-                document.getElementById('logoutButton').addEventListener('click', async () => {
-                    try {
-                        await signOut(auth);
-                        window.location.href = 'index.html';
-                    } catch (error) {
-                        console.error('Logout error:', error);
-                    }
-                });
-            } else {
-                // User is not logged in, show login button
-                navLoginItem.innerHTML = `
-                    <a class="nav-link btn btn-primary ms-2 text-white px-4" href="login.html">Login</a>
-                `;
+        // Check user role and update navigation
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                // User is not logged in, redirect to login
+                window.location.href = 'login.html';
+                return;
             }
+
+            // Get user data from Firestore
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            const userData = userDoc.data();
+
+            if (!userData || userData.userType !== 'mentor') {
+                // User is not a mentor, redirect to home
+                alert('Access denied. Only mentors can access this page.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // User is a mentor, update navigation
+            const navLoginItem = document.querySelector('.navbar-nav .btn-primary').parentElement;
+            navLoginItem.innerHTML = `
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user me-2"></i>${userData.firstName}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" id="logoutButton"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            `;
+
+            // Add logout functionality
+            document.getElementById('logoutButton').addEventListener('click', async () => {
+                try {
+                    await signOut(auth);
+                    window.location.href = 'index.html';
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            });
         });
     </script>
 </body>

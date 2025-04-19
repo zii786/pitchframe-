@@ -170,17 +170,27 @@
             GoogleAuthProvider,
             signInWithPopup
         } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
         import { firebaseConfig } from './firebase-config.js';
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
         // Check if user is already logged in
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                alert('You are already logged in! Redirecting to home page...');
-                window.location.href = 'index.html';
+                // Get user data from Firestore
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.data();
+
+                // Redirect based on user type
+                if (userData.userType === 'mentor') {
+                    window.location.href = 'mentor-dashboard.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
             }
         });
 
@@ -202,10 +212,19 @@
                 await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
                 
                 // Sign in user
-                await signInWithEmailAndPassword(auth, email, password);
-                
-                // Redirect to settings page
-                window.location.href = 'settings.html';
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Get user data from Firestore
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.data();
+
+                // Redirect based on user type
+                if (userData.userType === 'mentor') {
+                    window.location.href = 'mentor-dashboard.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
             } catch (error) {
                 console.error('Login error:', error);
                 let message = error.message;
@@ -263,8 +282,19 @@
         document.getElementById('googleLogin').addEventListener('click', async () => {
             try {
                 errorMessage.classList.add('d-none');
-                await signInWithPopup(auth, googleProvider);
-                window.location.href = 'index.html';
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+
+                // Get user data from Firestore
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.data();
+
+                // Redirect based on user type
+                if (userData.userType === 'mentor') {
+                    window.location.href = 'mentor-dashboard.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
             } catch (error) {
                 console.error('Google login error:', error);
                 errorMessage.textContent = 'Failed to sign in with Google. Please try again.';
