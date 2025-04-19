@@ -9,68 +9,501 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
     <style>
-        .pitch-submission {
-            padding: 2rem 0;
+        :root {
+            --primary-color: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #7c3aed;
+            --accent-color: #6366f1;
+            --light-color: #f8fafc;
+            --dark-color: #0f172a;
+            --text-color: #334155;
+            --light-gray: #f1f5f9;
+            --medium-gray: #e2e8f0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            --soft-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            --hard-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            line-height: 1.6;
         }
 
-        .upload-area {
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
+        /* Glassmorphism Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: var(--hard-shadow);
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            padding: 15px 0;
             transition: all 0.3s ease;
         }
 
+        .navbar.scrolled {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+            color: var(--text-color);
+            font-weight: 500;
+            margin: 0 8px;
+            padding: 8px 16px !important;
+            border-radius: 8px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-color);
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+
+        .nav-link.active {
+            font-weight: 600;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gradient);
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        }
+
+        .nav-link:hover::after {
+            width: 70%;
+        }
+
+        .btn-login {
+            background: var(--gradient);
+            color: white !important;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 8px 24px !important;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+            border: none;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            background: linear-gradient(135deg, var(--primary-light), var(--secondary-color));
+        }
+
+        /* Main Content */
+        .pitch-submission {
+            padding: 80px 0;
+            background: url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80') no-repeat center center;
+            background-size: cover;
+            position: relative;
+        }
+
+        .pitch-submission::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(248, 250, 252, 0.9);
+            backdrop-filter: blur(2px);
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--hard-shadow);
+            transition: all 0.4s ease;
+            background: white;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 50px rgba(37, 99, 235, 0.15);
+        }
+
+        .card-body {
+            padding: 3rem;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 1rem;
+            font-size: 2.2rem;
+            text-align: center;
+        }
+
+        .card-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        .card-subtitle {
+            color: var(--text-color);
+            text-align: center;
+            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Form Elements */
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-label i {
+            margin-right: 8px;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .form-control, .form-select {
+            transition: all 0.3s ease;
+            border: 2px solid var(--medium-gray);
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-size: 0.95rem;
+            background-color: white;
+            height: auto;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.15);
+            background-color: white;
+        }
+
+        textarea.form-control {
+            min-height: 140px;
+        }
+
+        .input-group-text {
+            background-color: var(--light-gray);
+            border: 2px solid var(--medium-gray);
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: var(--gradient);
+            border: none;
+            border-radius: 10px;
+            padding: 14px 28px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            font-size: 1rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+            text-transform: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
+            background: linear-gradient(135deg, var(--primary-light), var(--secondary-color));
+        }
+
+        .btn-primary:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        /* File Upload */
+        .upload-area {
+            transition: all 0.4s ease;
+            border: 2px dashed var(--medium-gray);
+            border-radius: 14px;
+            padding: 2.5rem;
+            text-align: center;
+            cursor: pointer;
+            background-color: white;
+            margin-bottom: 20px;
+        }
+
         .upload-area:hover {
-            border-color: #0d6efd;
-            background-color: #f8f9fa;
+            border-color: var(--primary-color);
+            background-color: rgba(37, 99, 235, 0.03);
+            transform: scale(1.01);
+            box-shadow: 0 5px 20px rgba(37, 99, 235, 0.05);
         }
 
         .upload-area i {
-            font-size: 3rem;
-            color: #6c757d;
-            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .file-list {
-            margin-top: 1rem;
+        .upload-area:hover i {
+            transform: scale(1.1);
         }
 
-        .file-item {
+        .upload-text {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        /* File Info */
+        .file-info-container {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .file-info {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 10px;
+            padding: 15px 20px;
             display: flex;
             align-items: center;
-            padding: 0.5rem;
-            border-radius: 4px;
-            background-color: #f8f9fa;
-            margin-bottom: 0.5rem;
+            margin-bottom: 20px;
         }
 
-        .file-item i {
-            margin-right: 0.5rem;
-            color: #6c757d;
+        .file-info i {
+            color: var(--success-color);
+            font-size: 1.5rem;
+            margin-right: 15px;
         }
 
-        .file-item .btn-remove {
-            margin-left: auto;
-            color: #dc3545;
+        .file-name {
+            font-weight: 500;
+            color: var(--dark-color);
+            flex-grow: 1;
         }
 
-        .progress {
-            height: 0.5rem;
-            margin-top: 1rem;
+        .btn-remove {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 5px;
+        }
+
+        .btn-remove:hover {
+            transform: scale(1.2);
+        }
+
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 1rem;
+            padding-bottom: 0;
+        }
+
+        .form-section-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            font-size: 1.3rem;
+        }
+
+        .form-section-title i {
+            margin-right: 12px;
+            font-size: 1.4rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Character Counter */
+        .char-counter {
+            font-size: 0.8rem;
+            color: #64748b;
+            text-align: right;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .char-counter.warning {
+            color: var(--warning-color);
+        }
+
+        .char-counter.danger {
+            color: var(--danger-color);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 40px 0 30px;
+        }
+
+        .footer p {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+
+        .footer .text-danger {
+            color: #f87171 !important;
+        }
+
+        /* Success State */
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #34d399);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .card-body {
+                padding: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.6rem;
+            }
+            
+            .card-body {
+                padding: 2rem;
+            }
+            
+            .pitch-submission {
+                padding: 60px 0;
+            }
+
+            .card-title {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .form-section-title {
+                font-size: 1.2rem;
+            }
+
+            .upload-area {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
 
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="index.html"><strong>Pitch<span class="text-primary">Frame</span></strong></a>
+            <a class="navbar-brand" href="index.html">PitchFrame</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -82,7 +515,7 @@
                     <li class="nav-item"><a class="nav-link" href="mentor-dashboard.html">Mentor Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link" href="AI_analyzer.html">AI Analysis</a></li>
                     <li class="nav-item"><a class="nav-link" href="settings.html">Settings</a></li>
-                    <li class="nav-item"><a class="nav-link btn btn-primary ms-2 text-white px-4"
+                    <li class="nav-item"><a class="nav-link btn btn-login ms-lg-3 mt-2 mt-lg-0"
                             href="login.html">Login</a></li>
                 </ul>
             </div>
@@ -91,81 +524,136 @@
 
     <!-- Pitch Submission Form -->
     <section class="pitch-submission">
-        
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="card">
+                <div class="col-lg-10 col-xl-8">
+                    <div class="card glass-card">
                         <div class="card-body">
-                            <h2 class="card-title text-center mb-4">Submit Your Pitch</h2>
+                            <h2 class="card-title">Craft Your Investment Pitch</h2>
+                            <p class="card-subtitle">Complete this form to submit your pitch for expert review and feedback</p>
 
                             <form id="pitchForm">
-                                <div class="mb-3">
-                                    <label for="companyName" class="form-label">Company Name</label>
-                                    <input type="text" class="form-control" id="companyName" required>
+                                <div class="form-section">
+                                    <h5 class="form-section-title"><i class="fas fa-building"></i> Company Information</h5>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <label for="companyName" class="form-label">
+                                                <i class="fas fa-signature"></i> Company Name
+                                            </label>
+                                            <input type="text" class="form-control" id="companyName" required>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <label for="industry" class="form-label">
+                                                <i class="fas fa-industry"></i> Industry
+                                            </label>
+                                            <select class="form-select" id="industry" required>
+                                                <option value="">Select Industry</option>
+                                                <option value="tech">Technology</option>
+                                                <option value="healthcare">Healthcare</option>
+                                                <option value="finance">Finance</option>
+                                                <option value="education">Education</option>
+                                                <option value="retail">Retail/E-commerce</option>
+                                                <option value="manufacturing">Manufacturing</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="tagline" class="form-label">
+                                            <i class="fas fa-tag"></i> Tagline (Brief Description)
+                                        </label>
+                                        <input type="text" class="form-control" id="tagline" placeholder="Describe your company in one sentence" required>
+                                        <div class="char-counter"><span id="tagline-counter">0</span>/60</div>
+                                    </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="industry" class="form-label">Industry</label>
-                                    <select class="form-select" id="industry" required>
-                                        <option value="">Select Industry</option>
-                                        <option value="tech">Technology</option>
-                                        <option value="healthcare">Healthcare</option>
-                                        <option value="finance">Finance</option>
-                                        <option value="education">Education</option>
-                                        <option value="other">Other</option>
-                                    </select>
+                                <div class="form-section">
+                                    <h5 class="form-section-title"><i class="fas fa-lightbulb"></i> Pitch Essentials</h5>
+                                    <div class="mb-4">
+                                        <label for="problem" class="form-label">
+                                            <i class="fas fa-question-circle"></i> Problem Statement
+                                        </label>
+                                        <textarea class="form-control" id="problem" rows="3" placeholder="What problem are you solving?" required></textarea>
+                                        <div class="char-counter"><span id="problem-counter">0</span>/500</div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="solution" class="form-label">
+                                            <i class="fas fa-check-circle"></i> Solution
+                                        </label>
+                                        <textarea class="form-control" id="solution" rows="3" placeholder="How does your product/service solve this problem?" required></textarea>
+                                        <div class="char-counter"><span id="solution-counter">0</span>/500</div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="businessModel" class="form-label">
+                                            <i class="fas fa-chart-pie"></i> Business Model
+                                        </label>
+                                        <textarea class="form-control" id="businessModel" rows="3" placeholder="How will you make money?" required></textarea>
+                                        <div class="char-counter"><span id="businessModel-counter">0</span>/300</div>
+                                    </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="tagline" class="form-label">Tagline</label>
-                                    <input type="text" class="form-control" id="tagline" required>
+                                <div class="form-section">
+                                    <h5 class="form-section-title"><i class="fas fa-chart-line"></i> Financial Information</h5>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <label for="fundingStage" class="form-label">
+                                                <i class="fas fa-layer-group"></i> Funding Stage
+                                            </label>
+                                            <select class="form-select" id="fundingStage" required>
+                                                <option value="">Select Stage</option>
+                                                <option value="pre-seed">Pre-seed</option>
+                                                <option value="seed">Seed</option>
+                                                <option value="series-a">Series A</option>
+                                                <option value="series-b">Series B</option>
+                                                <option value="series-c">Series C+</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <label for="fundingAmount" class="form-label">
+                                                <i class="fas fa-dollar-sign"></i> Funding Amount (USD)
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" class="form-control" id="fundingAmount" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="revenue" class="form-label">
+                                            <i class="fas fa-money-bill-wave"></i> Current Revenue (USD - optional)
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="number" class="form-control" id="revenue">
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="problem" class="form-label">Problem Statement</label>
-                                    <textarea class="form-control" id="problem" rows="3" required></textarea>
+                                <div class="form-section">
+                                    <h5 class="form-section-title"><i class="fas fa-file-pdf"></i> Pitch Deck</h5>
+                                    <div class="upload-area" id="uploadArea">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <h5 class="upload-text">Upload Your Pitch Deck</h5>
+                                        <p class="upload-subtext">PDF, PPT, or PPTX (Max 10MB)</p>
+                                        <input type="file" id="pitchDeck" class="d-none" accept=".pdf,.ppt,.pptx">
+                                    </div>
+                                    <div id="fileInfo" class="file-info-container">
+                                        <div class="file-info">
+                                            <i class="fas fa-check-circle"></i>
+                                            <span class="file-name" id="fileName">File selected: pitch_deck.pdf</span>
+                                            <button type="button" class="btn-remove" id="removeFile">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="solution" class="form-label">Solution</label>
-                                    <textarea class="form-control" id="solution" rows="3" required></textarea>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="businessModel" class="form-label">Business Model</label>
-                                    <textarea class="form-control" id="businessModel" rows="3" required></textarea>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="fundingStage" class="form-label">Funding Stage</label>
-                                    <select class="form-select" id="fundingStage" required>
-                                        <option value="">Select Stage</option>
-                                        <option value="pre-seed">Pre-seed</option>
-                                        <option value="seed">Seed</option>
-                                        <option value="series-a">Series A</option>
-                                        <option value="series-b">Series B</option>
-                                        <option value="series-c">Series C+</option>
-                                    </select>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="fundingAmount" class="form-label">Funding Amount (USD)</label>
-                                    <input type="number" class="form-control" id="fundingAmount" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="revenue" class="form-label">Current Revenue (USD)</label>
-                                    <input type="number" class="form-control" id="revenue">
-                                </div>
-
-                                <div class="mb-4">
-                                    <label class="form-label">Pitch Deck</label>
-                                    <input type="file" id="pitchDeck" class="form-control" accept=".pdf,.ppt,.pptx">
-                                </div>
-
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary">Submit Pitch</button>
+                                <div class="d-grid mt-5">
+                                    <button type="submit" class="btn btn-primary btn-lg py-3">
+                                        <i class="fas fa-paper-plane me-2"></i> Submit Pitch
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -176,14 +664,14 @@
     </section>
 
     <!-- Footer -->
-    <footer class="footer py-4">
+    <footer class="footer">
         <div class="container">
             <div class="row">
                 <div class="col-md-6 text-center text-md-start">
-                    <p class="small mb-0">© 2023 PitchFrame. All rights reserved.</p>
+                    <p class="small mb-0">&copy; 2023 PitchFrame. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    <p class="small mb-0">Made with <i class="fas fa-heart text-danger"></i> for startup growth</p>
+                    <p class="small mb-0">Made with <i class="fas fa-heart text-danger"></i> for entrepreneurs</p>
                 </div>
             </div>
         </div>
@@ -204,10 +692,79 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Handle form submission
+        // DOM Elements
         const pitchForm = document.getElementById('pitchForm');
         const fileInput = document.getElementById('pitchDeck');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInfoContainer = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const removeFile = document.getElementById('removeFile');
+        
+        // Character counters
+        const taglineCounter = document.getElementById('tagline-counter');
+        const problemCounter = document.getElementById('problem-counter');
+        const solutionCounter = document.getElementById('solution-counter');
+        const businessModelCounter = document.getElementById('businessModel-counter');
+        
+        // Text inputs for character counting
+        const taglineInput = document.getElementById('tagline');
+        const problemInput = document.getElementById('problem');
+        const solutionInput = document.getElementById('solution');
+        const businessModelInput = document.getElementById('businessModel');
 
+        // Setup character counters
+        taglineInput.addEventListener('input', () => {
+            taglineCounter.textContent = taglineInput.value.length;
+            updateCounterStyle(taglineCounter, taglineInput.value.length, 60);
+        });
+        
+        problemInput.addEventListener('input', () => {
+            problemCounter.textContent = problemInput.value.length;
+            updateCounterStyle(problemCounter, problemInput.value.length, 500);
+        });
+        
+        solutionInput.addEventListener('input', () => {
+            solutionCounter.textContent = solutionInput.value.length;
+            updateCounterStyle(solutionCounter, solutionInput.value.length, 500);
+        });
+        
+        businessModelInput.addEventListener('input', () => {
+            businessModelCounter.textContent = businessModelInput.value.length;
+            updateCounterStyle(businessModelCounter, businessModelInput.value.length, 300);
+        });
+        
+        function updateCounterStyle(counterElement, currentLength, maxLength) {
+            counterElement.classList.remove('warning', 'danger');
+            if (currentLength > maxLength * 0.9) {
+                counterElement.classList.add('danger');
+            } else if (currentLength > maxLength * 0.75) {
+                counterElement.classList.add('warning');
+            }
+        }
+
+        // File upload handling
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                    alert('File size exceeds 10MB limit. Please choose a smaller file.');
+                    return;
+                }
+                fileName.textContent = `File selected: ${file.name}`;
+                uploadArea.style.display = 'none';
+                fileInfoContainer.style.display = 'block';
+            }
+        });
+        
+        removeFile.addEventListener('click', () => {
+            fileInput.value = '';
+            uploadArea.style.display = 'block';
+            fileInfoContainer.style.display = 'none';
+        });
+
+        // Handle form submission
         pitchForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -251,8 +808,16 @@
                 const docRef = await addDoc(collection(db, 'pitches'), pitchData);
                 console.log("Pitch document written with ID: ", docRef.id);
                 
-                alert('Pitch submitted successfully!');
-                window.location.href = 'index.html';
+                // Show success message
+                const submitBtn = pitchForm.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i> Pitch Submitted!';
+                submitBtn.classList.remove('btn-primary');
+                submitBtn.classList.add('btn-success');
+                
+                // Redirect after delay
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
                 
             } catch (error) {
                 console.error('Error:', error);
@@ -264,6 +829,15 @@
         onAuthStateChanged(auth, (user) => {
             if (!user) {
                 window.location.href = 'login.html';
+            }
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                document.querySelector('.navbar').classList.add('scrolled');
+            } else {
+                document.querySelector('.navbar').classList.remove('scrolled');
             }
         });
     </script>
