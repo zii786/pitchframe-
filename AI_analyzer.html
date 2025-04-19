@@ -65,6 +65,32 @@
         .progress {
             height: 25px;
         }
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .dropdown-menu {
+            min-width: 200px;
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+        }
+
+        .form-select {
+            max-width: 200px;
+        }
+
+        .badge {
+            padding: 0.5em 0.8em;
+        }
     </style>
 </head>
 <body>
@@ -101,85 +127,29 @@
                 
                 <!-- Main Content -->
                 <div class="col-md-9">
-                    <div class="main-content">
-                        <h2 class="mb-4">AI Pitch Analysis</h2>
-                        
-                        <!-- Upload Section -->
-                        <div class="upload-section mb-4">
-                            <div class="upload-area" id="dropZone">
-                                <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-primary"></i>
-                                <h5>Drag & Drop your pitch deck here</h5>
-                                <p class="text-muted">or</p>
-                                <input type="file" id="fileInput" class="d-none" accept=".pdf,.ppt,.pptx">
-                                <button class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
-                                    Browse Files
-                                </button>
-                            </div>
-                            <div class="progress mt-3 d-none" id="uploadProgress">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
-                            </div>
-                            <div class="alert alert-info mt-3 d-none" id="processingAlert">
-                                <i class="fas fa-spinner fa-spin me-2"></i>
-                                Analyzing your pitch deck... This may take a few minutes.
+                    <div class="container">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2>Pitch Analysis Dashboard</h2>
+                            <div class="d-flex gap-2">
+                                <select class="form-select" id="industryFilter">
+                                    <option value="">All Industries</option>
+                                    <option value="Technology">Technology</option>
+                                    <option value="Healthcare">Healthcare</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <select class="form-select" id="sortBy">
+                                    <option value="newest">Newest First</option>
+                                    <option value="oldest">Oldest First</option>
+                                    <option value="revenue">Highest Revenue</option>
+                                </select>
                             </div>
                         </div>
                         
-                        <!-- Analysis Results -->
-                        <div class="analysis-results" id="analysisResults">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="card mb-4">
-                                        <div class="card-body">
-                                            <h5 class="card-title d-flex justify-content-between align-items-center">
-                                                Clarity Score
-                                                <span class="badge bg-primary" id="clarityBadge">0/10</span>
-                                            </h5>
-                                            <div class="progress mb-2">
-                                                <div class="progress-bar bg-success" role="progressbar" style="width: 0%" id="clarityScore"></div>
-                                            </div>
-                                            <p class="card-text" id="clarityFeedback"></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="card mb-4">
-                                        <div class="card-body">
-                                            <h5 class="card-title d-flex justify-content-between align-items-center">
-                                                Engagement Score
-                                                <span class="badge bg-primary" id="engagementBadge">0/10</span>
-                                            </h5>
-                                            <div class="progress mb-2">
-                                                <div class="progress-bar bg-warning" role="progressbar" style="width: 0%" id="engagementScore"></div>
-                                            </div>
-                                            <p class="card-text" id="engagementFeedback"></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="card mb-4">
-                                <div class="card-body">
-                                    <h5 class="card-title">Key Recommendations</h5>
-                                    <div class="alert alert-info mb-3">
-                                        <i class="fas fa-lightbulb me-2"></i>
-                                        These recommendations are based on our AI analysis of your pitch deck.
-                                    </div>
-                                    <ul class="list-group list-group-flush" id="recommendationsList">
-                                        <!-- Recommendations will be added here -->
-                                    </ul>
-                                </div>
-                            </div>
-                            
-                            <div class="d-flex justify-content-between align-items-center">
-                                <button class="btn btn-outline-primary" id="downloadReportBtn">
-                                    <i class="fas fa-download me-2"></i>
-                                    Download Report
-                                </button>
-                                <button class="btn btn-primary" id="saveAnalysisBtn">
-                                    <i class="fas fa-save me-2"></i>
-                                    Save Analysis
-                                </button>
-                            </div>
+                        <!-- Pitch Cards Container -->
+                        <div class="row g-4" id="pitchCardsContainer">
+                            <!-- Cards will be dynamically inserted here -->
                         </div>
                     </div>
                 </div>
@@ -197,6 +167,185 @@
     <!-- Custom JS -->
     <script src="firebase-config.js"></script>
     <script src="dark-mode.js"></script>
-    <script src="AI_analyzer.js"></script>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { 
+            getFirestore, 
+            collection, 
+            query, 
+            getDocs,
+            orderBy,
+            where 
+        } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        import { firebaseConfig } from './firebase-config.js';
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Function to format currency
+        function formatCurrency(amount) {
+            if (!amount && amount !== 0) return 'Not Specified';
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Function to format date
+        function formatDate(timestamp) {
+            if (!timestamp || !timestamp.toDate) return 'Date not available';
+            const date = timestamp.toDate();
+            return new Intl.DateTimeFormat('en-IN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            }).format(date);
+        }
+
+        // Function to load and display pitches
+        async function loadPitches() {
+            try {
+                const container = document.getElementById('pitchCardsContainer');
+                container.innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"></div></div>';
+
+                const pitchesRef = collection(db, 'pitches');
+                let q = query(pitchesRef, orderBy('createdAt', 'desc'));
+
+                // Get industry filter value
+                const industryFilter = document.getElementById('industryFilter').value;
+                if (industryFilter) {
+                    q = query(q, where('industry', '==', industryFilter));
+                }
+
+                const querySnapshot = await getDocs(q);
+                let pitches = [];
+
+                querySnapshot.forEach((doc) => {
+                    pitches.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                // Apply sorting
+                const sortBy = document.getElementById('sortBy').value;
+                if (sortBy === 'revenue') {
+                    pitches.sort((a, b) => (b.revenue || 0) - (a.revenue || 0));
+                } else if (sortBy === 'oldest') {
+                    pitches.reverse();
+                }
+
+                if (pitches.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                No pitches found. ${industryFilter ? 'Try changing the industry filter.' : ''}
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = pitches.map(pitch => `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0" style="font-size: 1.2rem; text-transform: uppercase;">${pitch.companyName || 'Unnamed Company'}</h5>
+                                    <span class="badge bg-primary">${pitch.industry || 'Unspecified'}</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <h6 class="text-muted">Business Details</h6>
+                                    <p class="card-text">${pitch.tagline || 'No tagline provided'}</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Current Revenue:</span>
+                                        <strong>${formatCurrency(pitch.revenue)}</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Funding Stage:</span>
+                                        <strong>${pitch.fundingStage || 'Not specified'}</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-muted">Funding Amount:</span>
+                                        <strong>${formatCurrency(pitch.fundingAmount)}</strong>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <h6 class="text-muted">Problem Statement</h6>
+                                    <p class="card-text">${pitch.problem || 'No problem statement provided'}</p>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="far fa-calendar me-1"></i>
+                                        Submitted: ${formatDate(pitch.createdAt)}
+                                    </small>
+                                    <div>
+                                        <span class="badge bg-${pitch.status === 'pending' ? 'warning' : 'success'}">
+                                            ${pitch.status === 'pending' ? 'Pending Review' : 'Reviewed'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mt-3 d-flex gap-2">
+                                    <button class="btn btn-sm btn-outline-primary w-100" 
+                                            onclick="window.location.href='pitch-submission.html?id=${pitch.id}'">
+                                        <i class="fas fa-eye me-1"></i> View Details
+                                    </button>
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            onclick="analyzePitch('${pitch.id}')">
+                                        <i class="fas fa-chart-line me-1"></i> Analyze
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading pitches:', error);
+                const container = document.getElementById('pitchCardsContainer');
+                container.innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Error loading pitches. Please try again later.
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Add event listeners for filters
+        document.getElementById('industryFilter').addEventListener('change', loadPitches);
+        document.getElementById('sortBy').addEventListener('change', loadPitches);
+
+        // Initialize the dashboard
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            await loadPitches();
+        });
+
+        // Make analyzePitch function available globally
+        window.analyzePitch = function(pitchId) {
+            // Implement pitch analysis logic here
+            console.log('Analyzing pitch:', pitchId);
+            // You can add your analysis logic or navigation here
+        };
+    </script>
 </body>
 </html> 
