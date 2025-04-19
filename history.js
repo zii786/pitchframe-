@@ -176,57 +176,119 @@ function handleLinkSubmission(linkUrl) {
 }
 
 // Load analysis history
-async function loadAnalysisHistory(user) {
+async function loadAnalysisHistory() {
     try {
+        // Show loading state
         const analysisList = document.getElementById('analysisList');
-        analysisList.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Loading your pitches...</p></div>';
+        analysisList.innerHTML = `
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading analysis history...</p>
+            </div>
+        `;
 
-        // Simplified query - just get user's pitches ordered by creation date
+        // Get current user
+        const user = auth.currentUser;
+        if (!user) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Get filters
+        const dateFilter = document.getElementById('dateFilter').value;
+        const statusFilter = document.getElementById('statusFilter').value;
+        const sortBy = document.getElementById('sortBy').value;
+
+        // Create base query
         let q = query(
             collection(db, 'pitches'),
             where('userId', '==', user.uid),
             orderBy('createdAt', 'desc')
         );
 
-        // Get documents
-        const snapshot = await getDocs(q);
-
-        if (snapshot.empty) {
-            analysisList.innerHTML = `
-                <div class="text-center text-muted">
-                    <i class="fas fa-folder-open fa-3x mb-3"></i>
-                    <p>No pitches found</p>
-                    <a href="pitch-submission.html" class="btn btn-primary btn-sm">
-                        <i class="fas fa-plus me-2"></i>Submit a Pitch
-                    </a>
-                </div>`;
-            return;
+        // Apply date filter
+        if (dateFilter !== 'all') {
+            const startDate = getFilterDate(dateFilter);
+            q = query(q, where('createdAt', '>=', startDate));
         }
+
+        // Apply status filter
+        if (statusFilter !== 'all') {
+            q = query(q, where('status', '==', statusFilter));
+        }
+
+        // Get documents
+        const querySnapshot = await getDocs(q);
 
         // Clear loading state
         analysisList.innerHTML = '';
 
-        // Create cards for each pitch
-        snapshot.forEach(doc => {
+        if (querySnapshot.empty) {
+            analysisList.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                    <h5>No analysis history found</h5>
+                    <p class="text-muted">Upload a pitch deck to get started</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Process and display results
+        querySnapshot.forEach((doc) => {
             const data = doc.data();
-            const card = createAnalysisCard(doc.id, data);
+            const card = createAnalysisCard(data, doc.id);
             analysisList.appendChild(card);
         });
 
     } catch (error) {
         console.error('Error loading history:', error);
+        
+        // Show error state with retry button
+        const analysisList = document.getElementById('analysisList');
         analysisList.innerHTML = `
-            <div class="alert alert-danger" role="alert">
-                <i class="fas fa-exclamation-circle me-2"></i>
-                Error loading pitch history: ${error.message}
-                <hr>
-                <p class="mb-0">Please try <a href="javascript:location.reload()" class="alert-link">refreshing the page</a> or <a href="pitch-submission.html" class="alert-link">submit a new pitch</a>.</p>
-            </div>`;
+            <div class="text-center py-4">
+                <i class="fas fa-exclamation-circle fa-3x text-danger mb-3"></i>
+                <h5>Error loading analysis history</h5>
+                <p class="text-muted">${error.message}</p>
+                <button class="btn btn-primary mt-3" onclick="loadAnalysisHistory()">
+                    <i class="fas fa-redo"></i> Retry
+                </button>
+            </div>
+        `;
+
+        // If the error is about missing index, show helpful message
+        if (error.code === 'failed-precondition' && error.message.includes('index')) {
+            analysisList.innerHTML += `
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>First-time setup:</strong> The system is creating necessary database indexes. 
+                    This may take a few minutes. Please try again shortly.
+                </div>
+            `;
+        }
+    }
+}
+
+// Helper function to get date for filtering
+function getFilterDate(filter) {
+    const now = new Date();
+    switch (filter) {
+        case 'today':
+            return new Date(now.setHours(0, 0, 0, 0));
+        case 'week':
+            return new Date(now.setDate(now.getDate() - 7));
+        case 'month':
+            return new Date(now.setMonth(now.getMonth() - 1));
+        default:
+            return null;
     }
 }
 
 // Create analysis card
-function createAnalysisCard(id, data) {
+function createAnalysisCard(data, id) {
     const card = document.createElement('div');
     card.className = 'analysis-card';
     

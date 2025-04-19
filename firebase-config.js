@@ -20,15 +20,14 @@ import { getStorage, ref } from 'https://www.gstatic.com/firebasejs/9.22.0/fireb
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
+    apiKey: "AIzaSyC5L9GpkSGVmT2jmWn1AzAHxHMhKBYEOqg",
     authDomain: "pitchframe-6967a.firebaseapp.com",
     projectId: "pitchframe-6967a",
     storageBucket: "pitchframe-6967a.appspot.com",
-    messagingSenderId: "801200566992",
-    appId: "1:801200566992:web:9dc20d8ad085577eb724d5"
+    messagingSenderId: "1039460737837",
+    appId: "1:1039460737837:web:b3f7c0d0b8b9e4c4f7c7f1"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase services with CORS settings
