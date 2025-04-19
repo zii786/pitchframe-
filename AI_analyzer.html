@@ -159,13 +159,8 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     <!-- Custom JS -->
-    <script src="firebase-config.js"></script>
+    <script type="module" src="firebase-config.js"></script>
     <script src="dark-mode.js"></script>
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
@@ -176,7 +171,9 @@
             query, 
             getDocs,
             orderBy,
-            where 
+            where,
+            doc,
+            updateDoc 
         } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
         import { firebaseConfig } from './firebase-config.js';
 
@@ -184,6 +181,11 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        // Make db and doc available globally
+        window.db = db;
+        window.doc = doc;
+        window.updateDoc = updateDoc;
 
         // Function to format currency
         function formatCurrency(amount) {
@@ -300,7 +302,7 @@
                                 </div>
                                 <div class="mt-3 d-flex gap-2">
                                     <button class="btn btn-sm btn-outline-primary w-100" 
-                                            onclick="window.location.href='pitch-submission.html?id=${pitch.id}'">
+                                            onclick="window.location.href='pitch-details.html?id=${pitch.id}'">
                                         <i class="fas fa-eye me-1"></i> View Details
                                     </button>
                                     <button class="btn btn-sm btn-primary w-100" 
@@ -340,12 +342,41 @@
             await loadPitches();
         });
 
-        // Make analyzePitch function available globally
-        window.analyzePitch = function(pitchId) {
-            // Implement pitch analysis logic here
-            console.log('Analyzing pitch:', pitchId);
-            // You can add your analysis logic or navigation here
+        // Update the analyzePitch function
+        window.analyzePitch = async function(pitchId) {
+            try {
+                // Use the globally available db and doc
+                const pitchRef = window.doc(window.db, 'pitches', pitchId);
+                await window.updateDoc(pitchRef, {
+                    status: 'reviewed'
+                });
+
+                // Refresh the display to show the updated status
+                await loadPitches();
+
+                // Show success message
+                alert('Pitch analysis completed successfully!');
+            } catch (error) {
+                console.error('Error analyzing pitch:', error);
+                alert('Error updating pitch status. Please try again.');
+            }
         };
+
+        // Add loading states:
+        document.getElementById('submitBtn').disabled = true;
+        try {
+            // ... submission code
+        } finally {
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        // Add error handling:
+        try {
+            // ... code
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        }
     </script>
 </body>
 </html> 

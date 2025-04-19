@@ -309,12 +309,80 @@
     
     <!-- Firebase Authentication -->
     <script type="module">
-        import { logoutUser, checkAuthState } from './firebase-config.js';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        import { firebaseConfig } from './firebase-config.js';
 
-        // Check if user is logged in, if not redirect to login
-        checkAuthState((user) => {
-            if (!user) {
-                alert('Please log in to access settings');
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Function to load user profile data
+        async function loadUserProfile(userId) {
+            try {
+                const userDoc = await getDoc(doc(db, 'users', userId));
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    
+                    // Update form fields with user data
+                    document.getElementById('firstName').value = userData.firstName || '';
+                    document.getElementById('lastName').value = userData.lastName || '';
+                    document.getElementById('email').value = userData.email || '';
+                    document.getElementById('company').value = userData.company || '';
+                    document.getElementById('bio').value = userData.bio || '';
+
+                    // Update profile picture if exists
+                    if (userData.profilePicture) {
+                        document.getElementById('profilePicture').src = userData.profilePicture;
+                    } else {
+                        // Set default avatar with user's name
+                        const initials = `${userData.firstName?.charAt(0) || ''}${userData.lastName?.charAt(0) || ''}`;
+                        document.getElementById('profilePicture').src = `https://ui-avatars.com/api/?name=${initials}&background=0D8ABC&color=fff`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+                alert('Error loading profile data. Please try again.');
+            }
+        }
+
+        // Function to save profile changes
+        async function saveProfile(event) {
+            event.preventDefault();
+            
+            const userId = auth.currentUser.uid;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const company = document.getElementById('company').value;
+            const bio = document.getElementById('bio').value;
+
+            try {
+                await updateDoc(doc(db, 'users', userId), {
+                    firstName,
+                    lastName,
+                    company,
+                    bio,
+                    updatedAt: new Date()
+                });
+
+                alert('Profile updated successfully!');
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('Error updating profile. Please try again.');
+            }
+        }
+
+        // Add form submit event listener
+        document.getElementById('profileForm').addEventListener('submit', saveProfile);
+
+        // Check authentication state and load profile
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loadUserProfile(user.uid);
+            } else {
                 window.location.href = 'login.html';
             }
         });
@@ -325,22 +393,14 @@
             logoutBtn.addEventListener('click', async (e) => {
                 e.preventDefault();
                 try {
-                    await logoutUser();
-                    alert('Successfully logged out!');
+                    await auth.signOut();
                     window.location.href = 'login.html';
                 } catch (error) {
-                    alert('Error logging out: ' + error.message);
+                    console.error('Error logging out:', error);
+                    alert('Error logging out. Please try again.');
                 }
             });
         }
-
-        // Load user profile data
-        checkAuthState(async (user) => {
-            if (user) {
-                document.getElementById('email').value = user.email;
-                // You can load more user data here from Firestore if needed
-            }
-        });
     </script>
 </body>
 </html> 

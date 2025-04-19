@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pitch Details - PitchFrame</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dark-mode.css">
+    <style>
+        .pitch-details-container {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            padding: 2rem 0;
+        }
+        .details-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .rating-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        .rating-criteria {
+            margin-bottom: 1.5rem;
+        }
+        .star-rating {
+            color: #ffc107;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .star-rating i {
+            margin-right: 0.25rem;
+        }
+        .badge {
+            padding: 0.5em 1em;
+            font-size: 0.9rem;
+        }
+        .section-title {
+            color: #6c757d;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .feedback-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+    </style>
+</head>
+<body>
+    <div class="pitch-details-container">
+        <div class="container">
+            <!-- Back Button -->
+            <div class="mb-4">
+                <button class="btn btn-outline-primary" onclick="window.history.back()">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </button>
+            </div>
+
+            <!-- Main Content -->
+            <div class="row">
+                <!-- Pitch Details Section -->
+                <div class="col-lg-8">
+                    <div class="details-card">
+                        <div id="pitchDetails">
+                            <!-- Content will be dynamically loaded -->
+                            <div class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rating Section -->
+                <div class="col-lg-4">
+                    <div class="rating-section">
+                        <h4 class="mb-4">Evaluation Form</h4>
+                        
+                        <!-- Market Potential -->
+                        <div class="rating-criteria">
+                            <label class="section-title">Market Potential</label>
+                            <select class="form-select mb-2" id="marketPotential">
+                                <option value="">Select rating</option>
+                                <option value="5">Excellent - Large market opportunity</option>
+                                <option value="4">Very Good - Significant potential</option>
+                                <option value="3">Good - Moderate potential</option>
+                                <option value="2">Fair - Limited potential</option>
+                                <option value="1">Poor - Very limited potential</option>
+                            </select>
+                        </div>
+
+                        <!-- Product Innovation -->
+                        <div class="rating-criteria">
+                            <label class="section-title">Product Innovation</label>
+                            <select class="form-select mb-2" id="productInnovation">
+                                <option value="">Select rating</option>
+                                <option value="5">Excellent - Highly innovative</option>
+                                <option value="4">Very Good - Notable innovation</option>
+                                <option value="3">Good - Some innovation</option>
+                                <option value="2">Fair - Limited innovation</option>
+                                <option value="1">Poor - Not innovative</option>
+                            </select>
+                        </div>
+
+                        <!-- Financial Viability -->
+                        <div class="rating-criteria">
+                            <label class="section-title">Financial Viability</label>
+                            <select class="form-select mb-2" id="financialViability">
+                                <option value="">Select rating</option>
+                                <option value="5">Excellent - Strong financials</option>
+                                <option value="4">Very Good - Solid financials</option>
+                                <option value="3">Good - Adequate financials</option>
+                                <option value="2">Fair - Weak financials</option>
+                                <option value="1">Poor - Very weak financials</option>
+                            </select>
+                        </div>
+
+                        <!-- Team Capability -->
+                        <div class="rating-criteria">
+                            <label class="section-title">Team Capability</label>
+                            <select class="form-select mb-2" id="teamCapability">
+                                <option value="">Select rating</option>
+                                <option value="5">Excellent - Highly capable team</option>
+                                <option value="4">Very Good - Strong team</option>
+                                <option value="3">Good - Capable team</option>
+                                <option value="2">Fair - Limited capability</option>
+                                <option value="1">Poor - Insufficient capability</option>
+                            </select>
+                        </div>
+
+                        <!-- Feedback -->
+                        <div class="mb-4">
+                            <label class="section-title">Detailed Feedback</label>
+                            <textarea class="form-control feedback-textarea" id="feedback" 
+                                    placeholder="Provide detailed feedback about the pitch..."></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button class="btn btn-primary w-100" onclick="submitRating()">
+                            Submit Evaluation
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="firebase-config.js"></script>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            updateDoc,
+            Timestamp 
+        } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        import { firebaseConfig } from './firebase-config.js';
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Get pitch ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const pitchId = urlParams.get('id');
+
+        if (!pitchId) {
+            window.location.href = 'AI_analyzer.html';
+        }
+
+        // Function to format currency
+        function formatCurrency(amount) {
+            if (!amount && amount !== 0) return 'Not Specified';
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Function to load pitch details
+        async function loadPitchDetails() {
+            try {
+                const pitchRef = doc(db, 'pitches', pitchId);
+                const pitchDoc = await getDoc(pitchRef);
+
+                if (!pitchDoc.exists()) {
+                    document.getElementById('pitchDetails').innerHTML = `
+                        <div class="alert alert-danger">
+                            Pitch not found
+                        </div>
+                    `;
+                    return;
+                }
+
+                const pitch = pitchDoc.data();
+                document.getElementById('pitchDetails').innerHTML = `
+                    <div class="mb-4">
+                        <h2 class="mb-3" style="font-size: 2rem; font-weight: bold; text-transform: uppercase;">${pitch.companyName || 'Unnamed Company'}</h2>
+                        <span class="badge bg-primary me-2">${pitch.industry || 'Unspecified Industry'}</span>
+                        <span class="badge bg-${pitch.status === 'pending' ? 'warning' : 'success'}">
+                            ${pitch.status === 'pending' ? 'Pending Review' : 'Reviewed'}
+                        </span>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="section-title">Tagline</h5>
+                        <p>${pitch.tagline || 'No tagline provided'}</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="section-title">Problem Statement</h5>
+                        <p>${pitch.problem || 'No problem statement provided'}</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="section-title">Solution</h5>
+                        <p>${pitch.solution || 'No solution provided'}</p>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="section-title">Financial Information</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <strong>Current Revenue:</strong> ${formatCurrency(pitch.revenue)}
+                                </li>
+                                <li class="mb-2">
+                                    <strong>Funding Stage:</strong> ${pitch.fundingStage || 'Not specified'}
+                                </li>
+                                <li>
+                                    <strong>Funding Amount:</strong> ${formatCurrency(pitch.fundingAmount)}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="section-title">Market Information</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <strong>Target Market:</strong> ${pitch.targetMarket || 'Not specified'}
+                                </li>
+                                <li class="mb-2">
+                                    <strong>Market Size:</strong> ${pitch.marketSize || 'Not specified'}
+                                </li>
+                                <li>
+                                    <strong>Competitors:</strong> ${pitch.competitors || 'Not specified'}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    ${pitch.rating ? `
+                        <div class="alert alert-info">
+                            <h5 class="section-title mb-3">Previous Evaluation</h5>
+                            <p><strong>Average Rating:</strong> ${(Object.values(pitch.rating).reduce((a, b) => a + Number(b), 0) / 4).toFixed(1)} / 5</p>
+                            <p><strong>Feedback:</strong> ${pitch.feedback || 'No feedback provided'}</p>
+                        </div>
+                    ` : ''}
+                `;
+
+            } catch (error) {
+                console.error('Error loading pitch details:', error);
+                document.getElementById('pitchDetails').innerHTML = `
+                    <div class="alert alert-danger">
+                        Error loading pitch details. Please try again later.
+                    </div>
+                `;
+            }
+        }
+
+        // Function to submit rating
+        window.submitRating = async function() {
+            try {
+                const marketPotential = document.getElementById('marketPotential').value;
+                const productInnovation = document.getElementById('productInnovation').value;
+                const financialViability = document.getElementById('financialViability').value;
+                const teamCapability = document.getElementById('teamCapability').value;
+                const feedback = document.getElementById('feedback').value;
+
+                if (!marketPotential || !productInnovation || !financialViability || !teamCapability) {
+                    alert('Please provide ratings for all criteria.');
+                    return;
+                }
+
+                if (!feedback.trim()) {
+                    alert('Please provide detailed feedback.');
+                    return;
+                }
+
+                const pitchRef = doc(db, 'pitches', pitchId);
+                await updateDoc(pitchRef, {
+                    rating: {
+                        marketPotential,
+                        productInnovation,
+                        financialViability,
+                        teamCapability
+                    },
+                    feedback,
+                    status: 'reviewed',
+                    reviewedAt: Timestamp.now(),
+                    reviewedBy: auth.currentUser.uid
+                });
+
+                alert('Evaluation submitted successfully!');
+                window.location.href = 'AI_analyzer.html';
+
+            } catch (error) {
+                console.error('Error submitting rating:', error);
+                alert('Error submitting evaluation. Please try again.');
+            }
+        };
+
+        // Initialize the page
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            await loadPitchDetails();
+        });
+    </script>
+</body>
+</html>
