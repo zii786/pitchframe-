@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+import { initializeApp, getApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
 import { 
     getAuth, 
     createUserWithEmailAndPassword,
@@ -30,8 +30,15 @@ const firebaseConfig = {
   appId: "1:801200566992:web:d4460e0f21707aaab724d5"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase only if it hasn't been initialized
+let app;
+try {
+    app = initializeApp(firebaseConfig);
+} catch (error) {
+    // If Firebase is already initialized, get the existing instance
+    app = getApp();
+}
+
 // Initialize Firebase services with CORS settings
 const auth = getAuth(app);
 const db = getFirestore(app);
