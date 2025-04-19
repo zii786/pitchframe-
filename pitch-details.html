@@ -236,6 +236,7 @@
                 if (!pitchDoc.exists()) {
                     document.getElementById('pitchDetails').innerHTML = `
                         <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>
                             Pitch not found
                         </div>
                     `;
@@ -248,71 +249,48 @@
                         <h2 class="mb-3" style="font-size: 2rem; font-weight: bold; text-transform: uppercase;">
                             ${pitch.companyName || 'Unnamed Company'}
                         </h2>
-                        <span class="badge bg-primary me-2">${pitch.industry || 'Unspecified Industry'}</span>
-                        <span class="badge bg-${pitch.status === 'pending' ? 'warning' : 'success'}">
-                            ${pitch.status === 'pending' ? 'Pending Review' : 'Reviewed'}
-                        </span>
+                        <div class="d-flex gap-2 mb-3">
+                            <span class="badge bg-primary">${pitch.industry || 'Unspecified'}</span>
+                            <span class="badge bg-${pitch.status === 'pending' ? 'warning' : 'success'}">
+                                ${pitch.status === 'pending' ? 'Pending Review' : 'Reviewed'}
+                            </span>
+                        </div>
                     </div>
-
-                    <div class="mb-4">
-                        <h5 class="section-title">Tagline</h5>
-                        <p>${pitch.tagline || 'No tagline provided'}</p>
-                    </div>
-
-                    <div class="mb-4">
-                        <h5 class="section-title">Problem Statement</h5>
-                        <p>${pitch.problem || 'No problem statement provided'}</p>
-                    </div>
-
-                    <div class="mb-4">
-                        <h5 class="section-title">Solution</h5>
-                        <p>${pitch.solution || 'No solution provided'}</p>
-                    </div>
-
-                    <div class="row mb-4">
+                    <div class="row">
                         <div class="col-md-6">
-                            <h5 class="section-title">Financial Information</h5>
-                            <ul class="list-unstyled">
-                                <li class="mb-2">
-                                    <strong>Current Revenue:</strong> ${formatCurrency(pitch.revenue)}
-                                </li>
-                                <li class="mb-2">
-                                    <strong>Funding Stage:</strong> ${pitch.fundingStage || 'Not specified'}
-                                </li>
-                                <li>
-                                    <strong>Funding Amount:</strong> ${formatCurrency(pitch.fundingAmount)}
-                                </li>
-                            </ul>
+                            <div class="mb-4">
+                                <h6 class="section-title">Business Details</h6>
+                                <p class="card-text">${pitch.tagline || 'No tagline provided'}</p>
+                            </div>
+                            <div class="mb-4">
+                                <h6 class="section-title">Problem Statement</h6>
+                                <p class="card-text">${pitch.problem || 'No problem statement provided'}</p>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <h5 class="section-title">Market Information</h5>
-                            <ul class="list-unstyled">
-                                <li class="mb-2">
-                                    <strong>Target Market:</strong> ${pitch.targetMarket || 'Not specified'}
-                                </li>
-                                <li class="mb-2">
-                                    <strong>Market Size:</strong> ${pitch.marketSize || 'Not specified'}
-                                </li>
-                                <li>
-                                    <strong>Competitors:</strong> ${pitch.competitors || 'Not specified'}
-                                </li>
-                            </ul>
+                            <div class="mb-4">
+                                <h6 class="section-title">Financial Information</h6>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Current Revenue:</span>
+                                    <strong>${formatCurrency(pitch.revenue)}</strong>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Funding Stage:</span>
+                                    <strong>${pitch.fundingStage || 'Not specified'}</strong>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">Funding Amount:</span>
+                                    <strong>${formatCurrency(pitch.fundingAmount)}</strong>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    ${pitch.rating ? `
-                        <div class="alert alert-info">
-                            <h5 class="section-title mb-3">Previous Evaluation</h5>
-                            <p><strong>Average Rating:</strong> ${(Object.values(pitch.rating).reduce((a, b) => a + Number(b), 0) / 4).toFixed(1)} / 5</p>
-                            <p><strong>Feedback:</strong> ${pitch.feedback || 'No feedback provided'}</p>
-                        </div>
-                    ` : ''}
                 `;
-
             } catch (error) {
                 console.error('Error loading pitch details:', error);
                 document.getElementById('pitchDetails').innerHTML = `
                     <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
                         Error loading pitch details. Please try again later.
                     </div>
                 `;
@@ -321,121 +299,53 @@
 
         // Function to submit evaluation
         async function submitEvaluation() {
-            const submitButton = document.querySelector('button[onclick="submitEvaluation()"]');
-            const originalButtonText = submitButton.innerHTML;
-            
             try {
-                // Show loading state
-                submitButton.disabled = true;
-                submitButton.innerHTML = `
-                    <span class="spinner-border spinner-border-sm"></span>
-                    Submitting...
-                `;
+                const submitBtn = document.querySelector('.btn-primary');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
 
-                // Get form values
-                const marketPotential = document.getElementById('marketPotential').value;
-                const productInnovation = document.getElementById('productInnovation').value;
-                const financialViability = document.getElementById('financialViability').value;
-                const teamCapability = document.getElementById('teamCapability').value;
-                const feedback = document.getElementById('feedback').value;
-
-                // Validate form
-                if (!marketPotential || !productInnovation || !financialViability || !teamCapability) {
-                    throw new Error('Please provide ratings for all criteria.');
-                }
-
-                if (!feedback.trim()) {
-                    throw new Error('Please provide detailed feedback.');
-                }
-
-                // Get current user (mentor) details
-                const user = auth.currentUser;
-                if (!user) {
-                    throw new Error('Please log in to submit evaluation.');
-                }
-
-                const mentorRef = doc(db, 'users', user.uid);
-                const mentorDoc = await getDoc(mentorRef);
-                
-                if (!mentorDoc.exists()) {
-                    throw new Error('Mentor profile not found.');
-                }
-
-                const mentorData = mentorDoc.data();
-
-                // Calculate average rating
-                const averageRating = (
-                    (Number(marketPotential) + 
-                    Number(productInnovation) + 
-                    Number(financialViability) + 
-                    Number(teamCapability)) / 4
-                ).toFixed(1);
-
-                // Create evaluation object
-                const evaluationData = {
-                    pitchId: pitchId,
-                    mentorId: user.uid,
-                    mentorName: `${mentorData.firstName} ${mentorData.lastName}`,
-                    mentorTitle: mentorData.title || 'Mentor',
-                    mentorCompany: mentorData.company || '',
-                    ratings: {
-                        marketPotential: Number(marketPotential),
-                        productInnovation: Number(productInnovation),
-                        financialViability: Number(financialViability),
-                        teamCapability: Number(teamCapability),
-                        averageRating: Number(averageRating)
-                    },
-                    feedback: feedback,
-                    createdAt: Timestamp.now()
+                const evaluation = {
+                    marketPotential: document.getElementById('marketPotential').value,
+                    productInnovation: document.getElementById('productInnovation').value,
+                    financialViability: document.getElementById('financialViability').value,
+                    teamCapability: document.getElementById('teamCapability').value,
+                    feedback: document.getElementById('feedback').value,
+                    timestamp: Timestamp.now()
                 };
 
-                // Save evaluation to Firestore
-                const evaluationRef = await addDoc(collection(db, 'evaluations'), evaluationData);
-
-                // Update pitch status
-                const pitchRef = doc(db, 'pitches', pitchId);
-                await updateDoc(pitchRef, {
-                    status: 'reviewed',
-                    lastReviewedAt: Timestamp.now(),
-                    lastReviewedBy: user.uid,
-                    evaluationId: evaluationRef.id
-                });
+                // Add evaluation to the evaluations subcollection
+                const evaluationsRef = collection(db, 'pitches', pitchId, 'evaluations');
+                await addDoc(evaluationsRef, evaluation);
 
                 // Show success message
-                const successAlert = document.createElement('div');
-                successAlert.className = 'alert alert-success mt-3';
-                successAlert.innerHTML = `
-                    <i class="fas fa-check-circle"></i>
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-check-circle me-2"></i>
                     Evaluation submitted successfully!
                 `;
-                document.querySelector('.rating-section').appendChild(successAlert);
+                document.querySelector('.rating-section').insertBefore(alertDiv, document.querySelector('.btn-primary'));
 
-                // Redirect after delay
-                setTimeout(() => {
-                    window.location.href = 'AI_analyzer.html';
-                }, 2000);
+                // Reset form
+                document.getElementById('marketPotential').value = '';
+                document.getElementById('productInnovation').value = '';
+                document.getElementById('financialViability').value = '';
+                document.getElementById('teamCapability').value = '';
+                document.getElementById('feedback').value = '';
 
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Submit Evaluation';
             } catch (error) {
                 console.error('Error submitting evaluation:', error);
-                
-                // Show error message
-                const errorAlert = document.createElement('div');
-                errorAlert.className = 'alert alert-danger mt-3';
-                errorAlert.innerHTML = `
-                    <i class="fas fa-exclamation-circle"></i>
-                    ${error.message || 'Error submitting evaluation. Please try again.'}
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    Error submitting evaluation. Please try again.
                 `;
-                document.querySelector('.rating-section').appendChild(errorAlert);
-
-            } finally {
-                // Reset button state
-                submitButton.disabled = false;
-                submitButton.innerHTML = originalButtonText;
+                document.querySelector('.rating-section').insertBefore(alertDiv, document.querySelector('.btn-primary'));
             }
         }
-
-        // Make submitEvaluation available globally
-        window.submitEvaluation = submitEvaluation;
 
         // Initialize the page
         onAuthStateChanged(auth, async (user) => {
@@ -443,57 +353,7 @@
                 window.location.href = 'login.html';
                 return;
             }
-
-            try {
-                // Load pitch details
-                await loadPitchDetails();
-                
-                // Check if evaluation exists
-                const evaluationsRef = collection(db, 'evaluations');
-                const q = query(
-                    evaluationsRef,
-                    where('pitchId', '==', pitchId),
-                    where('mentorId', '==', user.uid),
-                    limit(1)
-                );
-
-                const querySnapshot = await getDocs(q);
-                
-                if (!querySnapshot.empty) {
-                    const evaluation = querySnapshot.docs[0].data();
-                    
-                    // Populate form with existing data
-                    document.getElementById('marketPotential').value = evaluation.ratings.marketPotential;
-                    document.getElementById('productInnovation').value = evaluation.ratings.productInnovation;
-                    document.getElementById('financialViability').value = evaluation.ratings.financialViability;
-                    document.getElementById('teamCapability').value = evaluation.ratings.teamCapability;
-                    document.getElementById('feedback').value = evaluation.feedback;
-
-                    // Disable form
-                    const formElements = document.querySelectorAll('select, textarea, button');
-                    formElements.forEach(element => element.disabled = true);
-
-                    // Show notice
-                    const notice = document.createElement('div');
-                    notice.className = 'alert alert-info mt-3';
-                    notice.innerHTML = `
-                        <i class="fas fa-info-circle"></i>
-                        You have already evaluated this pitch on ${new Date(evaluation.createdAt.toDate()).toLocaleDateString()}.
-                    `;
-                    document.querySelector('.rating-section').appendChild(notice);
-                }
-            } catch (error) {
-                console.error('Error initializing page:', error);
-                
-                // Show error message
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'alert alert-danger mt-3';
-                errorDiv.innerHTML = `
-                    <i class="fas fa-exclamation-circle"></i>
-                    Error loading page: ${error.message}
-                `;
-                document.getElementById('pitchDetails').appendChild(errorDiv);
-            }
+            await loadPitchDetails();
         });
     </script>
 </body>
