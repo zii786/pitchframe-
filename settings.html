@@ -256,11 +256,11 @@
                 <!-- Main Content -->
                 <div class="col-md-9">
                     <div class="main-content">
-                        <h2 class="mb-4">Settings</h2>
+                        <h2 class="mb-4" data-translate="settings">Settings</h2>
                         
                         <!-- Profile Section -->
                         <div class="settings-section">
-                            <h3>Profile</h3>
+                            <h3 data-translate="profile">Profile</h3>
                             <div class="text-center mb-4">
                                 <div class="position-relative d-inline-block">
                                     <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" alt="Profile Picture" class="profile-picture" id="profilePicture">
@@ -278,61 +278,61 @@
                             <form id="profileForm">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="firstName" class="form-label">First Name</label>
+                                        <label for="firstName" class="form-label" data-translate="firstName">First Name</label>
                                         <input type="text" class="form-control" id="firstName" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="lastName" class="form-label">Last Name</label>
+                                        <label for="lastName" class="form-label" data-translate="lastName">Last Name</label>
                                         <input type="text" class="form-control" id="lastName" required>
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
+                                    <label for="email" class="form-label" data-translate="email">Email</label>
                                     <input type="email" class="form-control" id="email" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="company" class="form-label">Company</label>
+                                    <label for="company" class="form-label" data-translate="company">Company</label>
                                     <input type="text" class="form-control" id="company">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="bio" class="form-label">Bio</label>
+                                    <label for="bio" class="form-label" data-translate="bio">Bio</label>
                                     <textarea class="form-control" id="bio" rows="3"></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Save Profile</button>
+                                <button type="submit" class="btn btn-primary" data-translate="saveProfile">Save Profile</button>
                             </form>
                         </div>
                         
                         <!-- App Preferences -->
                         <div class="settings-section">
-                            <h3>App Preferences</h3>
+                            <h3 data-translate="appPreferences">App Preferences</h3>
                             <div class="mb-3">
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="darkMode">
-                                    <label class="form-check-label" for="darkMode">Dark Mode</label>
+                                    <label class="form-check-label" for="darkMode" data-translate="darkMode">Dark Mode</label>
                                 </div>
                                 <small class="text-muted">Toggle between light and dark theme</small>
                             </div>
                             <div class="mb-3">
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="autoDarkMode">
-                                    <label class="form-check-label" for="autoDarkMode">Auto Dark Mode</label>
+                                    <label class="form-check-label" for="autoDarkMode" data-translate="autoDarkMode">Auto Dark Mode</label>
                                 </div>
                                 <small class="text-muted">Automatically switch based on system preferences</small>
                             </div>
                             <div class="mb-3">
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="notifications">
-                                    <label class="form-check-label" for="notifications">Email Notifications</label>
+                                    <label class="form-check-label" for="notifications" data-translate="emailNotifications">Email Notifications</label>
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="autoSave">
-                                    <label class="form-check-label" for="autoSave">Auto-save Analysis</label>
+                                    <label class="form-check-label" for="autoSave" data-translate="autoSaveAnalysis">Auto-save Analysis</label>
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="language" class="form-label">Language</label>
+                                <label for="language" class="form-label" data-translate="language">Language</label>
                                 <select class="form-select" id="language">
                                     <option value="en">English</option>
                                     <option value="es">Spanish</option>
@@ -344,9 +344,9 @@
                         
                         <!-- AI Analysis Preferences -->
                         <div class="settings-section">
-                            <h3>AI Analysis Preferences</h3>
+                            <h3 data-translate="aiAnalysisPreferences">AI Analysis Preferences</h3>
                             <div class="mb-3">
-                                <label for="analysisDepth" class="form-label">Analysis Depth</label>
+                                <label for="analysisDepth" class="form-label" data-translate="analysisDepth">Analysis Depth</label>
                                 <select class="form-select" id="analysisDepth">
                                     <option value="basic">Basic</option>
                                     <option value="standard" selected>Standard</option>
@@ -354,36 +354,36 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="focusAreas" class="form-label">Focus Areas</label>
+                                <label class="form-label" data-translate="focusAreas">Focus Areas</label>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="clarity" checked>
-                                    <label class="form-check-label" for="clarity">Clarity</label>
+                                    <label class="form-check-label" for="clarity" data-translate="clarity">Clarity</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="engagement" checked>
-                                    <label class="form-check-label" for="engagement">Engagement</label>
+                                    <label class="form-check-label" for="engagement" data-translate="engagement">Engagement</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="marketAnalysis" checked>
-                                    <label class="form-check-label" for="marketAnalysis">Market Analysis</label>
+                                    <label class="form-check-label" for="marketAnalysis" data-translate="marketAnalysis">Market Analysis</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="financialAnalysis">
-                                    <label class="form-check-label" for="financialAnalysis">Financial Analysis</label>
+                                    <label class="form-check-label" for="financialAnalysis" data-translate="financialAnalysis">Financial Analysis</label>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Account Settings -->
                         <div class="settings-section">
-                            <h3>Account Settings</h3>
+                            <h3 data-translate="accountSettings">Account Settings</h3>
                             <div class="mb-3">
-                                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#changePasswordModal" data-translate="changePassword">
                                     Change Password
                                 </button>
                             </div>
                             <div class="mb-3">
-                                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal" data-translate="deleteAccount">
                                     Delete Account
                                 </button>
                             </div>
@@ -455,13 +455,253 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-        import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        import { getFirestore, doc, getDoc, updateDoc, Timestamp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
         import { firebaseConfig } from './firebase-config.js';
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        // Translation dictionary
+        const translations = {
+            en: {
+                settings: 'Settings',
+                profile: 'Profile',
+                firstName: 'First Name',
+                lastName: 'Last Name',
+                email: 'Email',
+                company: 'Company',
+                bio: 'Bio',
+                saveProfile: 'Save Profile',
+                appPreferences: 'App Preferences',
+                darkMode: 'Dark Mode',
+                autoDarkMode: 'Auto Dark Mode',
+                emailNotifications: 'Email Notifications',
+                autoSaveAnalysis: 'Auto-save Analysis',
+                language: 'Language',
+                aiAnalysisPreferences: 'AI Analysis Preferences',
+                analysisDepth: 'Analysis Depth',
+                focusAreas: 'Focus Areas',
+                clarity: 'Clarity',
+                engagement: 'Engagement',
+                marketAnalysis: 'Market Analysis',
+                financialAnalysis: 'Financial Analysis',
+                accountSettings: 'Account Settings',
+                changePassword: 'Change Password',
+                deleteAccount: 'Delete Account',
+                logout: 'Logout',
+                aiAnalysis: 'AI Analysis',
+                submitPitch: 'Submit Pitch',
+                history: 'History'
+            },
+            es: {
+                settings: 'Configuración',
+                profile: 'Perfil',
+                firstName: 'Nombre',
+                lastName: 'Apellido',
+                email: 'Correo electrónico',
+                company: 'Empresa',
+                bio: 'Biografía',
+                saveProfile: 'Guardar Perfil',
+                appPreferences: 'Preferencias de la Aplicación',
+                darkMode: 'Modo Oscuro',
+                autoDarkMode: 'Modo Oscuro Automático',
+                emailNotifications: 'Notificaciones por Correo',
+                autoSaveAnalysis: 'Guardar Análisis Automáticamente',
+                language: 'Idioma',
+                aiAnalysisPreferences: 'Preferencias de Análisis IA',
+                analysisDepth: 'Profundidad del Análisis',
+                focusAreas: 'Áreas de Enfoque',
+                clarity: 'Claridad',
+                engagement: 'Compromiso',
+                marketAnalysis: 'Análisis de Mercado',
+                financialAnalysis: 'Análisis Financiero',
+                accountSettings: 'Configuración de Cuenta',
+                changePassword: 'Cambiar Contraseña',
+                deleteAccount: 'Eliminar Cuenta',
+                logout: 'Cerrar Sesión',
+                aiAnalysis: 'Análisis IA',
+                submitPitch: 'Enviar Pitch',
+                history: 'Historial'
+            },
+            fr: {
+                settings: 'Paramètres',
+                profile: 'Profil',
+                firstName: 'Prénom',
+                lastName: 'Nom',
+                email: 'Email',
+                company: 'Entreprise',
+                bio: 'Biographie',
+                saveProfile: 'Enregistrer le Profil',
+                appPreferences: 'Préférences de l\'Application',
+                darkMode: 'Mode Sombre',
+                autoDarkMode: 'Mode Sombre Automatique',
+                emailNotifications: 'Notifications par Email',
+                autoSaveAnalysis: 'Sauvegarde Automatique de l\'Analyse',
+                language: 'Langue',
+                aiAnalysisPreferences: 'Préférences d\'Analyse IA',
+                analysisDepth: 'Profondeur d\'Analyse',
+                focusAreas: 'Domaines d\'Intérêt',
+                clarity: 'Clarté',
+                engagement: 'Engagement',
+                marketAnalysis: 'Analyse du Marché',
+                financialAnalysis: 'Analyse Financière',
+                accountSettings: 'Paramètres du Compte',
+                changePassword: 'Changer le Mot de Passe',
+                deleteAccount: 'Supprimer le Compte',
+                logout: 'Déconnexion',
+                aiAnalysis: 'Analyse IA',
+                submitPitch: 'Soumettre un Pitch',
+                history: 'Historique'
+            },
+            de: {
+                settings: 'Einstellungen',
+                profile: 'Profil',
+                firstName: 'Vorname',
+                lastName: 'Nachname',
+                email: 'E-Mail',
+                company: 'Unternehmen',
+                bio: 'Biografie',
+                saveProfile: 'Profil Speichern',
+                appPreferences: 'App-Einstellungen',
+                darkMode: 'Dunkelmodus',
+                autoDarkMode: 'Automatischer Dunkelmodus',
+                emailNotifications: 'E-Mail-Benachrichtigungen',
+                autoSaveAnalysis: 'Analyse Automatisch Speichern',
+                language: 'Sprache',
+                aiAnalysisPreferences: 'KI-Analyse-Einstellungen',
+                analysisDepth: 'Analyse-Tiefe',
+                focusAreas: 'Fokusbereiche',
+                clarity: 'Klarheit',
+                engagement: 'Engagement',
+                marketAnalysis: 'Marktanalyse',
+                financialAnalysis: 'Finanzanalyse',
+                accountSettings: 'Kontoeinstellungen',
+                changePassword: 'Passwort Ändern',
+                deleteAccount: 'Konto Löschen',
+                logout: 'Abmelden',
+                aiAnalysis: 'KI-Analyse',
+                submitPitch: 'Pitch Einreichen',
+                history: 'Verlauf'
+            }
+        };
+
+        // Function to update UI with selected language
+        function updateLanguage(lang) {
+            const langTranslations = translations[lang];
+            if (!langTranslations) return;
+
+            // Update all translatable elements
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (langTranslations[key]) {
+                    element.textContent = langTranslations[key];
+                }
+            });
+
+            // Update navigation links
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                const text = link.textContent.trim();
+                if (text === 'AI Analysis') {
+                    link.textContent = langTranslations.aiAnalysis;
+                } else if (text === 'Submit Pitch') {
+                    link.textContent = langTranslations.submitPitch;
+                } else if (text === 'History') {
+                    link.textContent = langTranslations.history;
+                } else if (text === 'Settings') {
+                    link.textContent = langTranslations.settings;
+                } else if (text === 'Logout') {
+                    link.textContent = langTranslations.logout;
+                }
+            });
+        }
+
+        // Function to load user preferences
+        async function loadUserPreferences(user) {
+            try {
+                const prefsDoc = await getDoc(doc(db, 'user_preferences', user.uid));
+                if (prefsDoc.exists()) {
+                    const prefs = prefsDoc.data();
+                    
+                    // Set language
+                    const language = prefs.language || 'en';
+                    document.getElementById('language').value = language;
+                    updateLanguage(language);
+
+                    // Set other preferences
+                    document.getElementById('darkMode').checked = prefs.darkMode || false;
+                    document.getElementById('notifications').checked = prefs.notifications || false;
+                    document.getElementById('autoSave').checked = prefs.autoSave || false;
+                    document.getElementById('analysisDepth').value = prefs.analysisDepth || 'standard';
+                    
+                    // Set focus areas
+                    document.getElementById('clarity').checked = prefs.focusAreas?.includes('clarity') || true;
+                    document.getElementById('engagement').checked = prefs.focusAreas?.includes('engagement') || true;
+                    document.getElementById('marketAnalysis').checked = prefs.focusAreas?.includes('marketAnalysis') || true;
+                    document.getElementById('financialAnalysis').checked = prefs.focusAreas?.includes('financialAnalysis') || false;
+                }
+            } catch (error) {
+                console.error('Error loading preferences:', error);
+            }
+        }
+
+        // Handle language change
+        document.getElementById('language').addEventListener('change', async (event) => {
+            try {
+                const language = event.target.value;
+                await updateDoc(doc(db, 'user_preferences', auth.currentUser.uid), {
+                    language,
+                    updatedAt: Timestamp.now()
+                });
+                updateLanguage(language);
+            } catch (error) {
+                console.error('Error updating language:', error);
+            }
+        });
+
+        // Handle other preferences changes
+        document.querySelectorAll('.form-check-input:not(#language), .form-select:not(#language)').forEach(element => {
+            element.addEventListener('change', async () => {
+                try {
+                    const prefs = {
+                        darkMode: document.getElementById('darkMode').checked,
+                        notifications: document.getElementById('notifications').checked,
+                        autoSave: document.getElementById('autoSave').checked,
+                        analysisDepth: document.getElementById('analysisDepth').value,
+                        focusAreas: [
+                            ...(document.getElementById('clarity').checked ? ['clarity'] : []),
+                            ...(document.getElementById('engagement').checked ? ['engagement'] : []),
+                            ...(document.getElementById('marketAnalysis').checked ? ['marketAnalysis'] : []),
+                            ...(document.getElementById('financialAnalysis').checked ? ['financialAnalysis'] : [])
+                        ],
+                        updatedAt: Timestamp.now()
+                    };
+                    
+                    await updateDoc(doc(db, 'user_preferences', auth.currentUser.uid), prefs);
+                    
+                    // Apply dark mode if changed
+                    if (prefs.darkMode) {
+                        document.body.classList.add('dark-mode');
+                    } else {
+                        document.body.classList.remove('dark-mode');
+                    }
+                } catch (error) {
+                    console.error('Error updating preferences:', error);
+                }
+            });
+        });
+
+        // Initialize the page
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            await loadUserPreferences(user);
+            await loadUserProfile(user.uid);
+        });
 
         // Function to load user profile data
         async function loadUserProfile(userId) {
@@ -521,15 +761,6 @@
 
         // Add form submit event listener
         document.getElementById('profileForm').addEventListener('submit', saveProfile);
-
-        // Check authentication state and load profile
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                loadUserProfile(user.uid);
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
 
         // Handle logout
         const logoutBtn = document.getElementById('logoutBtn');
