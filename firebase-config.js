@@ -175,6 +175,7 @@ async function getInvestorProfile(userId) {
     return investorDoc.exists() ? investorDoc.data() : null;
 }
 
+// Export functions and variables
 export {
     auth,
     db,
