@@ -250,7 +250,7 @@
                             <i class="fas fa-cloud-upload-alt"></i>
                             <p class="mb-2">Drag and drop your pitch deck here</p>
                             <p class="text-muted small">or</p>
-                            <button type="button" class="btn btn-outline-primary">Browse Files</button>
+                            <button type="file" class="btn btn-outline-primary">Browse Files</button>
                                 <div class="file-info">
                                     <p class="file-name mb-1"></p>
                                     <p class="file-size mb-0"></p>
@@ -411,8 +411,8 @@
             }
             
             // Enhanced size validation with minimum size check
-            const minSize = 1024; // 1KB minimum
-            const maxSize = 10 * 1024 * 1024; // 10MB maximum
+            const minSize = 1024; 
+            const maxSize = 10 * 1024 * 1024; 
             
             if (file.size < minSize) {
                 showError('File is too small. Minimum size is 1KB');
