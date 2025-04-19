@@ -10,6 +10,224 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Global Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInUp {
+            from { 
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @keyframes scaleIn {
+            from { 
+                transform: scale(0.95);
+                opacity: 0;
+            }
+            to { 
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Navbar Animations */
+        .navbar {
+            animation: slideInDown 0.5s ease-out;
+        }
+        @keyframes slideInDown {
+            from { 
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .navbar-brand {
+            transition: all 0.3s ease;
+        }
+        .navbar-brand:hover {
+            transform: scale(1.05);
+        }
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: #0d6efd;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .nav-link.btn-primary {
+            transition: all 0.3s ease;
+        }
+        .nav-link.btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+        }
+
+        /* Hero Section Animations */
+        .hero {
+            animation: fadeIn 1s ease-out;
+        }
+        .hero h1 {
+            animation: slideInUp 0.8s ease-out;
+        }
+        .hero p {
+            animation: slideInUp 0.8s ease-out 0.2s;
+        }
+        .hero .btn {
+            animation: slideInUp 0.8s ease-out 0.4s;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+        .hero .btn:hover::after {
+            width: 200%;
+            height: 200%;
+        }
+        .hero .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .hero-image {
+            animation: scaleIn 1s ease-out 0.4s;
+            transition: all 0.3s ease;
+        }
+        .hero-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Features Section Animations */
+        .features {
+            animation: fadeIn 1s ease-out;
+        }
+        .section-title {
+            animation: slideInUp 0.8s ease-out;
+        }
+        .section-subtitle {
+            animation: slideInUp 0.8s ease-out 0.2s;
+        }
+        .feature-card {
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .icon-wrapper {
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover .icon-wrapper {
+            transform: scale(1.2) rotate(5deg);
+        }
+        .feature-card:nth-child(1) { animation-delay: 0.2s; }
+        .feature-card:nth-child(2) { animation-delay: 0.4s; }
+        .feature-card:nth-child(3) { animation-delay: 0.6s; }
+
+        /* Mentor Dashboard Section Animations */
+        .mentor-dashboard {
+            animation: fadeIn 1s ease-out;
+        }
+        .dashboard-preview {
+            transition: all 0.3s ease;
+        }
+        .dashboard-preview:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .dashboard-features .feature-item {
+            transition: all 0.3s ease;
+            animation: slideInUp 0.8s ease-out;
+        }
+        .dashboard-features .feature-item:hover {
+            transform: translateX(10px);
+        }
+        .dashboard-features .feature-item:nth-child(1) { animation-delay: 0.2s; }
+        .dashboard-features .feature-item:nth-child(2) { animation-delay: 0.4s; }
+        .dashboard-features .feature-item:nth-child(3) { animation-delay: 0.6s; }
+
+        /* Footer Animations */
+        .footer {
+            animation: fadeIn 1s ease-out;
+        }
+        .footer h4, .footer h5 {
+            transition: all 0.3s ease;
+        }
+        .footer h4:hover, .footer h5:hover {
+            transform: translateX(5px);
+        }
+        .footer a {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .footer a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: #0d6efd;
+            transition: width 0.3s ease;
+        }
+        .footer a:hover::after {
+            width: 100%;
+        }
+        .social-links a {
+            transition: all 0.3s ease;
+        }
+        .social-links a:hover {
+            transform: translateY(-3px) scale(1.2);
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
@@ -93,40 +311,6 @@
                         </div>
                         <h3>Mentor Matchmaking</h3>
                         <p>Get paired with ideal mentors based on your domain, stage, and problem statement.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Mentor Dashboard Preview -->
-    <section id="mentor-dashboard" class="mentor-dashboard py-5">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Mentor Dashboard</h2>
-                <p class="section-subtitle">A powerful interface for mentors to review, shortlist and provide structured feedback</p>
-            </div>
-            
-            <div class="dashboard-preview">
-                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80" class="img-fluid rounded dashboard-img" alt="Mentor Dashboard Preview">
-                
-                <div class="dashboard-overlay">
-                    <div class="dashboard-features">
-                        <div class="feature-item">
-                            <i class="fas fa-filter"></i>
-                            <h4>Smart Filtering</h4>
-                            <p>Filter pitches by industry, stage, and metrics</p>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-comment-dots"></i>
-                            <h4>Structured Feedback</h4>
-                            <p>Provide detailed feedback with our template system</p>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-tasks"></i>
-                            <h4>Progress Tracking</h4>
-                            <p>Track startup progress and improvements</p>
-                        </div>
                     </div>
                 </div>
             </div>
