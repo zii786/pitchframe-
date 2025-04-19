@@ -244,6 +244,12 @@
                 const q = query(mentorsRef, ...constraints);
                 const querySnapshot = await getDocs(q);
 
+                // Add debugging information
+                console.log('Total mentors found:', querySnapshot.size);
+                querySnapshot.forEach(doc => {
+                    console.log('Mentor:', doc.id, doc.data());
+                });
+
                 if (querySnapshot.empty) {
                     mentorsGrid.innerHTML = `
                         <div class="col-12">
