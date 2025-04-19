@@ -18,18 +18,20 @@ import {
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 import { getStorage, ref } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js';
 
-// Your web app's Firebase configuration
+import { initializeApp } from "firebase/app";
+
 const firebaseConfig = {
-    apiKey: "AIzaSyC5L9GpkSGVmT2jmWn1AzAHxHMhKBYEOqg",
-    authDomain: "pitchframe-6967a.firebaseapp.com",
-    projectId: "pitchframe-6967a",
-    storageBucket: "pitchframe-6967a.appspot.com",
-    messagingSenderId: "1039460737837",
-    appId: "1:1039460737837:web:b3f7c0d0b8b9e4c4f7c7f1"
+  apiKey: "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
+  authDomain: "pitchframe-6967a.firebaseapp.com",
+  databaseURL: "https://pitchframe-6967a-default-rtdb.firebaseio.com",
+  projectId: "pitchframe-6967a",
+  storageBucket: "pitchframe-6967a.firebasestorage.app",
+  messagingSenderId: "801200566992",
+  appId: "1:801200566992:web:d4460e0f21707aaab724d5"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
 // Initialize Firebase services with CORS settings
 const auth = getAuth(app);
 const db = getFirestore(app);
