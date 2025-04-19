@@ -1,0 +1,231 @@
+[debug] [2025-04-19T19:19:34.329Z] ----------------------------------------------------------------------
+[debug] [2025-04-19T19:19:34.334Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Zaid\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2025-04-19T19:19:34.334Z] CLI Version:   14.2.0
+[debug] [2025-04-19T19:19:34.334Z] Platform:      win32
+[debug] [2025-04-19T19:19:34.334Z] Node Version:  v22.14.0
+[debug] [2025-04-19T19:19:34.334Z] Time:          Sun Apr 20 2025 00:49:34 GMT+0530 (India Standard Time)
+[debug] [2025-04-19T19:19:34.335Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-04-19T19:19:34.456Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-04-19T19:19:34.456Z] > authorizing via signed-in user (prouggamer4543@gmail.com)
+[debug] [2025-04-19T19:19:34.456Z] [iam] checking project pitchframe-6967a for permissions ["cloudsql.databases.create","cloudsql.databases.update","cloudsql.instances.connect","cloudsql.instances.create","cloudsql.instances.get","cloudsql.instances.list","cloudsql.instances.update","cloudsql.users.create","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasedataconnect.connectors.create","firebasedataconnect.connectors.delete","firebasedataconnect.connectors.list","firebasedataconnect.connectors.update","firebasedataconnect.operations.get","firebasedataconnect.schemas.create","firebasedataconnect.schemas.delete","firebasedataconnect.schemas.list","firebasedataconnect.schemas.update","firebasedataconnect.services.create","firebasedataconnect.services.delete","firebasedataconnect.services.list","firebasedataconnect.services.update","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]
+[debug] [2025-04-19T19:19:34.457Z] Checked if tokens are valid: false, expires at: 1745085201228
+[debug] [2025-04-19T19:19:34.457Z] Checked if tokens are valid: false, expires at: 1745085201228
+[debug] [2025-04-19T19:19:34.458Z] > refreshing access token with scopes: []
+[debug] [2025-04-19T19:19:34.459Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-04-19T19:19:34.459Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-04-19T19:19:34.712Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-04-19T19:19:34.712Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-04-19T19:19:34.717Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/pitchframe-6967a:testIamPermissions [none]
+[debug] [2025-04-19T19:19:34.718Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/pitchframe-6967a:testIamPermissions x-goog-quota-user=projects/pitchframe-6967a
+[debug] [2025-04-19T19:19:34.718Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/pitchframe-6967a:testIamPermissions {"permissions":["cloudsql.databases.create","cloudsql.databases.update","cloudsql.instances.connect","cloudsql.instances.create","cloudsql.instances.get","cloudsql.instances.list","cloudsql.instances.update","cloudsql.users.create","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasedataconnect.connectors.create","firebasedataconnect.connectors.delete","firebasedataconnect.connectors.list","firebasedataconnect.connectors.update","firebasedataconnect.operations.get","firebasedataconnect.schemas.create","firebasedataconnect.schemas.delete","firebasedataconnect.schemas.list","firebasedataconnect.schemas.update","firebasedataconnect.services.create","firebasedataconnect.services.delete","firebasedataconnect.services.list","firebasedataconnect.services.update","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}
+[debug] [2025-04-19T19:19:36.257Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/pitchframe-6967a:testIamPermissions 200
+[debug] [2025-04-19T19:19:36.257Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/pitchframe-6967a:testIamPermissions {"permissions":["cloudsql.databases.create","cloudsql.databases.update","cloudsql.instances.connect","cloudsql.instances.create","cloudsql.instances.get","cloudsql.instances.list","cloudsql.instances.update","cloudsql.users.create","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasedataconnect.connectors.create","firebasedataconnect.connectors.delete","firebasedataconnect.connectors.list","firebasedataconnect.connectors.update","firebasedataconnect.operations.get","firebasedataconnect.schemas.create","firebasedataconnect.schemas.delete","firebasedataconnect.schemas.list","firebasedataconnect.schemas.update","firebasedataconnect.services.create","firebasedataconnect.services.delete","firebasedataconnect.services.list","firebasedataconnect.services.update","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}
+[debug] [2025-04-19T19:19:36.258Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:36.258Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:36.259Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/pitchframe-6967a [none]
+[debug] [2025-04-19T19:19:36.959Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/pitchframe-6967a 200
+[debug] [2025-04-19T19:19:36.959Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/pitchframe-6967a {"projectId":"pitchframe-6967a","projectNumber":"801200566992","displayName":"Pitchframe","name":"projects/pitchframe-6967a","resources":{"hostingSite":"pitchframe-6967a","realtimeDatabaseInstance":"pitchframe-6967a-default-rtdb"},"state":"ACTIVE","etag":"1_a7deddcb-0f97-4a26-ac7a-76a38cadd374"}
+[info] 
+[info] === Deploying to 'pitchframe-6967a'...
+[info] 
+[info] i  deploying storage, firestore, hosting, dataconnect 
+[info] i  storage: ensuring required API firebasestorage.googleapis.com is enabled... 
+[debug] [2025-04-19T19:19:36.968Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:36.968Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:36.968Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/firebasestorage.googleapis.com [none]
+[debug] [2025-04-19T19:19:36.968Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/firebasestorage.googleapis.com x-goog-quota-user=projects/pitchframe-6967a
+[debug] [2025-04-19T19:19:38.898Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/firebasestorage.googleapis.com 200
+[debug] [2025-04-19T19:19:38.898Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/firebasestorage.googleapis.com [omitted]
+[info] +  storage: required API firebasestorage.googleapis.com is enabled 
+[debug] [2025-04-19T19:19:38.899Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:38.899Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:38.899Z] >>> [apiv2][query] GET https://firebasestorage.googleapis.com/v1alpha/projects/pitchframe-6967a/defaultBucket [none]
+[debug] [2025-04-19T19:19:39.659Z] <<< [apiv2][status] GET https://firebasestorage.googleapis.com/v1alpha/projects/pitchframe-6967a/defaultBucket 200
+[debug] [2025-04-19T19:19:39.659Z] <<< [apiv2][body] GET https://firebasestorage.googleapis.com/v1alpha/projects/pitchframe-6967a/defaultBucket {"name":"projects/pitchframe-6967a/defaultBucket","location":"ASIA-SOUTH1","bucket":{"name":"projects/pitchframe-6967a/buckets/pitchframe-6967a.firebasestorage.app"},"storageClass":"REGIONAL"}
+[info] i  firebase.storage: checking storage.rules for compilation errors... 
+[debug] [2025-04-19T19:19:39.660Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:39.660Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:39.661Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a:test [none]
+[debug] [2025-04-19T19:19:39.661Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a:test [omitted]
+[debug] [2025-04-19T19:19:41.218Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a:test 200
+[debug] [2025-04-19T19:19:41.219Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a:test {}
+[info] +  firebase.storage: rules file storage.rules compiled successfully 
+[info] i  firestore: reading indexes from firestore.indexes.json... 
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2025-04-19T19:19:41.222Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:41.222Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:41.222Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a:test [none]
+[debug] [2025-04-19T19:19:41.222Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a:test [omitted]
+[debug] [2025-04-19T19:19:42.565Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a:test 200
+[debug] [2025-04-19T19:19:42.565Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a:test {}
+[info] +  cloud.firestore: rules file firestore.rules compiled successfully 
+[debug] [2025-04-19T19:19:42.570Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:42.570Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:42.570Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/pitchframe-6967a/versions [none]
+[debug] [2025-04-19T19:19:42.570Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/pitchframe-6967a/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2025-04-19T19:19:45.115Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/pitchframe-6967a/versions 200
+[debug] [2025-04-19T19:19:45.115Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/pitchframe-6967a/versions {"name":"projects/801200566992/sites/pitchframe-6967a/versions/d9fc56d96c6a13ae","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2025-04-19T19:19:45.116Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:45.116Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:45.116Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/pitchframe-6967a/billingInfo [none]
+[debug] [2025-04-19T19:19:46.609Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/pitchframe-6967a/billingInfo 200
+[debug] [2025-04-19T19:19:46.609Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/pitchframe-6967a/billingInfo {"name":"projects/pitchframe-6967a/billingInfo","projectId":"pitchframe-6967a","billingAccountName":"billingAccounts/010A0E-9A90B1-C7D70F","billingEnabled":true}
+[info] i  dataconnect: ensuring required API firebasedataconnect.googleapis.com is enabled... 
+[debug] [2025-04-19T19:19:46.610Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:46.610Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:46.610Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-04-19T19:19:46.610Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/pitchframe-6967a
+[debug] [2025-04-19T19:19:48.413Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-04-19T19:19:48.414Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/firebasedataconnect.googleapis.com [omitted]
+[info] +  dataconnect: required API firebasedataconnect.googleapis.com is enabled 
+[info] i  dataconnect: ensuring required API sqladmin.googleapis.com is enabled... 
+[debug] [2025-04-19T19:19:48.414Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:48.414Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:48.415Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/sqladmin.googleapis.com [none]
+[debug] [2025-04-19T19:19:48.415Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/sqladmin.googleapis.com x-goog-quota-user=projects/pitchframe-6967a
+[debug] [2025-04-19T19:19:48.803Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/sqladmin.googleapis.com 200
+[debug] [2025-04-19T19:19:48.803Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/sqladmin.googleapis.com [omitted]
+[info] +  dataconnect: required API sqladmin.googleapis.com is enabled 
+[info] i  dataconnect: ensuring required API compute.googleapis.com is enabled... 
+[debug] [2025-04-19T19:19:48.804Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:48.804Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:48.804Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/compute.googleapis.com [none]
+[debug] [2025-04-19T19:19:48.804Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/compute.googleapis.com x-goog-quota-user=projects/pitchframe-6967a
+[debug] [2025-04-19T19:19:50.644Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/compute.googleapis.com 200
+[debug] [2025-04-19T19:19:50.644Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/pitchframe-6967a/services/compute.googleapis.com [omitted]
+[info] +  dataconnect: required API compute.googleapis.com is enabled 
+[debug] [2025-04-19T19:19:50.644Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:50.644Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:50.644Z] >>> [apiv2][query] GET https://mobilesdk-pa.googleapis.com/v1/accessmanagement/tos:getStatus [none]
+[debug] [2025-04-19T19:19:51.360Z] <<< [apiv2][status] GET https://mobilesdk-pa.googleapis.com/v1/accessmanagement/tos:getStatus 200
+[debug] [2025-04-19T19:19:51.360Z] <<< [apiv2][body] GET https://mobilesdk-pa.googleapis.com/v1/accessmanagement/tos:getStatus {"overallStatus":"ACCEPTED","uTosStatus":{"tos":{"id":"firebase","tosId":"FIREBASE_UNIVERSAL"},"status":"ACCEPTED","acceptedVersion":7},"childTosStatus":[{"tos":{"id":"cloud","tosId":"CLOUD_PLATFORM"},"status":"ACCEPTED","acceptedVersion":36},{"tos":{"id":"firebase_b2b","tosId":"FIREBASE_B2B"},"status":"ACCEPTED","acceptedVersion":1},{"tos":{"id":"universal","tosId":"GOOGLE_APIS"},"status":"ACCEPTED","acceptedVersion":6}],"termsUrl":"https://firebase.google.com/terms","perServiceStatus":[{"tosId":"APP_CHECK","serviceStatus":{"tos":{"id":"app_check","tosId":"APP_CHECK"},"status":"ACCEPTED","acceptedVersion":3}},{"tosId":"APP_HOSTING_TOS","serviceStatus":{"tos":{"id":"app_hosting","tosId":"APP_HOSTING_TOS"},"status":"ACCEPTED","acceptedVersion":3}},{"tosId":"FIREBASE_DATA_CONNECT","serviceStatus":{"tos":{"id":"data_connect","tosId":"FIREBASE_DATA_CONNECT"},"status":"ACCEPTED","acceptedVersion":3}},{"tosId":"CORE_APPS","serviceStatus":{"tos":{"id":"core_apps","tosId":"CORE_APPS"},"status":"ACCEPTED","acceptedVersion":1}},{"tosId":"VERTEX_AI_IN_FIREBASE","serviceStatus":{"tos":{"id":"vertex_ai_in_firebase","tosId":"VERTEX_AI_IN_FIREBASE"},"status":"ACCEPTED","acceptedVersion":2}},{"tosId":"FIREBASE_CRASHLYTICS_APP_DISTRIBUTION","serviceStatus":{"tos":{"id":"firebase_crashlytics_app_distribution","tosId":"FIREBASE_CRASHLYTICS_APP_DISTRIBUTION"},"status":"ACCEPTED","acceptedVersion":4}},{"tosId":"GENERATIVE_LANGUAGE","serviceStatus":{"tos":{"id":"generative-language-api","tosId":"GENERATIVE_LANGUAGE"},"status":"NEVER_ACCEPTED","acceptedVersion":3}}]}
+[info] i  dataconnect: Preparing to deploy 
+[debug] [2025-04-19T19:19:51.383Z] defaultcredentials: writing to file C:\Users\Zaid\AppData\Roaming\firebase\prouggamer4543_gmail_com_application_default_credentials.json
+[debug] [2025-04-19T19:19:51.385Z] Setting GAC to C:\Users\Zaid\AppData\Roaming\firebase\prouggamer4543_gmail_com_application_default_credentials.json {"metadata":{"emulator":{"name":"dataconnect"},"message":"Setting GAC to C:\\Users\\Zaid\\AppData\\Roaming\\firebase\\prouggamer4543_gmail_com_application_default_credentials.json"}}
+[debug] [2025-04-19T19:19:52.561Z] I0420 00:49:51.509395    4008 env.go:20] Enabled Preview Flags: conn_evolution
+I0420 00:49:52.547646    4008 control.go:71] [/emulator/pitches b8dd] UpdateResources(): done
+Schema: sources: schema\schema.gql [2140B] 
+Connector "default": sources: connector\mutations.gql [1266B] connector\queries.gql [1880B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0420 00:49:51.509395    4008 env.go:20] Enabled Preview Flags: conn_evolution\nI0420 00:49:52.547646    4008 control.go:71] [/emulator/pitches b8dd] UpdateResources(): done\nSchema: sources: schema\\schema.gql [2140B] \nConnector \"default\": sources: connector\\mutations.gql [1266B] connector\\queries.gql [1880B] \n"}}
+[info] i  dataconnect: Successfully prepared schema and connectors 
+[debug] [2025-04-19T19:19:52.561Z] {
+  "serviceInfos": [
+    {
+      "serviceName": "projects/pitchframe-6967a/locations/asia-south1/services/pitches",
+      "sourceDirectory": "C:\\Users\\Zaid\\OneDrive\\Desktop\\PitchFrame\\dataconnect",
+      "schema": {
+        "name": "projects/pitchframe-6967a/locations/asia-south1/services/pitches/schemas/main",
+        "datasources": [
+          {
+            "postgresql": {
+              "database": "pitch",
+              "cloudSql": {
+                "instance": "projects/pitchframe-6967a/locations/asia-south1/instances/pitches1"
+              }
+            }
+          }
+        ],
+        "source": {
+          "files": [
+            {
+              "path": "schema.gql",
+              "content": "# # Example schema for simple movie review app\r\n\r\n# # User table is keyed by Firebase Auth UID.\r\n# type User @table {\r\n#   # `@default(expr: \"auth.uid\")` sets it to Firebase Auth UID during insert and upsert.\r\n#   id: String! @default(expr: \"auth.uid\")\r\n#   username: String! @col(dataType: \"varchar(50)\")\r\n#   # The `user: User!` field in the Review table generates the following one-to-many query field.\r\n#   #  reviews_on_user: [Review!]!\r\n#   # The `Review` join table the following many-to-many query field.\r\n#   #  movies_via_Review: [Movie!]!\r\n# }\r\n\r\n# # Movie is keyed by a randomly generated UUID.\r\n# type Movie @table {\r\n#   # If you do not pass a 'key' to `@table`, Data Connect automatically adds the following 'id' column.\r\n#   # Feel free to uncomment and customize it.\r\n#   #  id: UUID! @default(expr: \"uuidV4()\")\r\n#   title: String!\r\n#   imageUrl: String!\r\n#   genre: String\r\n# }\r\n\r\n# # MovieMetadata is a metadata attached to a Movie.\r\n# # Movie <-> MovieMetadata is a one-to-one relationship\r\n# type MovieMetadata @table {\r\n#   # @unique ensures each Movie can only one MovieMetadata.\r\n#   movie: Movie! @unique\r\n#   # The movie field adds the following foreign key field. Feel free to uncomment and customize it.\r\n#   #  movieId: UUID!\r\n#   rating: Float\r\n#   releaseYear: Int\r\n#   description: String\r\n# }\r\n\r\n# # Reviews is a join table between User and Movie.\r\n# # It has a composite primary keys `userUid` and `movieId`.\r\n# # A user can leave reviews for many movies. A movie can have reviews from many users.\r\n# # User  <-> Review is a one-to-many relationship\r\n# # Movie <-> Review is a one-to-many relationship\r\n# # Movie <-> User is a many-to-many relationship\r\n# type Review @table(name: \"Reviews\", key: [\"movie\", \"user\"]) {\r\n#   user: User!\r\n#   # The user field adds the following foreign key field. Feel free to uncomment and customize it.\r\n#   #  userUid: String!\r\n#   movie: Movie!\r\n#   # The movie field adds the following foreign key field. Feel free to uncomment and customize it.\r\n#   #  movieId: UUID!\r\n#   rating: Int\r\n#   reviewText: String\r\n#   reviewDate: Date! @default(expr: \"request.time\")\r\n# }\r\n"
+            }
+          ]
+        }
+      },
+      "dataConnectYaml": {
+        "specVersion": "v1",
+        "serviceId": "pitches",
+        "location": "asia-south1",
+        "schema": {
+          "source": "./schema",
+          "datasource": {
+            "postgresql": {
+              "database": "pitch",
+              "cloudSql": {
+                "instanceId": "pitches1"
+              }
+            }
+          }
+        },
+        "connectorDirs": [
+          "./connector"
+        ]
+      },
+      "connectorInfo": [
+        {
+          "directory": "C:\\Users\\Zaid\\OneDrive\\Desktop\\PitchFrame\\dataconnect\\connector",
+          "connectorYaml": {
+            "connectorId": "default"
+          },
+          "connector": {
+            "name": "projects/pitchframe-6967a/locations/asia-south1/services/pitches/connectors/default",
+            "source": {
+              "files": [
+                {
+                  "path": "mutations.gql",
+                  "content": "# # Example mutations for a simple movie app\r\n\r\n# # Create a movie based on user input\r\n# mutation CreateMovie($title: String!, $genre: String!, $imageUrl: String!)\r\n# @auth(level: USER_EMAIL_VERIFIED) {\r\n#   movie_insert(data: { title: $title, genre: $genre, imageUrl: $imageUrl })\r\n# }\r\n\r\n# # Upsert (update or insert) a user's username based on their auth.uid\r\n# mutation UpsertUser($username: String!) @auth(level: USER) {\r\n#   # The \"auth.uid\" server value ensures that users can only register their own user.\r\n#   user_upsert(data: { id_expr: \"auth.uid\", username: $username })\r\n# }\r\n\r\n# # Add a review for a movie\r\n# mutation AddReview($movieId: UUID!, $rating: Int!, $reviewText: String!)\r\n# @auth(level: USER) {\r\n#   review_upsert(\r\n#     data: {\r\n#       userId_expr: \"auth.uid\"\r\n#       movieId: $movieId\r\n#       rating: $rating\r\n#       reviewText: $reviewText\r\n#       # reviewDate defaults to today in the schema. No need to set it manually.\r\n#     }\r\n#   )\r\n# }\r\n\r\n# # Logged in user can delete their review for a movie\r\n# mutation DeleteReview($movieId: UUID!) @auth(level: USER) {\r\n#   # The \"auth.uid\" server value ensures that users can only delete their own reviews.\r\n#   review_delete(key: { userId_expr: \"auth.uid\", movieId: $movieId })\r\n# }\r\n"
+                },
+                {
+                  "path": "queries.gql",
+                  "content": "# # Example queries for a simple movie app.\r\n\r\n# # @auth() directives control who can call each operation.\r\n# # Anyone should be able to list all movies, so the auth level is set to PUBLIC\r\n# query ListMovies @auth(level: PUBLIC) {\r\n#   movies {\r\n#     id\r\n#     title\r\n#     imageUrl\r\n#     genre\r\n#   }\r\n# }\r\n\r\n# # List all users, only admins should be able to list all users, so we use NO_ACCESS\r\n# query ListUsers @auth(level: NO_ACCESS) {\r\n#   users {\r\n#     id\r\n#     username\r\n#   }\r\n# }\r\n\r\n# # Logged in users can list all their reviews and movie titles associated with the review\r\n# # Since the query uses the uid of the current authenticated user, we set auth level to USER\r\n# query ListUserReviews @auth(level: USER) {\r\n#   user(key: { id_expr: \"auth.uid\" }) {\r\n#     id\r\n#     username\r\n#     # <field>_on_<foreign_key_field> makes it easy to grab info from another table\r\n#     # Here, we use it to grab all the reviews written by the user.\r\n#     reviews: reviews_on_user {\r\n#       rating\r\n#       reviewDate\r\n#       reviewText\r\n#       movie {\r\n#         id\r\n#         title\r\n#       }\r\n#     }\r\n#   }\r\n# }\r\n\r\n# # Get movie by id\r\n# query GetMovieById($id: UUID!) @auth(level: PUBLIC) {\r\n#   movie(id: $id) {\r\n#     id\r\n#     title\r\n#     imageUrl\r\n#     genre\r\n#     metadata: movieMetadata_on_movie {\r\n#       rating\r\n#       releaseYear\r\n#       description\r\n#     }\r\n#     reviews: reviews_on_movie {\r\n#       reviewText\r\n#       reviewDate\r\n#       rating\r\n#       user {\r\n#         id\r\n#         username\r\n#       }\r\n#     }\r\n#   }\r\n# }\r\n\r\n# # Search for movies, actors, and reviews\r\n# query SearchMovie($titleInput: String, $genre: String) @auth(level: PUBLIC) {\r\n#   movies(\r\n#     where: {\r\n#       _and: [{ genre: { eq: $genre } }, { title: { contains: $titleInput } }]\r\n#     }\r\n#   ) {\r\n#     id\r\n#     title\r\n#     genre\r\n#     imageUrl\r\n#   }\r\n# }\r\n"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "deploymentMetadata": {
+        "primaryDataSource": {
+          "postgres": {
+            "requiredExtensions": null
+          }
+        }
+      }
+    }
+  ]
+}
+[debug] [2025-04-19T19:19:52.562Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:52.562Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:52.562Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/releases pageSize=10&pageToken=
+[debug] [2025-04-19T19:19:54.047Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/releases 200
+[debug] [2025-04-19T19:19:54.047Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/releases {"releases":[{"name":"projects/pitchframe-6967a/releases/cloud.firestore","rulesetName":"projects/pitchframe-6967a/rulesets/f2646138-f48b-4015-9afa-2290f6ad4534","createTime":"2025-04-18T10:18:08.278988Z","updateTime":"2025-04-19T18:23:25.591552Z"},{"name":"projects/pitchframe-6967a/releases/firebase.storage/pitchframe-6967a.firebasestorage.app","rulesetName":"projects/pitchframe-6967a/rulesets/0090bd6f-bbd1-42eb-868b-4f9edb87acc8","createTime":"2025-04-18T10:44:36.513981Z","updateTime":"2025-04-19T17:19:00.995913Z"}]}
+[debug] [2025-04-19T19:19:54.066Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:54.066Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:54.067Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/rulesets/0090bd6f-bbd1-42eb-868b-4f9edb87acc8 [none]
+[debug] [2025-04-19T19:19:55.379Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/rulesets/0090bd6f-bbd1-42eb-868b-4f9edb87acc8 200
+[debug] [2025-04-19T19:19:55.380Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/rulesets/0090bd6f-bbd1-42eb-868b-4f9edb87acc8 [omitted]
+[info] i  storage: latest version of storage.rules already up to date, skipping upload... 
+[debug] [2025-04-19T19:19:55.382Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:55.382Z] Checked if tokens are valid: true, expires at: 1745093973712
+[info] i  firestore: deploying indexes... 
+[debug] [2025-04-19T19:19:55.384Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:55.384Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:55.384Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/releases pageSize=10&pageToken=
+[debug] [2025-04-19T19:19:55.385Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/pitchframe-6967a/databases/(default)/collectionGroups/-/indexes [none]
+[debug] [2025-04-19T19:19:55.581Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/pitchframe-6967a/databases/(default)/collectionGroups/-/indexes 200
+[debug] [2025-04-19T19:19:55.582Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/pitchframe-6967a/databases/(default)/collectionGroups/-/indexes {"indexes":[{"name":"projects/pitchframe-6967a/databases/(default)/collectionGroups/user_history/indexes/CICAgJim14AK","queryScope":"COLLECTION","fields":[{"fieldPath":"userId","order":"ASCENDING"},{"fieldPath":"viewedAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}],"state":"READY","density":"SPARSE_ALL"},{"name":"projects/pitchframe-6967a/databases/(default)/collectionGroups/pitch_decks/indexes/CICAgOjXh4EK","queryScope":"COLLECTION","fields":[{"fieldPath":"userId","order":"ASCENDING"},{"fieldPath":"createdAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}],"state":"READY","density":"SPARSE_ALL"},{"name":"projects/pitchframe-6967a/databases/(default)/collectionGroups/analysis_results/indexes/CICAgJiUpoMK","queryScope":"COLLECTION","fields":[{"fieldPath":"pitchDeckId","order":"ASCENDING"},{"fieldPath":"createdAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}],"state":"READY","density":"SPARSE_ALL"},{"name":"projects/pitchframe-6967a/databases/(default)/collectionGroups/pitches/indexes/CICAgJjmiJEK","queryScope":"COLLECTION","fields":[{"fieldPath":"status","order":"ASCENDING"},{"fieldPath":"createdAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}],"state":"READY","density":"SPARSE_ALL"}]}
+[debug] [2025-04-19T19:19:55.582Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:55.582Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:55.582Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/pitchframe-6967a/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* [none]
+[debug] [2025-04-19T19:19:55.698Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/pitchframe-6967a/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* 200
+[debug] [2025-04-19T19:19:55.698Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/pitchframe-6967a/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* {"fields":[{"name":"projects/pitchframe-6967a/databases/(default)/collectionGroups/__default__/fields/*","indexConfig":{"indexes":[{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","order":"ASCENDING"}],"state":"READY"},{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","order":"DESCENDING"}],"state":"READY"},{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","arrayConfig":"CONTAINS"}],"state":"READY"}]}}]}
+[info] i  firestore: The following indexes are defined in your project but are not present in your firestore indexes file:
+	(pitches) -- (status,ASCENDING) (createdAt,DESCENDING)  
+[debug] [2025-04-19T19:19:56.736Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/releases 200
+[debug] [2025-04-19T19:19:56.736Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/releases {"releases":[{"name":"projects/pitchframe-6967a/releases/cloud.firestore","rulesetName":"projects/pitchframe-6967a/rulesets/f2646138-f48b-4015-9afa-2290f6ad4534","createTime":"2025-04-18T10:18:08.278988Z","updateTime":"2025-04-19T18:23:25.591552Z"},{"name":"projects/pitchframe-6967a/releases/firebase.storage/pitchframe-6967a.firebasestorage.app","rulesetName":"projects/pitchframe-6967a/rulesets/0090bd6f-bbd1-42eb-868b-4f9edb87acc8","createTime":"2025-04-18T10:44:36.513981Z","updateTime":"2025-04-19T17:19:00.995913Z"}]}
+[debug] [2025-04-19T19:19:56.736Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:56.736Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:56.736Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/rulesets/f2646138-f48b-4015-9afa-2290f6ad4534 [none]
+[debug] [2025-04-19T19:19:58.057Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/rulesets/f2646138-f48b-4015-9afa-2290f6ad4534 200
+[debug] [2025-04-19T19:19:58.057Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/rulesets/f2646138-f48b-4015-9afa-2290f6ad4534 [omitted]
+[info] i  firestore: uploading rules firestore.rules... 
+[debug] [2025-04-19T19:19:58.058Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:58.058Z] Checked if tokens are valid: true, expires at: 1745093973712
+[debug] [2025-04-19T19:19:58.058Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/rulesets [none]
+[debug] [2025-04-19T19:19:58.058Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/rulesets [omitted]
+[debug] [2025-04-19T19:19:59.440Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/rulesets 200
+[debug] [2025-04-19T19:19:59.440Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/pitchframe-6967a/rulesets {"name":"projects/pitchframe-6967a/rulesets/b5bec487-a1e3-4c38-a717-7be0c73bf480","source":{"files":[{"content":"rules_version = '2';\r\n\r\nservice cloud.firestore {\r\n  match /databases/{database}/documents {\r\n    // Helper functions\r\n    function isAuthenticated() {\r\n      return request.auth != null;\r\n    }\r\n    \r\n    function isOwner(userId) {\r\n      return request.auth.uid == userId;\r\n    }\r\n\r\n    // Allow users to create their own profile\r\n    match /users/{userId} {\r\n      allow create: if isAuthenticated() && isOwner(userId);\r\n      allow read: if isAuthenticated();\r\n      allow update: if isAuthenticated() && isOwner(userId);\r\n      allow delete: if isAuthenticated() && isOwner(userId);\r\n    }\r\n\r\n    // Startup profiles\r\n    match /startups/{userId} {\r\n      allow create: if isAuthenticated() && isOwner(userId);\r\n      allow read: if isAuthenticated();\r\n      allow update: if isAuthenticated() && isOwner(userId);\r\n      allow delete: if isAuthenticated() && isOwner(userId);\r\n    }\r\n\r\n    // Mentor profiles\r\n    match /mentors/{userId} {\r\n      allow create: if isAuthenticated() && isOwner(userId);\r\n      allow read: if isAuthenticated();\r\n      allow update: if isAuthenticated() && isOwner(userId);\r\n      allow delete: if isAuthenticated() && isOwner(userId);\r\n    }\r\n\r\n    // Investor profiles\r\n    match /investors/{userId} {\r\n      allow create: if isAuthenticated() && isOwner(userId);\r\n      allow read: if isAuthenticated();\r\n      allow update: if isAuthenticated() && isOwner(userId);\r\n      allow delete: if isAuthenticated() && isOwner(userId);\r\n    }\r\n\r\n    // Pitch submissions\r\n    match /pitches/{pitchId} {\r\n      allow create: if isAuthenticated() \r\n                   && request.resource.data.userId == request.auth.uid;\r\n      allow read: if isAuthenticated();\r\n      allow update: if isAuthenticated() \r\n                   && resource.data.userId == request.auth.uid;\r\n      allow delete: if isAuthenticated() \r\n                   && resource.data.userId == request.auth.uid;\r\n    }\r\n\r\n    // Default deny\r\n    match /{document=**} {\r\n      allow read, write: if false;\r\n    }\r\n  }\r\n} ","name":"firestore.rules"}]},"createTime":"2025-04-19T19:20:02.980623Z","metadata":{"services":["cloud.firestore"]}}
+[debug] [2025-04-19T19:19:59.440Z] [rules] created ruleset projects/pitchframe-6967a/rulesets/b5bec487-a1e3-4c38-a717-7be0c73bf480
