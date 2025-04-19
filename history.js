@@ -1,24 +1,8 @@
-// Import Firebase modules
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-import { getFirestore, collection, query, where, orderBy, getDocs } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-import { getStorage, ref, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js';
-
-// Your Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
-    authDomain: "pitchframe-6967a.firebaseapp.com",
-    projectId: "pitchframe-6967a",
-    storageBucket: "pitchframe-6967a.appspot.com",
-    messagingSenderId: "801200566992",
-    appId: "1:801200566992:web:9dc20d8ad085577eb724d5"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+// Import Firebase configuration and services
+import { auth, db, storage } from './firebase-config.js';
+import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+import { collection, query, where, orderBy, getDocs } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+import { ref, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js';
 
 // Check authentication state
 onAuthStateChanged(auth, (user) => {
@@ -195,51 +179,32 @@ function handleLinkSubmission(linkUrl) {
 async function loadAnalysisHistory(user) {
     try {
         const analysisList = document.getElementById('analysisList');
-        analysisList.innerHTML = ''; // Clear existing content
+        analysisList.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Loading your pitches...</p></div>';
 
-        // Get filters
-        const dateFilter = document.getElementById('dateFilter').value;
-        const statusFilter = document.getElementById('statusFilter').value;
-        const sortBy = document.getElementById('sortBy').value;
-
-        // Build query
-        let q = collection(db, 'pitches');
-        
-        // Add filters
-        q = query(q, where('userId', '==', user.uid));
-
-        if (dateFilter !== 'all') {
-            const startDate = new Date();
-            switch (dateFilter) {
-                case 'today':
-                    startDate.setHours(0, 0, 0, 0);
-                    break;
-                case 'week':
-                    startDate.setDate(startDate.getDate() - 7);
-                    break;
-                case 'month':
-                    startDate.setMonth(startDate.getMonth() - 1);
-                    break;
-            }
-            q = query(q, where('createdAt', '>=', startDate));
-        }
-
-        if (statusFilter !== 'all') {
-            q = query(q, where('status', '==', statusFilter));
-        }
-
-        // Add sorting
-        const [sortField, sortDirection] = sortBy.split('-');
-        q = query(q, orderBy(sortField === 'date' ? 'createdAt' : 'analysis.score', 
-            sortDirection === 'desc' ? 'desc' : 'asc'));
+        // Simplified query - just get user's pitches ordered by creation date
+        let q = query(
+            collection(db, 'pitches'),
+            where('userId', '==', user.uid),
+            orderBy('createdAt', 'desc')
+        );
 
         // Get documents
         const snapshot = await getDocs(q);
 
         if (snapshot.empty) {
-            analysisList.innerHTML = '<div class="text-center text-muted">No pitches found</div>';
+            analysisList.innerHTML = `
+                <div class="text-center text-muted">
+                    <i class="fas fa-folder-open fa-3x mb-3"></i>
+                    <p>No pitches found</p>
+                    <a href="pitch-submission.html" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-2"></i>Submit a Pitch
+                    </a>
+                </div>`;
             return;
         }
+
+        // Clear loading state
+        analysisList.innerHTML = '';
 
         // Create cards for each pitch
         snapshot.forEach(doc => {
@@ -250,7 +215,13 @@ async function loadAnalysisHistory(user) {
 
     } catch (error) {
         console.error('Error loading history:', error);
-        alert('Error loading pitch history: ' + error.message);
+        analysisList.innerHTML = `
+            <div class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                Error loading pitch history: ${error.message}
+                <hr>
+                <p class="mb-0">Please try <a href="javascript:location.reload()" class="alert-link">refreshing the page</a> or <a href="pitch-submission.html" class="alert-link">submit a new pitch</a>.</p>
+            </div>`;
     }
 }
 
