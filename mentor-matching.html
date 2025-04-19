@@ -213,35 +213,34 @@
 
                 // Build query
                 let mentorsRef = collection(db, 'mentors');
-                let constraints = [];
+                let q = mentorsRef;
 
                 // Add filters
                 if (industry) {
-                    constraints.push(where('industry', '==', industry));
+                    q = query(q, where('industry', '==', industry));
                 }
                 if (expertise) {
-                    constraints.push(where('expertiseLevel', '==', expertise));
+                    q = query(q, where('expertiseLevel', '==', expertise));
                 }
                 if (availability) {
-                    constraints.push(where('availability', '==', availability));
+                    q = query(q, where('availability', '==', availability));
                 }
 
                 // Add sorting
                 switch(sortBy) {
                     case 'experience':
-                        constraints.push(orderBy('yearsOfExperience', 'desc'));
+                        q = query(q, orderBy('yearsOfExperience', 'desc'));
                         break;
                     case 'recent':
-                        constraints.push(orderBy('lastActive', 'desc'));
+                        q = query(q, orderBy('lastActive', 'desc'));
                         break;
                     case 'match':
-                        constraints.push(orderBy('rating', 'desc'));
+                        q = query(q, orderBy('rating', 'desc'));
                         break;
                     default:
-                        constraints.push(orderBy('createdAt', 'desc'));
+                        q = query(q, orderBy('createdAt', 'desc'));
                 }
 
-                const q = query(mentorsRef, ...constraints);
                 const querySnapshot = await getDocs(q);
 
                 // Add debugging information
