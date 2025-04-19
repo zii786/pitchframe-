@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
     <title>Login - PitchFrame</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -159,115 +160,107 @@
     <!-- Firebase Authentication -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { 
-            getAuth, 
-            signInWithEmailAndPassword,
-            sendPasswordResetEmail,
-            onAuthStateChanged,
-            setPersistence,
-            browserLocalPersistence,
-            browserSessionPersistence,
-            GoogleAuthProvider,
-            signInWithPopup
-        } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, getRedirectResult } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
         import { firebaseConfig } from './firebase-config.js';
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
 
-        // Check if user is already logged in
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // Get user data from Firestore
+        // Handle Google Sign In
+        document.getElementById('googleLogin').addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                
+                // Check if user document exists
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
-                const userData = userDoc.data();
-
-                // Redirect based on user type
-                if (userData.userType === 'mentor') {
-                    window.location.href = 'mentor-dashboard.html';
+                
+                if (!userDoc.exists()) {
+                    // Create new user document if it doesn't exist
+                    await setDoc(doc(db, 'users', user.uid), {
+                        firstName: user.displayName?.split(' ')[0] || '',
+                        lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
+                        email: user.email,
+                        userType: 'startup', // Default user type
+                        createdAt: new Date()
+                    });
+                    
+                    // Redirect to profile completion page
+                    window.location.href = 'complete-profile.html';
                 } else {
-                    window.location.href = 'index.html';
+                    // Get user type from existing document
+                    const userData = userDoc.data();
+                    
+                    // Redirect based on user type
+                    switch(userData.userType) {
+                        case 'mentor':
+                            window.location.href = 'mentor-dashboard.html';
+                            break;
+                        case 'startup':
+                            window.location.href = 'index.html';
+                            break;
+                        case 'investor':
+                            window.location.href = 'investor-dashboard.html';
+                            break;
+                        default:
+                            window.location.href = 'index.html';
+                    }
                 }
+            } catch (error) {
+                console.error('Google login error:', error);
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.textContent = 'Error signing in with Google. Please try again.';
+                errorMessage.classList.remove('d-none');
             }
         });
 
-        // Handle login form submission
-        const loginForm = document.getElementById('loginForm');
-        const errorMessage = document.getElementById('errorMessage');
-
-        loginForm.addEventListener('submit', async (e) => {
+        // Handle Email/Password Sign In
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const remember = document.getElementById('remember').checked;
+            const errorMessage = document.getElementById('errorMessage');
             
             try {
-                errorMessage.classList.add('d-none');
-                
-                // Set persistence based on remember me checkbox
-                await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
-                
-                // Sign in user
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-
+                
                 // Get user data from Firestore
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
-                const userData = userDoc.data();
-
-                // Redirect based on user type
-                if (userData.userType === 'mentor') {
-                    window.location.href = 'mentor-dashboard.html';
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    
+                    // Redirect based on user type
+                    switch(userData.userType) {
+                        case 'mentor':
+                            window.location.href = 'mentor-dashboard.html';
+                            break;
+                        case 'startup':
+                            window.location.href = 'startup-dashboard.html';
+                            break;
+                        case 'investor':
+                            window.location.href = 'investor-dashboard.html';
+                            break;
+                        default:
+                            window.location.href = 'index.html';
+                    }
                 } else {
-                    window.location.href = 'index.html';
+                    window.location.href = 'complete-profile.html';
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                let message = error.message;
-                
-                // Make error messages more user-friendly
-                if (error.code === 'auth/wrong-password') {
-                    message = 'Incorrect password. Please try again.';
-                } else if (error.code === 'auth/user-not-found') {
-                    message = 'No account found with this email address.';
-                } else if (error.code === 'auth/invalid-email') {
-                    message = 'Please enter a valid email address.';
-                } else if (error.code === 'auth/too-many-requests') {
-                    message = 'Too many failed attempts. Please try again later.';
-                }
-                
-                errorMessage.textContent = message;
-                errorMessage.classList.remove('d-none');
-            }
-        });
-
-        // Handle forgot password
-        document.getElementById('forgotPassword').addEventListener('click', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            
-            if (!email) {
-                errorMessage.textContent = 'Please enter your email address';
-                errorMessage.classList.remove('d-none');
-                return;
-            }
-            
-            try {
-                errorMessage.classList.add('d-none');
-                await sendPasswordResetEmail(auth, email);
-                alert('Password reset email sent! Please check your inbox.');
-            } catch (error) {
-                console.error('Password reset error:', error);
-                let message = error.message;
+                let message = 'Invalid email or password';
                 
                 if (error.code === 'auth/user-not-found') {
-                    message = 'No account found with this email address.';
-                } else if (error.code === 'auth/invalid-email') {
-                    message = 'Please enter a valid email address.';
+                    message = 'No account found with this email';
+                } else if (error.code === 'auth/wrong-password') {
+                    message = 'Invalid password';
                 }
                 
                 errorMessage.textContent = message;
@@ -275,37 +268,18 @@
             }
         });
 
-        // Initialize Google Auth Provider
-        const googleProvider = new GoogleAuthProvider();
-        
-        // Handle Google login
-        document.getElementById('googleLogin').addEventListener('click', async () => {
-            try {
-                errorMessage.classList.add('d-none');
-                const result = await signInWithPopup(auth, googleProvider);
-                const user = result.user;
-
-                // Get user data from Firestore
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                const userData = userDoc.data();
-
-                // Redirect based on user type
-                if (userData.userType === 'mentor') {
-                    window.location.href = 'mentor-dashboard.html';
-                } else {
-                    window.location.href = 'index.html';
+        // Check for redirect result (in case popup was blocked)
+        getRedirectResult(auth)
+            .then((result) => {
+                if (result) {
+                    // Handle successful redirect sign-in
+                    const user = result.user;
+                    // ... handle user redirect ...
                 }
-            } catch (error) {
-                console.error('Google login error:', error);
-                errorMessage.textContent = 'Failed to sign in with Google. Please try again.';
-                errorMessage.classList.remove('d-none');
-            }
-        });
-
-        // Handle LinkedIn login (placeholder)
-        document.getElementById('linkedinLogin').addEventListener('click', () => {
-            alert('LinkedIn login will be implemented soon!');
-        });
+            })
+            .catch((error) => {
+                console.error('Redirect error:', error);
+            });
     </script>
 </body>
 </html> 

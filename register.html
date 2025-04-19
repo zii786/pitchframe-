@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - PitchFrame</title>
     <!-- Bootstrap CSS -->
@@ -64,16 +66,22 @@
         .password-requirements ul {
             padding-left: 1rem;
             margin-bottom: 0;
+            list-style: none;
         }
         .password-requirements li {
             margin-bottom: 0.25rem;
+            position: relative;
+            padding-left: 1.5rem;
         }
-        .password-requirements li.valid {
-            color: #198754;
+        .password-requirements li::before {
+            content: "×";
+            position: absolute;
+            left: 0;
+            color: #dc3545;
         }
         .password-requirements li.valid::before {
             content: "✓";
-            margin-right: 0.5rem;
+            color: #198754;
         }
         .login-container {
             min-height: 100vh;
@@ -135,6 +143,7 @@
     </style>
 </head>
 <body>
+    
     <div class="register-container">
         <div class="container">
             <a href="index.html" class="back-button">
@@ -145,7 +154,7 @@
                     <h1><strong>Pitch<span class="text-primary">Frame</span></strong></h1>
                     <p class="text-muted">Create your account to get started</p>
                 </div>
-                <div id="errorMessage" class="alert alert-danger d-none"></div>
+                <div id="errorMessage" class="alert alert-danger d-none" role="alert"></div>
                 <form id="registerForm" class="register-form">
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -223,7 +232,7 @@
     <!-- Firebase Authentication -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
         import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
         import { firebaseConfig } from './firebase-config.js';
 
@@ -232,87 +241,346 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        let mentorModal;
+        let currentUser;
+
+        // Get DOM elements
         const form = document.getElementById('registerForm');
         const errorMessage = document.getElementById('errorMessage');
-        const password = document.getElementById('password');
-        const requirements = {
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const passwordRequirements = {
             length: document.getElementById('lengthReq'),
             upper: document.getElementById('upperReq'),
             number: document.getElementById('numberReq'),
             special: document.getElementById('specialReq')
         };
 
-        // Password validation
-        password.addEventListener('input', () => {
-            const value = password.value;
-            requirements.length.classList.toggle('valid', value.length >= 8);
-            requirements.upper.classList.toggle('valid', /[A-Z]/.test(value));
-            requirements.number.classList.toggle('valid', /[0-9]/.test(value));
-            requirements.special.classList.toggle('valid', /[!@#$%^&*]/.test(value));
+        // Initialize the modal when document is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            mentorModal = new bootstrap.Modal(document.getElementById('mentorDetailsModal'));
+            
+            // Add email input validation
+            if (emailInput) {
+                emailInput.addEventListener('blur', async () => {
+                    if (emailInput.value) {
+                        try {
+                            const methods = await fetchSignInMethodsForEmail(auth, emailInput.value);
+                            if (methods.length > 0) {
+                                showError('This email is already registered. <a href="login.html" class="alert-link">Click here to login</a>', true);
+                                emailInput.setCustomValidity('Email already in use');
+                            } else {
+                                emailInput.setCustomValidity('');
+                                hideError();
+                            }
+                        } catch (error) {
+                            console.error('Error checking email:', error);
+                        }
+                    }
+                });
+            }
+
+            // Add password validation listener
+            if (passwordInput) {
+                passwordInput.addEventListener('input', validatePassword);
+            }
         });
 
-        // Form submission
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        // Password validation function
+        function validatePassword() {
+            const value = passwordInput.value;
             
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const firstName = document.getElementById('firstName').value;
-            const lastName = document.getElementById('lastName').value;
-            const userType = document.getElementById('userType').value;
-            
-            // Validate password match
-            if (password !== confirmPassword) {
-                errorMessage.textContent = 'Passwords do not match';
-                errorMessage.classList.remove('d-none');
-                return;
+            if (passwordRequirements.length) {
+                passwordRequirements.length.classList.toggle('valid', value.length >= 8);
             }
-
-            // Validate password requirements
-            if (password.length < 8 || !/[A-Z]/.test(password) || 
-                !/[0-9]/.test(password) || !/[!@#$%^&*]/.test(password)) {
-                errorMessage.textContent = 'Please meet all password requirements';
-                errorMessage.classList.remove('d-none');
-                return;
+            if (passwordRequirements.upper) {
+                passwordRequirements.upper.classList.toggle('valid', /[A-Z]/.test(value));
             }
+            if (passwordRequirements.number) {
+                passwordRequirements.number.classList.toggle('valid', /[0-9]/.test(value));
+            }
+            if (passwordRequirements.special) {
+                passwordRequirements.special.classList.toggle('valid', /[!@#$%^&*]/.test(value));
+            }
+        }
 
+        // Handle mentor details form submission
+        document.getElementById('saveMentorDetails')?.addEventListener('click', async () => {
             try {
-                errorMessage.classList.add('d-none');
+                const expertise = Array.from(document.querySelectorAll('.expertise-check:checked')).map(cb => cb.value);
                 
-                // Create user with email and password
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
+                if (expertise.length === 0) {
+                    alert('Please select at least one area of expertise');
+                    return;
+                }
 
-                // Store additional user data in Firestore
-                await setDoc(doc(db, 'users', user.uid), {
-                    firstName: firstName,
-                    lastName: lastName,
-                    email: email,
-                    userType: userType,
+                const mentorData = {
+                    userId: currentUser.uid,
+                    firstName: currentUser.displayName?.split(' ')[0] || '',
+                    lastName: currentUser.displayName?.split(' ').slice(1).join(' ') || '',
+                    email: currentUser.email,
+                    industry: document.getElementById('mentorIndustry')?.value || '',
+                    yearsOfExperience: parseInt(document.getElementById('yearsOfExperience')?.value || '0'),
+                    expertise: expertise,
+                    company: document.getElementById('mentorCompany')?.value || '',
+                    title: document.getElementById('mentorTitle')?.value || '',
+                    linkedinProfile: document.getElementById('linkedinProfile')?.value || '',
+                    bio: document.getElementById('mentorBio')?.value || '',
+                    meetingFormat: document.getElementById('meetingFormat')?.value || '',
+                    availability: document.getElementById('mentorAvailability')?.value || '',
+                    status: 'active',
+                    rating: 0,
+                    totalReviews: 0,
+                    matchPreferences: {
+                        industries: Array.from(document.querySelectorAll('.preferred-industry:checked')).map(cb => cb.value),
+                        startupStages: Array.from(document.querySelectorAll('.startup-stage:checked')).map(cb => cb.value),
+                        maxStartups: parseInt(document.getElementById('maxStartups')?.value || '5')
+                    },
+                    createdAt: new Date(),
+                    lastActive: new Date()
+                };
+
+                // Create mentor profile in mentors collection
+                await setDoc(doc(db, 'mentors', currentUser.uid), mentorData);
+
+                // Update user document with mentor status
+                await setDoc(doc(db, 'users', currentUser.uid), {
+                    userType: 'mentor',
+                    mentorProfileCompleted: true,
+                    firstName: mentorData.firstName,
+                    lastName: mentorData.lastName,
+                    email: mentorData.email,
                     createdAt: new Date()
                 });
 
-                // Redirect based on user type
+                // Close modal and redirect
+                mentorModal.hide();
+                window.location.href = 'mentor-dashboard.html';
+            } catch (error) {
+                console.error('Error saving mentor details:', error);
+                alert('Error saving mentor details. Please try again.');
+            }
+        });
+
+        // Main registration form submission
+        form?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = emailInput?.value;
+            const password = passwordInput?.value;
+            const confirmPassword = document.getElementById('confirmPassword')?.value;
+            const firstName = document.getElementById('firstName')?.value;
+            const lastName = document.getElementById('lastName')?.value;
+            const userType = document.getElementById('userType')?.value;
+
+            if (!email || !password || !confirmPassword || !firstName || !lastName || !userType) {
+                showError('Please fill in all required fields');
+                return;
+            }
+
+            // Check if email already exists
+            try {
+                const methods = await fetchSignInMethodsForEmail(auth, email);
+                if (methods.length > 0) {
+                    showError('This email is already registered. <a href="login.html" class="alert-link">Click here to login</a>', true);
+                    return;
+                }
+
+                // Password validation
+                if (password !== confirmPassword) {
+                    showError('Passwords do not match');
+                    return;
+                }
+
+                // Create user account
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                currentUser = userCredential.user;
+
+                // Store basic user data
+                await setDoc(doc(db, 'users', currentUser.uid), {
+                    firstName,
+                    lastName,
+                    email,
+                    userType,
+                    createdAt: new Date()
+                });
+
+                // If user is registering as a mentor, show the mentor details modal
                 if (userType === 'mentor') {
-                    window.location.href = 'mentor-dashboard.html';
+                    mentorModal?.show();
                 } else {
                     window.location.href = 'index.html';
                 }
             } catch (error) {
                 console.error('Registration error:', error);
-                let message = error.message;
+                let errorMsg = 'An error occurred during registration. Please try again.';
                 
-                if (error.code === 'auth/email-already-in-use') {
-                    message = 'This email is already registered. Please login instead.';
-                } else if (error.code === 'auth/weak-password') {
-                    message = 'Password is too weak. Please use a stronger password.';
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMsg = 'This email is already registered. <a href="login.html" class="alert-link">Click here to login</a>';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMsg = 'Please enter a valid email address';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        errorMsg = 'Email/password registration is not enabled. Please contact support.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMsg = 'Please choose a stronger password';
+                        break;
                 }
                 
-                errorMessage.textContent = message;
-                errorMessage.classList.remove('d-none');
+                showError(errorMsg, true);
             }
         });
+
+        // Show error message
+        function showError(message, isHtml = false) {
+            if (errorMessage) {
+                if (isHtml) {
+                    errorMessage.innerHTML = message;
+                } else {
+                    errorMessage.textContent = message;
+                }
+                errorMessage.classList.remove('d-none');
+            }
+        }
+
+        // Hide error message
+        function hideError() {
+            if (errorMessage) {
+                errorMessage.classList.add('d-none');
+            }
+        }
     </script>
+
+    <!-- Mentor Details Modal -->
+    <div class="modal fade" id="mentorDetailsModal" tabindex="-1" aria-labelledby="mentorDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mentorDetailsModalLabel">Complete Your Mentor Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="mentorDetailsForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Industry Expertise</label>
+                                <select class="form-select" id="mentorIndustry" required>
+                                    <option value="">Select Industry</option>
+                                    <option value="Technology">Technology</option>
+                                    <option value="Healthcare">Healthcare</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Retail">Retail</option>
+                                    <option value="Manufacturing">Manufacturing</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Years of Experience</label>
+                                <input type="number" class="form-control" id="yearsOfExperience" min="1" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Areas of Expertise (Select multiple)</label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input expertise-check" type="checkbox" value="Business Strategy">
+                                        <label class="form-check-label">Business Strategy</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input expertise-check" type="checkbox" value="Marketing">
+                                        <label class="form-check-label">Marketing</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input expertise-check" type="checkbox" value="Finance">
+                                        <label class="form-check-label">Finance</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input expertise-check" type="checkbox" value="Technology">
+                                        <label class="form-check-label">Technology</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input expertise-check" type="checkbox" value="Product Development">
+                                        <label class="form-check-label">Product Development</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input expertise-check" type="checkbox" value="Sales">
+                                        <label class="form-check-label">Sales</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input expertise-check" type="checkbox" value="Operations">
+                                        <label class="form-check-label">Operations</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input expertise-check" type="checkbox" value="Legal">
+                                        <label class="form-check-label">Legal</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input expertise-check" type="checkbox" value="HR">
+                                        <label class="form-check-label">HR</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Current Company</label>
+                                <input type="text" class="form-control" id="mentorCompany" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Job Title</label>
+                                <input type="text" class="form-control" id="mentorTitle" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">LinkedIn Profile</label>
+                            <input type="url" class="form-control" id="linkedinProfile" placeholder="https://linkedin.com/in/your-profile">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Bio</label>
+                            <textarea class="form-control" id="mentorBio" rows="3" required></textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Preferred Meeting Format</label>
+                                <select class="form-select" id="meetingFormat" required>
+                                    <option value="">Select Format</option>
+                                    <option value="Virtual">Virtual Only</option>
+                                    <option value="In-Person">In-Person Only</option>
+                                    <option value="Both">Both Virtual and In-Person</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Availability</label>
+                                <select class="form-select" id="mentorAvailability" required>
+                                    <option value="">Select Availability</option>
+                                    <option value="Full">Full Time</option>
+                                    <option value="Part">Part Time</option>
+                                    <option value="Flexible">Flexible</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveMentorDetails">Complete Registration</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html> 
