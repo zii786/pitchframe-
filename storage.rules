@@ -17,18 +17,22 @@ service firebase.storage {
           || request.resource.contentType.matches('application/vnd.ms-powerpoint');
     }
 
+    function isValidLinkSubmission() {
+      return request.resource.metadata.isLink == true;
+    }
+
     // Pitch deck rules
     match /pitch-decks/{userId}/{fileName} {
       allow read: if isAuthenticated() 
                   && (isOwner(userId) || resource.metadata.isPublic == true);
       allow write: if isAuthenticated() 
                    && isOwner(userId) 
-                   && isValidFileType()
-                   && request.resource.size < 10 * 1024 * 1024; // 10MB limit
+                   && (isValidFileType() || isValidLinkSubmission())
+                   && (isValidLinkSubmission() || request.resource.size < 10 * 1024 * 1024); // 10MB limit for files only
     }
 
     match /{allPaths=**} {
-      allow read, write: if request.auth != null;
+      allow read, write: if false;  // Secure default rule
     }
   }
 } 

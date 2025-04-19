@@ -178,7 +178,7 @@
         // Check if user is already logged in
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                alert('You are already logged in! Redirecting to settings...');
+                alert('You are already logged in! Redirecting to home page...');
                 window.location.href = 'index.html';
             }
         });

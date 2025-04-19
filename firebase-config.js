@@ -16,7 +16,7 @@ import {
     getDoc, 
     updateDoc
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-import { getStorage } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js';
+import { getStorage, ref } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -31,10 +31,28 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase services
+// Initialize Firebase services with CORS settings
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
+const storage = getStorage(app, undefined, {
+    customDomain: undefined,
+    cors: {
+        origin: ['http://localhost:8000', 'http://127.0.0.1:8000'],
+        methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        maxAge: 3600
+    }
+});
+
+// Set CORS configuration
+const corsSettings = {
+  origin: ['http://localhost:8000', 'http://127.0.0.1:8000'],
+  methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Content-Length', 'User-Agent', 'x-goog-resumable'],
+  maxAge: 3600
+};
+
+const storageRef = ref(storage);
 
 // Function to handle user registration
 async function registerUser(email, password, firstName, lastName, userType) {
@@ -161,6 +179,8 @@ export {
     auth,
     db,
     storage,
+    storageRef,
+    corsSettings,
     firebaseConfig,
     registerUser,
     loginUser,

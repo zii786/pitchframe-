@@ -43,6 +43,17 @@ service cloud.firestore {
       allow delete: if isAuthenticated() && isOwner(userId);
     }
 
+    // Pitch submissions
+    match /pitches/{pitchId} {
+      allow create: if isAuthenticated() 
+                   && request.resource.data.userId == request.auth.uid;
+      allow read: if isAuthenticated();
+      allow update: if isAuthenticated() 
+                   && resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() 
+                   && resource.data.userId == request.auth.uid;
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

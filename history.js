@@ -1,5 +1,27 @@
+// Import Firebase modules
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+import { getFirestore, collection, query, where, orderBy, getDocs } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+import { getStorage, ref, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js';
+
+// Your Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
+    authDomain: "pitchframe-6967a.firebaseapp.com",
+    projectId: "pitchframe-6967a",
+    storageBucket: "pitchframe-6967a.appspot.com",
+    messagingSenderId: "801200566992",
+    appId: "1:801200566992:web:9dc20d8ad085577eb724d5"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
 // Check authentication state
-auth.onAuthStateChanged((user) => {
+onAuthStateChanged(auth, (user) => {
     if (!user) {
         window.location.href = 'login.html';
     } else {
@@ -11,7 +33,7 @@ auth.onAuthStateChanged((user) => {
 document.getElementById('logoutBtn').addEventListener('click', async (e) => {
     e.preventDefault();
     try {
-        await logoutUser();
+        await signOut(auth);
         window.location.href = 'login.html';
     } catch (error) {
         console.error('Logout error:', error);
@@ -56,22 +78,57 @@ fileInput.addEventListener('change', (e) => {
 });
 
 // Handle file upload
-async function handleFileUpload(file) {
-    // Validate file type
-    const validTypes = ['application/pdf', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
-    if (!validTypes.includes(file.type)) {
-        alert('Please upload a PDF or PowerPoint file');
-        return;
-    }
-
+async function handleFileUpload(file, isLink = false, linkUrl = null) {
     try {
         // Show progress bar
         uploadProgress.classList.remove('d-none');
         progressBar.style.width = '0%';
 
-        // Create a unique filename
+        // Create a unique filename/identifier
         const timestamp = new Date().getTime();
-        const filename = `${auth.currentUser.uid}/${timestamp}_${file.name}`;
+        const filename = isLink ? 
+            `${auth.currentUser.uid}/${timestamp}_link` :
+            `${auth.currentUser.uid}/${timestamp}_${file.name}`;
+
+        if (isLink) {
+            // For link submissions, create a metadata-only entry
+            const metadata = {
+                customMetadata: {
+                    isLink: 'true',
+                    originalUrl: linkUrl
+                }
+            };
+
+            // Create an empty file with metadata in Firebase Storage
+            const storageRef = firebase.storage().ref();
+            const fileRef = storageRef.child(filename);
+            await fileRef.putString('', 'raw', metadata);
+
+            // Save link metadata to Firestore
+            await firebase.firestore().collection('pitch_decks').add({
+                userId: auth.currentUser.uid,
+                filename: 'External Link',
+                downloadURL: linkUrl,
+                uploadType: 'link',
+                uploadDate: firebase.firestore.FieldValue.serverTimestamp(),
+                status: 'processing'
+            });
+
+            // Hide progress bar and show success
+            uploadProgress.classList.add('d-none');
+            bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
+            alert('Link submitted successfully! Analysis will begin shortly.');
+            loadAnalysisHistory(auth.currentUser);
+            return;
+        }
+
+        // For file uploads, validate file type
+        const validTypes = ['application/pdf', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
+        if (!validTypes.includes(file.type)) {
+            alert('Please upload a PDF or PowerPoint file');
+            uploadProgress.classList.add('d-none');
+            return;
+        }
 
         // Upload file to Firebase Storage
         const storageRef = firebase.storage().ref();
@@ -98,20 +155,15 @@ async function handleFileUpload(file) {
                     userId: auth.currentUser.uid,
                     filename: file.name,
                     downloadURL: downloadURL,
+                    uploadType: 'file',
                     uploadDate: firebase.firestore.FieldValue.serverTimestamp(),
                     status: 'processing'
                 });
 
                 // Hide progress bar
                 uploadProgress.classList.add('d-none');
-
-                // Close modal
                 bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
-
-                // Show success message
                 alert('File uploaded successfully! Analysis will begin shortly.');
-
-                // Reload history
                 loadAnalysisHistory(auth.currentUser);
             }
         );
@@ -122,72 +174,83 @@ async function handleFileUpload(file) {
     }
 }
 
+// Add link submission handler
+function handleLinkSubmission(linkUrl) {
+    if (!linkUrl) {
+        alert('Please enter a valid URL');
+        return;
+    }
+
+    try {
+        new URL(linkUrl);
+    } catch (error) {
+        alert('Please enter a valid URL');
+        return;
+    }
+
+    handleFileUpload(null, true, linkUrl);
+}
+
 // Load analysis history
 async function loadAnalysisHistory(user) {
     try {
         const analysisList = document.getElementById('analysisList');
         analysisList.innerHTML = ''; // Clear existing content
 
-        // Get user preferences for filtering
-        const prefsDoc = await firebase.firestore().collection('user_preferences').doc(user.uid).get();
-        const prefs = prefsDoc.exists ? prefsDoc.data() : {};
-
-        // Get date filter
+        // Get filters
         const dateFilter = document.getElementById('dateFilter').value;
-        let startDate = new Date();
-        switch (dateFilter) {
-            case 'today':
-                startDate.setHours(0, 0, 0, 0);
-                break;
-            case 'week':
-                startDate.setDate(startDate.getDate() - 7);
-                break;
-            case 'month':
-                startDate.setMonth(startDate.getMonth() - 1);
-                break;
-            case 'all':
-            default:
-                startDate = null;
-        }
-
-        // Get status filter
         const statusFilter = document.getElementById('statusFilter').value;
-
-        // Get sort order
         const sortBy = document.getElementById('sortBy').value;
-        const [sortField, sortOrder] = sortBy.split('-');
 
         // Build query
-        let query = firebase.firestore().collection('pitch_decks')
-            .where('userId', '==', user.uid);
+        let q = collection(db, 'pitches');
+        
+        // Add filters
+        q = query(q, where('userId', '==', user.uid));
 
-        if (startDate) {
-            query = query.where('uploadDate', '>=', startDate);
+        if (dateFilter !== 'all') {
+            const startDate = new Date();
+            switch (dateFilter) {
+                case 'today':
+                    startDate.setHours(0, 0, 0, 0);
+                    break;
+                case 'week':
+                    startDate.setDate(startDate.getDate() - 7);
+                    break;
+                case 'month':
+                    startDate.setMonth(startDate.getMonth() - 1);
+                    break;
+            }
+            q = query(q, where('createdAt', '>=', startDate));
         }
 
         if (statusFilter !== 'all') {
-            query = query.where('status', '==', statusFilter);
+            q = query(q, where('status', '==', statusFilter));
         }
 
         // Add sorting
-        query = query.orderBy(sortField === 'date' ? 'uploadDate' : 'analysis.score', 
-            sortOrder === 'desc' ? 'desc' : 'asc');
+        const [sortField, sortDirection] = sortBy.split('-');
+        q = query(q, orderBy(sortField === 'date' ? 'createdAt' : 'analysis.score', 
+            sortDirection === 'desc' ? 'desc' : 'asc'));
 
-        const snapshot = await query.get();
+        // Get documents
+        const snapshot = await getDocs(q);
 
         if (snapshot.empty) {
-            analysisList.innerHTML = '<div class="text-center text-muted">No analyses found</div>';
+            analysisList.innerHTML = '<div class="text-center text-muted">No pitches found</div>';
             return;
         }
 
+        // Create cards for each pitch
         snapshot.forEach(doc => {
             const data = doc.data();
-            const analysisCard = createAnalysisCard(doc.id, data);
-            analysisList.appendChild(analysisCard);
+            const card = createAnalysisCard(doc.id, data);
+            analysisList.appendChild(card);
         });
+
     } catch (error) {
         console.error('Error loading history:', error);
-        alert('Error loading analysis history: ' + error.message);
+        alert('Error loading pitch history: ' + error.message);
     }
 }
 
@@ -196,7 +259,7 @@ function createAnalysisCard(id, data) {
     const card = document.createElement('div');
     card.className = 'analysis-card';
     
-    const date = data.uploadDate ? data.uploadDate.toDate().toLocaleDateString() : 'N/A';
+    const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
     const statusClass = `status-${data.status}`;
     const statusText = data.status.charAt(0).toUpperCase() + data.status.slice(1);
     
@@ -214,32 +277,23 @@ function createAnalysisCard(id, data) {
     card.innerHTML = `
         <div class="d-flex justify-content-between align-items-start">
             <div>
-                <h5 class="mb-1">${data.filename}</h5>
-                <div class="analysis-date mb-2">Uploaded on ${date}</div>
+                <h5 class="mb-1">${data.companyName}</h5>
+                <div class="analysis-date mb-2">Submitted on ${date}</div>
                 <span class="analysis-status ${statusClass}">${statusText}</span>
             </div>
             ${scoreHtml}
         </div>
-        ${data.status === 'completed' && data.analysis ? `
-            <div class="mt-3">
-                <h6>Key Recommendations:</h6>
-                <ul class="list-group list-group-flush">
-                    ${data.analysis.recommendations.slice(0, 3).map(rec => `
-                        <li class="list-group-item">
-                            <i class="fas fa-check-circle text-success me-2"></i>
-                            ${rec}
-                        </li>
-                    `).join('')}
-                </ul>
-            </div>
-        ` : ''}
         <div class="mt-3">
-            <button class="btn btn-outline-primary btn-sm" onclick="viewAnalysis('${id}')">
-                View Details
+            <p class="mb-2">${data.tagline || ''}</p>
+            <p class="mb-2 text-muted">Industry: ${data.industry}</p>
+        </div>
+        <div class="mt-3">
+            <button class="btn btn-outline-primary btn-sm" onclick="window.location.href='${data.pitchDeckUrl}'">
+                <i class="fas fa-file-download me-2"></i>View Pitch Deck
             </button>
             ${data.status === 'completed' ? `
-                <button class="btn btn-outline-secondary btn-sm ms-2" onclick="downloadReport('${id}')">
-                    Download Report
+                <button class="btn btn-outline-success btn-sm ms-2" onclick="viewAnalysis('${id}')">
+                    <i class="fas fa-chart-bar me-2"></i>View Analysis
                 </button>
             ` : ''}
         </div>
@@ -249,12 +303,10 @@ function createAnalysisCard(id, data) {
 }
 
 // View analysis details
-function viewAnalysis(id) {
-    // Store the analysis ID in session storage
+window.viewAnalysis = function(id) {
     sessionStorage.setItem('currentAnalysisId', id);
-    // Redirect to AI analyzer page
     window.location.href = 'AI_analyzer.html';
-}
+};
 
 // Download analysis report
 async function downloadReport(id) {
@@ -288,7 +340,63 @@ async function downloadReport(id) {
     }
 }
 
-// Add event listeners for filters
+// Add filter change handlers
 document.getElementById('dateFilter').addEventListener('change', () => loadAnalysisHistory(auth.currentUser));
 document.getElementById('statusFilter').addEventListener('change', () => loadAnalysisHistory(auth.currentUser));
-document.getElementById('sortBy').addEventListener('change', () => loadAnalysisHistory(auth.currentUser)); 
+document.getElementById('sortBy').addEventListener('change', () => loadAnalysisHistory(auth.currentUser));
+
+// Add this function to handle viewing pitch decks
+function viewPitchDeck(pitchDeckUrl, uploadType) {
+    if (!pitchDeckUrl) {
+        showError('No pitch deck available');
+        return;
+    }
+
+    if (uploadType === 'link') {
+        // For cloud storage links, open in new tab
+        window.open(pitchDeckUrl, '_blank');
+    } else {
+        // For uploaded files, handle Firebase Storage URLs
+        const storageRef = ref(storage, pitchDeckUrl);
+        getDownloadURL(storageRef)
+            .then((url) => {
+                window.open(url, '_blank');
+            })
+            .catch((error) => {
+                console.error('Error getting pitch deck:', error);
+                showError('Error accessing pitch deck: ' + error.message);
+            });
+    }
+}
+
+// Update the createHistoryCard function to include upload type
+function createHistoryCard(pitch) {
+    const date = pitch.createdAt.toDate();
+    const formattedDate = date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+
+    return `
+        <div class="history-card">
+            <div class="history-header">
+                <h3>${pitch.companyName}</h3>
+                <span class="badge ${getStatusBadgeClass(pitch.status)}">${pitch.status}</span>
+            </div>
+            <p class="submission-date">Submitted on ${formattedDate}</p>
+            <div class="history-actions">
+                <button class="btn btn-primary" onclick="viewPitchDeck('${pitch.pitchDeckUrl}', '${pitch.uploadType || 'file'}')">
+                    <i class="fas ${pitch.uploadType === 'link' ? 'fa-external-link-alt' : 'fa-file-download'} me-2"></i>
+                    View Pitch Deck
+                </button>
+                ${pitch.status === 'reviewed' ? `
+                    <button class="btn btn-success" onclick="viewFeedback('${pitch.id}')">
+                        <i class="fas fa-comment-alt me-2"></i>
+                        View Feedback
+                    </button>
+                ` : ''}
+            </div>
+        </div>
+    `;
+} 
