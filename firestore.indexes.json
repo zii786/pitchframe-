@@ -23,6 +23,15 @@
         { "fieldPath": "userId", "order": "ASCENDING" },
         { "fieldPath": "viewedAt", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "mentors",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "industry", "order": "ASCENDING" },
+        { "fieldPath": "matchScore", "order": "DESCENDING" },
+        { "fieldPath": "__name__", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []
