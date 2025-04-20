@@ -440,8 +440,8 @@
             where, 
             orderBy, 
             getDocs, 
-            onSnapshot, 
-            limit, 
+            onSnapshot,
+            limit,
             updateDoc 
         } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
         import { firebaseConfig } from './firebase-config.js';
@@ -450,6 +450,8 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        let unreadNotificationsCount = 0;
 
         // Function to format date
         function formatDate(timestamp) {
@@ -579,21 +581,7 @@
         // Make loadPendingReviews available globally
         window.loadPendingReviews = loadPendingReviews;
 
-<<<<<<< HEAD
-        // Check authentication and load data
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // Verify user is a mentor
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                if (userDoc.exists() && userDoc.data().userType === 'mentor') {
-                    await loadPendingReviews();
-                } else {
-                    window.location.href = 'login.html';
-=======
-        // Add this after the existing Firebase imports
-        let unreadNotificationsCount = 0;
-
-        // Function to load notifications
+        // Add the notifications function
         async function loadNotifications(userId) {
             try {
                 const notificationsRef = collection(db, 'notifications');
@@ -605,15 +593,12 @@
                     limit(10)
                 );
 
-                // Real-time listener for notifications
                 onSnapshot(q, async (snapshot) => {
                     const notificationsList = document.getElementById('notificationsList');
                     const notificationBadge = document.getElementById('notificationBadge');
                     
-                    // Count unread notifications
                     unreadNotificationsCount = snapshot.docs.filter(doc => !doc.data().read).length;
                     
-                    // Update badge
                     if (unreadNotificationsCount > 0) {
                         notificationBadge.style.display = 'block';
                         notificationBadge.textContent = unreadNotificationsCount;
@@ -621,7 +606,6 @@
                         notificationBadge.style.display = 'none';
                     }
 
-                    // Update notifications list
                     if (snapshot.empty) {
                         notificationsList.innerHTML = `
                             <div class="p-3 text-center text-muted">
@@ -658,7 +642,6 @@
                         `;
                         notificationsList.appendChild(notificationElement);
 
-                        // Mark notification as read when clicked
                         notificationElement.addEventListener('click', async () => {
                             if (!notification.read) {
                                 await updateDoc(doc(db, 'notifications', doc.id), {
@@ -674,35 +657,35 @@
             }
         }
 
-        // Function to open chat
+        // Add chat opening function
         window.openChat = (chatRoomId) => {
             window.location.href = `chat.html?roomId=${chatRoomId}`;
         };
 
-        // Check authentication and load data
+        // Update the onAuthStateChanged listener
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                try {
-                    const userDoc = await getDoc(doc(db, 'users', user.uid));
-                    const userData = userDoc.data();
-
-                    if (userData?.userType !== 'mentor') {
-                        window.location.href = 'index.html';
-                        alert('Access denied. This page is only for mentors.');
-                        return;
-                    }
-
-                    // Load notifications and pending reviews
-                    await loadNotifications(user.uid);
-                    await loadPendingReviews();
-
-                } catch (error) {
-                    console.error('Error checking user role:', error);
-                    window.location.href = 'index.html';
->>>>>>> 25d7486374dee129ba29d41f7e9c9b1e5fa26195
-                }
-            } else {
+            if (!user) {
                 window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.data();
+
+                if (userData?.userType !== 'mentor') {
+                    window.location.href = 'index.html';
+                    alert('Access denied. This page is only for mentors.');
+                    return;
+                }
+
+                // Load both notifications and pending reviews
+                await loadNotifications(user.uid);
+                await loadPendingReviews();
+
+            } catch (error) {
+                console.error('Error checking user role:', error);
+                window.location.href = 'index.html';
             }
         });
 
@@ -720,4 +703,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
