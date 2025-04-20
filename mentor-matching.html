@@ -104,6 +104,24 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(13, 110, 253, 0.4);
         }
+
+        .error-message {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -174,7 +192,18 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-        import { getFirestore, collection, query, where, getDocs, orderBy, addDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        import { 
+            getFirestore, 
+            collection, 
+            query, 
+            where, 
+            getDocs, 
+            orderBy, 
+            addDoc,
+            getDoc,
+            doc,
+            serverTimestamp 
+        } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
         import { firebaseConfig } from './firebase-config.js';
 
         // Initialize Firebase
@@ -211,37 +240,68 @@
                 const availability = document.getElementById('availabilityFilter').value;
                 const sortBy = document.getElementById('sortBy').value;
 
-                // Build query
-                let mentorsRef = collection(db, 'mentors');
-                let q = query(mentorsRef, orderBy('createdAt', 'desc'));
+                // Base query
+                const mentorsRef = collection(db, 'mentors');
+                let queryConstraints = [];
 
-                const querySnapshot = await getDocs(q);
-                let mentors = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-
-                // Apply filters client-side
+                // Add filters to query
                 if (industry) {
-                    mentors = mentors.filter(mentor => mentor.industry === industry);
+                    queryConstraints.push(where('industry', '==', industry));
                 }
                 if (expertise) {
-                    mentors = mentors.filter(mentor => mentor.expertiseLevel === expertise);
+                    queryConstraints.push(where('expertiseLevel', '==', expertise));
                 }
                 if (availability) {
-                    mentors = mentors.filter(mentor => mentor.availability === availability);
+                    queryConstraints.push(where('availability', '==', availability));
                 }
 
-                // Apply sorting
+                // Add initial sorting
                 switch(sortBy) {
                     case 'experience':
-                        mentors.sort((a, b) => (b.yearsOfExperience || 0) - (a.yearsOfExperience || 0));
+                        queryConstraints.push(orderBy('yearsOfExperience', 'desc'));
                         break;
                     case 'recent':
-                        mentors.sort((a, b) => (b.lastActive?.toDate() || 0) - (a.lastActive?.toDate() || 0));
+                        queryConstraints.push(orderBy('lastActive', 'desc'));
                         break;
                     case 'match':
-                        mentors.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+                        queryConstraints.push(orderBy('rating', 'desc'));
+                        break;
+                }
+
+                const q = query(mentorsRef, ...queryConstraints);
+                const querySnapshot = await getDocs(q);
+                let mentors = [];
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    mentors.push({
+                        id: doc.id,
+                        ...data,
+                        yearsOfExperience: Number(data.yearsOfExperience) || 0,
+                        rating: Number(data.rating) || 0,
+                        totalReviews: Number(data.totalReviews) || 0
+                    });
+                });
+
+                // Additional client-side sorting for complex cases
+                switch(sortBy) {
+                    case 'experience':
+                        mentors.sort((a, b) => b.yearsOfExperience - a.yearsOfExperience);
+                        break;
+                    case 'recent':
+                        mentors.sort((a, b) => {
+                            const dateA = a.lastActive?.toDate() || new Date(0);
+                            const dateB = b.lastActive?.toDate() || new Date(0);
+                            return dateB - dateA;
+                        });
+                        break;
+                    case 'match':
+                        mentors.sort((a, b) => {
+                            // Complex matching algorithm
+                            const scoreA = calculateMatchScore(a);
+                            const scoreB = calculateMatchScore(b);
+                            return scoreB - scoreA;
+                        });
                         break;
                 }
 
@@ -257,85 +317,103 @@
                     return;
                 }
 
-                mentorsGrid.innerHTML = mentors.map(mentor => {
-                    return `
-                        <div class="col-md-6 col-lg-4 mb-4">
-                            <div class="mentor-card position-relative">
-                                <div class="match-percentage">
-                                    <i class="fas fa-star text-warning"></i>
-                                    ${mentor.rating ? mentor.rating.toFixed(1) : 'New'}
-                                </div>
-                                <div class="text-center mb-3">
-                                    <img src="${mentor.profilePicture || `https://ui-avatars.com/api/?name=${mentor.firstName}+${mentor.lastName}&background=0D8ABC&color=fff`}" 
-                                         alt="${mentor.firstName} ${mentor.lastName}" 
-                                         class="mentor-avatar mb-3">
-                                    <h4 class="mb-1">${mentor.firstName} ${mentor.lastName}</h4>
-                                    <p class="text-muted mb-2">
-                                        <i class="fas fa-briefcase me-2"></i>
-                                        ${mentor.title || 'Mentor'} at ${mentor.company || 'Company'}
-                                    </p>
-                                    <div class="badge bg-primary mb-2">
-                                        <i class="fas fa-industry me-1"></i>
-                                        ${mentor.industry || 'Industry not specified'}
-                                    </div>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <h6 class="mb-2"><i class="fas fa-star me-2"></i>Expertise</h6>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        ${(mentor.expertise || ['General']).map(exp => 
-                                            `<span class="expertise-badge">${exp}</span>`
-                                        ).join('')}
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span><i class="fas fa-history me-2"></i>Experience</span>
-                                        <strong>${formatExperience(mentor.yearsOfExperience)}</strong>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span><i class="fas fa-calendar me-2"></i>Availability</span>
-                                        <strong>${mentor.availability || 'Not specified'}</strong>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span><i class="fas fa-users me-2"></i>Total Reviews</span>
-                                        <strong>${mentor.totalReviews || 0}</strong>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <h6 class="mb-2"><i class="fas fa-comment-alt me-2"></i>Bio</h6>
-                                    <p class="text-muted small">${mentor.bio || 'No bio provided'}</p>
-                                </div>
-
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-primary connect-btn flex-grow-1" onclick="requestMentor('${mentor.id}')">
-                                        <i class="fas fa-handshake me-2"></i>Connect
-                                    </button>
-                                    <a href="${mentor.linkedinProfile || '#'}" 
-                                       class="btn btn-outline-primary" 
-                                       target="_blank"
-                                       ${!mentor.linkedinProfile ? 'disabled' : ''}>
-                                        <i class="fab fa-linkedin"></i>
-                                    </a>
+                // Display sorted mentors
+                mentorsGrid.innerHTML = mentors.map(mentor => `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="mentor-card position-relative">
+                            <div class="match-percentage">
+                                ${sortBy === 'match' 
+                                    ? `<span class="match-score">${calculateMatchScore(mentor)}% Match</span>`
+                                    : `<span><i class="fas fa-star text-warning"></i> ${mentor.rating.toFixed(1)}</span>`
+                                }
+                            </div>
+                            <div class="text-center mb-3">
+                                <img src="${mentor.profilePicture || `https://ui-avatars.com/api/?name=${mentor.firstName}+${mentor.lastName}&background=0D8ABC&color=fff`}" 
+                                     alt="${mentor.firstName} ${mentor.lastName}" 
+                                     class="mentor-avatar mb-3">
+                                <h4 class="mb-1">${mentor.firstName} ${mentor.lastName}</h4>
+                                <p class="text-muted mb-2">
+                                    <i class="fas fa-briefcase me-2"></i>
+                                    ${mentor.title || 'Mentor'} at ${mentor.company || 'Company'}
+                                </p>
+                                <div class="badge bg-primary mb-2">
+                                    <i class="fas fa-industry me-1"></i>
+                                    ${mentor.industry || 'Industry not specified'}
                                 </div>
                             </div>
+                            
+                            <div class="mb-3">
+                                <h6 class="mb-2"><i class="fas fa-star me-2"></i>Expertise</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    ${(mentor.expertise || ['General']).map(exp => 
+                                        `<span class="expertise-badge">${exp}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span><i class="fas fa-history me-2"></i>Experience</span>
+                                    <strong>${formatExperience(mentor.yearsOfExperience)}</strong>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span><i class="fas fa-calendar me-2"></i>Last Active</span>
+                                    <strong>${formatDate(mentor.lastActive)}</strong>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-users me-2"></i>Reviews</span>
+                                    <strong>${mentor.totalReviews}</strong>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary connect-btn flex-grow-1" onclick="requestMentor('${mentor.id}')">
+                                    <i class="fas fa-handshake me-2"></i>Connect
+                                </button>
+                                <a href="${mentor.linkedinProfile || '#'}" 
+                                   class="btn btn-outline-primary" 
+                                   target="_blank"
+                                   ${!mentor.linkedinProfile ? 'disabled' : ''}>
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                            </div>
                         </div>
-                    `;
-                }).join('');
+                    </div>
+                `).join('');
 
             } catch (error) {
                 console.error('Error loading mentors:', error);
-                document.getElementById('mentorsGrid').innerHTML = `
+                mentorsGrid.innerHTML = `
                     <div class="col-12">
                         <div class="alert alert-danger">
                             <i class="fas fa-exclamation-circle me-2"></i>
-                            Error loading mentors. Please try again later.
+                            Error loading mentors: ${error.message}
                         </div>
                     </div>
                 `;
             }
+        }
+
+        // Add this function to calculate match score
+        function calculateMatchScore(mentor) {
+            // This is a sample matching algorithm - customize based on your needs
+            let score = 0;
+            
+            // Experience weight (30%)
+            score += (mentor.yearsOfExperience / 10) * 30; // Assuming 10 years is max
+
+            // Rating weight (40%)
+            score += (mentor.rating / 5) * 40; // Assuming 5 is max rating
+
+            // Activity weight (20%)
+            const lastActive = mentor.lastActive?.toDate() || new Date(0);
+            const daysSinceActive = (new Date() - lastActive) / (1000 * 60 * 60 * 24);
+            score += Math.max(0, (30 - daysSinceActive) / 30) * 20; // More recent = higher score
+
+            // Reviews weight (10%)
+            score += Math.min(mentor.totalReviews / 10, 1) * 10; // Cap at 10 reviews
+
+            return Math.round(Math.min(score, 100)); // Ensure score doesn't exceed 100
         }
 
         // Add event listeners for filters
@@ -349,25 +427,58 @@
             try {
                 const user = auth.currentUser;
                 if (!user) {
+                    alert('Please log in to connect with mentors.');
                     window.location.href = 'login.html';
                     return;
                 }
 
-                // Create a connection request in Firestore
+                // Show loading state
+                const button = event.target.closest('button');
+                const originalText = button.innerHTML;
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+
+                // Create chat room
+                const chatRoomRef = collection(db, 'chatRooms');
+                const chatRoomDoc = await addDoc(chatRoomRef, {
+                    mentorId: mentorId,
+                    founderId: user.uid,
+                    createdAt: new Date(),
+                    lastMessage: null,
+                    lastMessageTime: null,
+                    status: 'active'
+                });
+
+                // Create connection request
                 const connectionRef = collection(db, 'connectionRequests');
                 await addDoc(connectionRef, {
                     mentorId: mentorId,
                     startupId: user.uid,
                     status: 'pending',
+                    chatRoomId: chatRoomDoc.id,
                     createdAt: new Date()
                 });
 
-                alert('Connection request sent to mentor! They will review your request soon.');
+                // Redirect to chat page
+                window.location.href = `chat.html?roomId=${chatRoomDoc.id}`;
+
             } catch (error) {
                 console.error('Error requesting mentor:', error);
-                alert('Error sending connection request. Please try again.');
+                alert('Error connecting with mentor. Please try again.');
+                
+                // Reset button state
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = originalText;
+                }
             }
         };
+
+        // Add this helper function to check if a document exists
+        async function documentExists(docRef) {
+            const docSnap = await getDoc(docRef);
+            return docSnap.exists();
+        }
 
         // Initialize the page
         onAuthStateChanged(auth, async (user) => {
