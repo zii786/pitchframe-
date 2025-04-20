@@ -156,15 +156,10 @@
     
     <!-- Firebase Authentication -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, getRedirectResult } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-        import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-        import { firebaseConfig } from './firebase-config.js';
+        import { auth, db, loginUser } from './firebase-config.js';
+        import { GoogleAuthProvider, signInWithPopup, getRedirectResult } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
         // Handle Google Sign In
@@ -191,7 +186,6 @@
                 } else {
                     // Get user type from existing document
                     const userData = userDoc.data();
-                    
                     // Redirect based on user type
                     switch(userData.userType) {
                         case 'mentor':
@@ -224,7 +218,7 @@
             const errorMessage = document.getElementById('errorMessage');
             
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const userCredential = await loginUser(email, password);
                 const user = userCredential.user;
                 
                 // Get user data from Firestore
@@ -252,15 +246,7 @@
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                let message = 'Invalid email or password';
-                
-                if (error.code === 'auth/user-not-found') {
-                    message = 'No account found with this email';
-                } else if (error.code === 'auth/wrong-password') {
-                    message = 'Invalid password';
-                }
-                
-                errorMessage.textContent = message;
+                errorMessage.textContent = 'Invalid email or password. Please try again.';
                 errorMessage.classList.remove('d-none');
             }
         });

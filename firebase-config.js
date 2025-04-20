@@ -49,8 +49,9 @@ const storage = getStorage(app, undefined, {
             'http://localhost:8000', 
             'http://127.0.0.1:8000',
             'https://exquisite-puppy-fb8537.netlify.app',
-            'https://exquisite-puppy-fb8537.netlify.app/login.html'
-           ' https://exquisite-puppy-fb8537.netlify.app/index'
+            'https://exquisite-puppy-fb8537.netlify.app/',
+            'https://pitchframe-6967a.firebaseapp.com',
+            'https://pitchframe-6967a.web.app'
         ],
         methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
