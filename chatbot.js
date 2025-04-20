@@ -1,18 +1,8 @@
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
 import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+import { getApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
 
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
-    authDomain: "pitchframe-6967a.firebaseapp.com",
-    projectId: "pitchframe-6967a",
-    storageBucket: "pitchframe-6967a.appspot.com",
-    messagingSenderId: "801200566992",
-    appId: "1:801200566992:web:9dc20d8ad085577eb724d5"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Get the existing Firebase app instance instead of initializing a new one
+const app = getApp();
 const db = getFirestore(app);
 
 // DOM elements
