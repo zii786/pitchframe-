@@ -670,8 +670,8 @@
             }
 
             try {
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                const userData = userDoc.data();
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            const userData = userDoc.data();
 
                 if (userData?.userType !== 'mentor') {
                     window.location.href = 'index.html';
@@ -703,4 +703,4 @@
         });
     </script>
 </body>
-</html>
+</html> 

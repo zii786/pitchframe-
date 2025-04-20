@@ -480,10 +480,24 @@
             return docSnap.exists();
         }
 
-        // Initialize the page
+        // Check user access
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                await loadMentors();
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    const userData = userDoc.data();
+
+                    if (userData?.userType === 'mentor') {
+                        // Redirect mentors to their dashboard
+                        window.location.href = 'mentor-dashboard.html';
+                        alert('Mentors cannot access the mentor matching page.');
+                    } else {
+                        await loadMentors();
+                    }
+                } catch (error) {
+                    console.error('Error checking user role:', error);
+                    window.location.href = 'index.html';
+                }
             } else {
                 window.location.href = 'login.html';
             }

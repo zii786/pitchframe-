@@ -139,6 +139,7 @@
                     <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
                     <li class="nav-item" data-role="founder"><a class="nav-link" href="pitch-submission.html">Submit Pitch</a></li>
                     <li class="nav-item" data-role="mentor"><a class="nav-link" href="mentor-dashboard.html">Mentor Dashboard</a></li>
+                    <li class="nav-item" data-role="founder"><a class="nav-link" href="mentor-matching.html">Find Mentors</a></li>
                     <li class="nav-item"><a class="nav-link" href="AI_analyzer.html">AI Analysis</a></li>
                     <li class="nav-item"><a class="nav-link" href="settings.html">Settings</a></li>
                     <li class="nav-item"><a class="nav-link btn btn-primary ms-2 text-white px-4" href="login.html">Login</a></li>
@@ -302,31 +303,21 @@
         import { firebaseConfig } from './firebase-config.js';
 
         // Initialize Firebase
-        window.firebaseApp = initializeApp(firebaseConfig);
-        const auth = getAuth(window.firebaseApp);
-        const db = getFirestore(window.firebaseApp);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
         // Function to update navigation based on user role
         async function updateNavigation(user) {
             try {
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 const userData = userDoc.data();
-                const userType = userData?.userType || 'founder'; // Default to founder if not specified
+                const userType = userData?.userType || 'founder';
 
-                // Get navigation elements
-                const mentorDashboardLink = document.querySelector('a[href="mentor-dashboard.html"]').parentElement;
-                const pitchSubmissionLink = document.querySelector('a[href="pitch-submission.html"]').parentElement;
-                const aiAnalyzerLink = document.querySelector('a[href="AI_analyzer.html"]').parentElement;
+                // Update body class for role-based display
+                document.body.className = `role-${userType}`;
+
                 const navLoginItem = document.querySelector('.navbar-nav .btn-primary').parentElement;
-
-                // Show/hide elements based on user type
-                if (userType === 'mentor') {
-                    mentorDashboardLink.style.display = 'block';
-                    pitchSubmissionLink.style.display = 'none';
-                } else {
-                    mentorDashboardLink.style.display = 'none';
-                    pitchSubmissionLink.style.display = 'block';
-                }
 
                 // Update the profile dropdown
                 navLoginItem.innerHTML = `
@@ -338,8 +329,11 @@
                             <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Settings</a></li>
                             ${userType === 'mentor' ? `
                                 <li><a class="dropdown-item" href="mentor-dashboard.html"><i class="fas fa-columns me-2"></i>Mentor Dashboard</a></li>
-                                <li><a class="dropdown-item" href="mentor-notification.html"><i class="fas fa-bell me-2"></i>Notifications</a></li>
-                            ` : ''}
+                                <li><a class="dropdown-item" href="mentor-notifications.html"><i class="fas fa-bell me-2"></i>Notifications</a></li>
+                            ` : `
+                                <li><a class="dropdown-item" href="mentor-matching.html"><i class="fas fa-users me-2"></i>Find Mentors</a></li>
+                                <li><a class="dropdown-item" href="pitch-submission.html"><i class="fas fa-file-upload me-2"></i>Submit Pitch</a></li>
+                            `}
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#" id="logoutButton"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                         </ul>
@@ -347,7 +341,8 @@
                 `;
 
                 // Add logout functionality
-                document.getElementById('logoutButton').addEventListener('click', async () => {
+                document.getElementById('logoutButton').addEventListener('click', async (e) => {
+                    e.preventDefault();
                     try {
                         await signOut(auth);
                         window.location.href = 'index.html';
@@ -370,13 +365,10 @@
                 await updateNavigation(user);
             } else {
                 // User is not logged in, show default navigation
+                document.body.className = ''; // Remove any role-based classes
                 navLoginItem.innerHTML = `
                     <a class="nav-link btn btn-primary ms-2 text-white px-4" href="login.html">Login</a>
                 `;
-                
-                // Hide mentor-specific items
-                const mentorDashboardLink = document.querySelector('a[href="mentor-dashboard.html"]').parentElement;
-                mentorDashboardLink.style.display = 'none';
             }
         });
     </script>
