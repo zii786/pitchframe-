@@ -292,46 +292,6 @@
                 padding: 80px 0 40px;
             }
         }
-
-        .btn-review {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            color: #0d6efd;
-            transition: all 0.3s ease;
-        }
-
-        .btn-review:hover {
-            background-color: #0d6efd;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .table {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .table th {
-            border-top: none;
-            font-weight: 600;
-            color: #6c757d;
-        }
-
-        .table td {
-            vertical-align: middle;
-        }
-
-        .badge {
-            padding: 0.5em 1em;
-            font-weight: 500;
-        }
-
-        .spinner-border {
-            width: 3rem;
-            height: 3rem;
-        }
     </style>
 </head>
 <body>
@@ -366,7 +326,7 @@
                         <p class="dashboard-subtitle">Review and provide feedback on startup pitches</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                        <button class="btn btn-new-review" onclick="window.location.href='AI_analyzer.html'">
+                        <button class="btn btn-new-review">
                         <i class="fas fa-plus me-2"></i>New Review
                     </button>
                     </div>
@@ -512,7 +472,7 @@
                             </td>
                             <td>${formatDate(review.createdAt)}</td>
                             <td>
-                                <button class="btn btn-review" onclick="window.location.href='pitch-details.html?id=${review.id}'">
+                                <button class="btn btn-review" onclick="window.location.href='his?id=${review.id}'">
                                     <i class="fas fa-eye me-1"></i> Review
                                 </button>
                             </td>
@@ -607,135 +567,6 @@
             } else {
                 document.querySelector('.navbar').classList.remove('scrolled');
             }
-        });
-
-        // Add this to your mentor-dashboard.html script section
-        async function loadPitches() {
-            try {
-                const pitchesContainer = document.getElementById('pitchesContainer');
-                pitchesContainer.innerHTML = `
-                    <div class="text-center py-4">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading pitches...</span>
-                        </div>
-                    </div>
-                `;
-
-                // Get pitches from Firestore
-                const pitchesRef = collection(db, 'pitches');
-                const q = query(
-                    pitchesRef,
-                    orderBy('createdAt', 'desc')
-                );
-
-                const querySnapshot = await getDocs(q);
-
-                if (querySnapshot.empty) {
-                    pitchesContainer.innerHTML = `
-                        <div class="text-center py-4">
-                            <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
-                            <h5>No pitches available for review</h5>
-                            <p class="text-muted">New pitches will appear here when startups submit them.</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                // Create table
-                let tableHTML = `
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Company</th>
-                                <th>Industry</th>
-                                <th>Submitted</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-
-                // Add pitches to table
-                querySnapshot.forEach((doc) => {
-                    const pitch = doc.data();
-                    const pitchId = doc.id;
-                    const submittedDate = pitch.createdAt ? new Date(pitch.createdAt.toDate()).toLocaleDateString() : 'N/A';
-                    
-                    tableHTML += `
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div>
-                                        <h6 class="mb-0">${pitch.companyName || 'Unnamed Company'}</h6>
-                                        <small class="text-muted">${pitch.tagline || 'No tagline provided'}</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge bg-primary">${pitch.industry || 'Unspecified'}</span>
-                            </td>
-                            <td>${submittedDate}</td>
-                            <td>
-                                <span class="badge bg-${pitch.status === 'pending' ? 'warning' : 'success'}">
-                                    ${pitch.status === 'pending' ? 'Pending Review' : 'Reviewed'}
-                                </span>
-                            </td>
-                            <td>
-                                <button class="btn btn-review" onclick="window.location.href='pitch-details.html?id=${pitchId}'">
-                                    <i class="fas fa-eye me-1"></i> Review Pitch
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                tableHTML += `
-                        </tbody>
-                    </table>
-                `;
-
-                pitchesContainer.innerHTML = tableHTML;
-
-            } catch (error) {
-                console.error('Error loading pitches:', error);
-                pitchesContainer.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-circle me-2"></i>
-                        Error loading pitches. Please try again later.
-                    </div>
-                `;
-            }
-        }
-
-        // Initialize the dashboard
-        document.addEventListener('DOMContentLoaded', () => {
-            onAuthStateChanged(auth, async (user) => {
-                if (!user) {
-                    window.location.href = 'login.html';
-                    return;
-                }
-
-                try {
-                    // Verify user is a mentor
-                    const userDoc = await getDoc(doc(db, 'users', user.uid));
-                    if (!userDoc.exists() || userDoc.data().userType !== 'mentor') {
-                        throw new Error('Access denied. Only mentors can view this page.');
-                    }
-
-                    // Load pitches
-                    await loadPitches();
-
-                } catch (error) {
-                    console.error('Error initializing dashboard:', error);
-                    document.getElementById('pitchesContainer').innerHTML = `
-                        <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            ${error.message || 'Error loading dashboard. Please try again later.'}
-                        </div>
-                    `;
-                }
-            });
         });
     </script>
 </body>
