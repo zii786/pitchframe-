@@ -119,6 +119,10 @@
                                 <i class="fas fa-cog"></i>
                                 Settings
                             </a>
+                            <a class="nav-link" href="#" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </a>
                             
                         </nav>
                     </div>
@@ -215,12 +219,15 @@
                 container.innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"></div></div>';
 
                 const pitchesRef = collection(db, 'pitches');
-                let q = query(pitchesRef, orderBy('createdAt', 'desc'));
-
-                // Get industry filter value
+                let q;
                 const industryFilter = document.getElementById('industryFilter').value;
+                const sortBy = document.getElementById('sortBy').value;
+
+                // Base query with industry filter if selected
                 if (industryFilter) {
-                    q = query(q, where('industry', '==', industryFilter));
+                    q = query(pitchesRef, where('industry', '==', industryFilter));
+                } else {
+                    q = query(pitchesRef);
                 }
 
                 const querySnapshot = await getDocs(q);
@@ -233,12 +240,29 @@
                     });
                 });
 
-                // Apply sorting
-                const sortBy = document.getElementById('sortBy').value;
-                if (sortBy === 'revenue') {
-                    pitches.sort((a, b) => (b.revenue || 0) - (a.revenue || 0));
-                } else if (sortBy === 'oldest') {
-                    pitches.reverse();
+                // Apply sorting based on selected option
+                switch (sortBy) {
+                    case 'newest':
+                        pitches.sort((a, b) => {
+                            const dateA = a.createdAt?.toDate() || new Date(0);
+                            const dateB = b.createdAt?.toDate() || new Date(0);
+                            return dateB - dateA;
+                        });
+                        break;
+                    case 'oldest':
+                        pitches.sort((a, b) => {
+                            const dateA = a.createdAt?.toDate() || new Date(0);
+                            const dateB = b.createdAt?.toDate() || new Date(0);
+                            return dateA - dateB;
+                        });
+                        break;
+                    case 'revenue':
+                        pitches.sort((a, b) => {
+                            const revenueA = Number(a.revenue) || 0;
+                            const revenueB = Number(b.revenue) || 0;
+                            return revenueB - revenueA;
+                        });
+                        break;
                 }
 
                 if (pitches.length === 0) {
