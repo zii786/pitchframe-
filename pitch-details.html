@@ -39,6 +39,195 @@
             min-height: 100vh;
         }
 
+        .pitch-header {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.1));
+            padding: 100px 0 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pitch-header::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="2" fill="%232563eb" opacity="0.2"/></svg>') repeat;
+            animation: backgroundMove 20s linear infinite;
+        }
+
+        @keyframes backgroundMove {
+            from { transform: translateX(0) translateY(0); }
+            to { transform: translateX(-60px) translateY(-60px); }
+        }
+
+        .pitch-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .pitch-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .pitch-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-dark);
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: var(--text-color);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .feedback-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .feedback-card:hover {
+            transform: translateX(5px);
+        }
+
+        .mentor-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .action-buttons .btn {
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .action-buttons .btn-primary {
+            background: var(--gradient);
+            border: none;
+        }
+
+        .action-buttons .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--gradient);
+        }
+
+        @media (max-width: 991.98px) {
+            .pitch-title {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .metric-card {
+                margin-bottom: 1rem;
+            }
+        }
+
         .pitch-details-container {
             padding: 2rem 0;
         }
@@ -58,156 +247,47 @@
             padding: 2.5rem;
             box-shadow: var(--card-shadow);
             border: 1px solid rgba(0, 0, 0, 0.05);
-            height: 100%;
-        }
-
-        .rating-section h4 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            color: var(--primary-dark);
-            position: relative;
-            padding-bottom: 1rem;
-        }
-
-        .rating-section h4::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 60px;
-            height: 4px;
-            background: var(--gradient);
-            border-radius: 2px;
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
         }
 
         .rating-criteria {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .rating-criteria label {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 0.75rem;
             font-weight: 600;
             color: var(--primary-dark);
-            margin-bottom: 0.8rem;
-            display: block;
-        }
-
-        .form-select {
-            border-radius: 12px;
-            padding: 12px 16px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .feedback-textarea {
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            font-size: 1rem;
             min-height: 150px;
-            transition: all 0.3s ease;
-        }
-
-        .feedback-textarea:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .btn-primary {
-            background: var(--gradient);
-            border: none;
-            padding: 12px 30px;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 1rem;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
-        }
-
-        .company-header {
-            margin-bottom: 2.5rem;
-        }
-
-        .company-header h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--primary-dark);
-        }
-
-        .badge {
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        .section-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--primary-dark);
-            margin-bottom: 1.2rem;
-            position: relative;
-            padding-bottom: 0.8rem;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 40px;
-            height: 3px;
-            background: var(--gradient);
-            border-radius: 2px;
-        }
-
-        .card-text {
-            color: var(--text-color);
-            line-height: 1.7;
-            font-size: 1.1rem;
-        }
-
-        .metric-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin-bottom: 0.5rem;
-        }
-
-        .metric-label {
-            color: var(--text-color);
-            font-size: 1rem;
-            font-weight: 500;
+            resize: vertical;
         }
 
         @media (max-width: 991.98px) {
-            .details-card, .rating-section {
+            .pitch-details-container {
+                padding: 1.5rem 0;
+            }
+            
+            .details-card,
+            .rating-section {
                 padding: 2rem;
             }
-
-            .company-header h2 {
-                font-size: 2rem;
+            
+            .rating-section {
+                position: static;
+                margin-top: 2rem;
             }
+        }
 
-            .section-title {
-                font-size: 1.3rem;
+        @media (max-width: 767.98px) {
+            .details-card,
+            .rating-section {
+                padding: 1.5rem;
             }
         }
     </style>
@@ -228,13 +308,13 @@
             </div>
 
             <!-- Main Content -->
-            <div class="row">
+            <div class="row g-4">
                 <!-- Pitch Details Section -->
                 <div class="col-lg-8">
                     <div class="details-card">
                         <div id="pitchDetails">
                             <!-- Content will be dynamically loaded -->
-                            <div class="text-center">
+                            <div class="text-center py-4">
                                 <div class="spinner-border text-primary" role="status">
                                     <span class="visually-hidden">Loading...</span>
                                 </div>
@@ -246,11 +326,11 @@
                 <!-- Rating Section -->
                 <div class="col-lg-4">
                     <div class="rating-section">
-                        <h4>Evaluation Form</h4>
+                        <h4 class="mb-4">Evaluation Form</h4>
                         
                         <!-- Market Potential -->
                         <div class="rating-criteria">
-                            <label>Market Potential</label>
+                            <label for="marketPotential">Market Potential</label>
                             <select class="form-select" id="marketPotential">
                                 <option value="">Select rating</option>
                                 <option value="5">Excellent - Large market opportunity</option>
@@ -263,33 +343,33 @@
 
                         <!-- Product Innovation -->
                         <div class="rating-criteria">
-                            <label>Product Innovation</label>
+                            <label for="productInnovation">Product Innovation</label>
                             <select class="form-select" id="productInnovation">
                                 <option value="">Select rating</option>
                                 <option value="5">Excellent - Highly innovative</option>
-                                <option value="4">Very Good - Notable innovation</option>
+                                <option value="4">Very Good - Innovative</option>
                                 <option value="3">Good - Some innovation</option>
                                 <option value="2">Fair - Limited innovation</option>
-                                <option value="1">Poor - Not innovative</option>
+                                <option value="1">Poor - No innovation</option>
                             </select>
                         </div>
 
                         <!-- Financial Viability -->
                         <div class="rating-criteria">
-                            <label>Financial Viability</label>
+                            <label for="financialViability">Financial Viability</label>
                             <select class="form-select" id="financialViability">
                                 <option value="">Select rating</option>
                                 <option value="5">Excellent - Strong financials</option>
-                                <option value="4">Very Good - Solid financials</option>
-                                <option value="3">Good - Adequate financials</option>
+                                <option value="4">Very Good - Good financials</option>
+                                <option value="3">Good - Moderate financials</option>
                                 <option value="2">Fair - Weak financials</option>
-                                <option value="1">Poor - Very weak financials</option>
+                                <option value="1">Poor - No financial viability</option>
                             </select>
                         </div>
 
                         <!-- Team Capability -->
                         <div class="rating-criteria">
-                            <label>Team Capability</label>
+                            <label for="teamCapability">Team Capability</label>
                             <select class="form-select" id="teamCapability">
                                 <option value="">Select rating</option>
                                 <option value="5">Excellent - Highly capable team</option>
@@ -302,13 +382,13 @@
 
                         <!-- Feedback -->
                         <div class="rating-criteria">
-                            <label>Detailed Feedback</label>
+                            <label for="feedback">Detailed Feedback</label>
                             <textarea class="form-control feedback-textarea" id="feedback" 
                                     placeholder="Provide detailed feedback about the pitch..."></textarea>
                         </div>
 
                         <!-- Submit Button -->
-                        <button class="btn btn-primary" onclick="submitEvaluation()">
+                        <button class="btn btn-primary w-100 mt-3" onclick="submitEvaluation()">
                             Submit Evaluation
                         </button>
                     </div>
@@ -380,9 +460,11 @@
 
                 const pitch = pitchDoc.data();
                 document.getElementById('pitchDetails').innerHTML = `
-                    <div class="company-header">
-                        <h2>${pitch.companyName || 'Unnamed Company'}</h2>
-                        <div class="d-flex gap-2">
+                    <div class="mb-4">
+                        <h2 class="mb-3" style="font-size: 2rem; font-weight: bold; text-transform: uppercase;">
+                            ${pitch.companyName || 'Unnamed Company'}
+                        </h2>
+                        <div class="d-flex gap-2 mb-3">
                             <span class="badge bg-primary">${pitch.industry || 'Unspecified'}</span>
                             <span class="badge bg-${pitch.status === 'pending' ? 'warning' : 'success'}">
                                 ${pitch.status === 'pending' ? 'Pending Review' : 'Reviewed'}
@@ -403,17 +485,17 @@
                         <div class="col-md-6">
                             <div class="mb-4">
                                 <h6 class="section-title">Financial Information</h6>
-                                <div class="d-flex justify-content-between mb-3">
-                                    <span class="metric-label">Current Revenue:</span>
-                                    <span class="metric-value">${formatCurrency(pitch.revenue)}</span>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Current Revenue:</span>
+                                    <strong>${formatCurrency(pitch.revenue)}</strong>
                                 </div>
-                                <div class="d-flex justify-content-between mb-3">
-                                    <span class="metric-label">Funding Stage:</span>
-                                    <span class="metric-value">${pitch.fundingStage || 'Not specified'}</span>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Funding Stage:</span>
+                                    <strong>${pitch.fundingStage || 'Not specified'}</strong>
                                 </div>
                                 <div class="d-flex justify-content-between">
-                                    <span class="metric-label">Funding Amount:</span>
-                                    <span class="metric-value">${formatCurrency(pitch.fundingAmount)}</span>
+                                    <span class="text-muted">Funding Amount:</span>
+                                    <strong>${formatCurrency(pitch.fundingAmount)}</strong>
                                 </div>
                             </div>
                         </div>
