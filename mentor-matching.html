@@ -9,400 +9,152 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- AOS Library for Scroll Animations -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
     <style>
-        :root {
-            --primary-color: #2563eb;
-            --primary-light: #3b82f6;
-            --primary-dark: #1d4ed8;
-            --secondary-color: #7c3aed;
-            --accent-color: #6366f1;
-            --light-color: #f8fafc;
-            --dark-color: #0f172a;
-            --text-color: #334155;
-            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        .matching-container {
             min-height: 100vh;
+            background-color: #f8f9fa;
+            padding: 2rem 0;
+            animation: fadeIn 0.5s ease-in-out;
         }
 
-        .hero-section {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.1));
-            padding: 100px 0 60px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="2" fill="%232563eb" opacity="0.2"/></svg>') repeat;
-            animation: backgroundMove 20s linear infinite;
-        }
-
-        @keyframes backgroundMove {
-            from { transform: translateX(0) translateY(0); }
-            to { transform: translateX(-60px) translateY(-60px); }
-        }
-
-        .page-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .mentor-card {
             background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: var(--card-shadow);
-            transition: all 0.3s ease;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
             margin-bottom: 2rem;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .mentor-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient);
-            opacity: 0;
             transition: all 0.3s ease;
-            z-index: 0;
         }
 
         .mentor-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .mentor-card:hover::before {
-            opacity: 0.05;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .mentor-avatar {
             width: 100px;
             height: 100px;
-            border-radius: 20px;
-            background: var(--gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-            z-index: 1;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .mentor-avatar:hover {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        .mentor-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .mentor-title {
-            color: var(--text-color);
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .mentor-bio {
-            color: var(--text-color);
-            margin-bottom: 1.5rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .expertise-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .expertise-tag {
-            background: rgba(37, 99, 235, 0.1);
-            color: var(--primary-color);
+        .expertise-badge {
+            background: #e9ecef;
+            color: #495057;
             padding: 0.5rem 1rem;
-            border-radius: 8px;
+            border-radius: 20px;
+            margin: 0.25rem;
             font-size: 0.9rem;
-            font-weight: 500;
             transition: all 0.3s ease;
         }
 
-        .expertise-tag:hover {
-            background: var(--gradient);
+        .expertise-badge:hover {
+            background: #0d6efd;
             color: white;
-            transform: translateY(-2px);
         }
 
-        .match-score {
+        .match-percentage {
             position: absolute;
             top: 1rem;
             right: 1rem;
-            background: var(--gradient);
+            background: linear-gradient(45deg, #0d6efd, #0dcaf0);
             color: white;
             padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            z-index: 1;
+            border-radius: 20px;
+            font-weight: bold;
         }
 
         .filter-section {
             background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: var(--card-shadow);
+            border-radius: 15px;
+            padding: 1.5rem;
             margin-bottom: 2rem;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .filter-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary-dark);
-            position: relative;
-            display: inline-block;
-        }
-
-        .filter-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 40px;
-            height: 4px;
-            background: var(--gradient);
-            border-radius: 2px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .form-select, .form-control {
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 0.75rem 1rem;
-            border: 1px solid rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
         }
 
         .form-select:focus, .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.1);
-        }
-
-        .btn-primary {
-            background: var(--gradient);
-            border: none;
-            padding: 12px 30px;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(37, 99, 235, 0.1);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 991.98px) {
-            .page-title {
-                font-size: 2.5rem;
-            }
-            
-            .mentor-avatar {
-                width: 80px;
-                height: 80px;
-                font-size: 1.5rem;
-            }
-            
-            .mentor-name {
-                font-size: 1.3rem;
-            }
-        }
-
-        .navbar {
-            padding: 1rem 0;
-            transition: all 0.3s ease;
-        }
-
-        .navbar-nav .nav-link {
-            position: relative;
-            padding: 0.5rem 1rem;
-            color: var(--text-color);
-            transition: all 0.3s ease;
-        }
-
-        .navbar-nav .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: var(--gradient);
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
-        }
-
-        .navbar-nav .nav-link:hover {
-            color: var(--primary-color);
-        }
-
-        .navbar-nav .nav-link:hover::after {
-            width: 80%;
-        }
-
-        .navbar-nav .nav-link.active {
-            color: var(--primary-color);
-        }
-
-        .navbar-nav .nav-link.active::after {
-            width: 80%;
-        }
-
-        .navbar-brand {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            transition: all 0.3s ease;
-        }
-
-        .navbar-brand:hover {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
             transform: translateY(-2px);
         }
 
-        .navbar-brand .text-primary {
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .connect-btn {
+            background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .connect-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.4);
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <div class="matching-container">
         <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <strong>Pitch<span class="text-primary">Frame</span></strong>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="pitch-submission.html">Submit Pitch</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="mentor-dashboard.html">Mentor Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-primary ms-2 text-white" href="login.html">Login</a>
-                    </li>
-                </ul>
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Find Your Ideal Mentor</h2>
+                <a href="index.html" class="text-decoration-none">
+                    <h4 class="mb-0"><strong>Pitch<span class="text-primary">Frame</span></strong></h4>
+                </a>
             </div>
-        </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
-                    <h1 class="page-title" data-aos="fade-up">Find Your Perfect Mentor</h1>
-                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
-                        Connect with industry experts who can help accelerate your startup's growth
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main Content -->
-    <section class="py-5">
-        <div class="container">
             <!-- Filter Section -->
-            <div class="filter-section" data-aos="fade-up">
-                <h3 class="filter-title">Filter Mentors</h3>
+            <div class="filter-section">
                 <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Industry</label>
                         <select class="form-select" id="industryFilter">
                             <option value="">All Industries</option>
-                            <option value="AI/ML">AI/ML</option>
-                            <option value="FinTech">FinTech</option>
-                            <option value="HealthTech">HealthTech</option>
-                            <option value="EdTech">EdTech</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <select class="form-select" id="expertiseFilter">
-                            <option value="">All Expertise</option>
-                            <option value="Product">Product</option>
-                            <option value="Marketing">Marketing</option>
-                            <option value="Finance">Finance</option>
                             <option value="Technology">Technology</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Education">Education</option>
+                            <option value="Other">Other</option>
                         </select>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <select class="form-select" id="experienceFilter">
-                            <option value="">All Experience Levels</option>
-                            <option value="5-10">5-10 years</option>
-                            <option value="10-15">10-15 years</option>
-                            <option value="15+">15+ years</option>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Expertise Level</label>
+                        <select class="form-select" id="expertiseFilter">
+                            <option value="">All Levels</option>
+                            <option value="Beginner">Early Stage</option>
+                            <option value="Intermediate">Growth Stage</option>
+                            <option value="Expert">Scale-up Stage</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Availability</label>
+                        <select class="form-select" id="availabilityFilter">
+                            <option value="">Any Availability</option>
+                            <option value="Full">Full Time</option>
+                            <option value="Part">Part Time</option>
+                            <option value="Flexible">Flexible</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Sort By</label>
+                        <select class="form-select" id="sortBy">
+                            <option value="match">Best Match</option>
+                            <option value="experience">Most Experienced</option>
+                            <option value="recent">Recently Active</option>
                         </select>
                     </div>
                 </div>
@@ -410,101 +162,175 @@
 
             <!-- Mentors Grid -->
             <div class="row" id="mentorsGrid">
-                <!-- Mentor cards will be dynamically loaded here -->
-                <div class="col-12 text-center">
-                    <div class="loading-spinner"></div>
-                </div>
+                <!-- Mentor cards will be dynamically inserted here -->
             </div>
         </div>
-    </section>
+    </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- AOS Library -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        // Initialize AOS
-        AOS.init({
-            duration: 1000,
-            once: true
-        });
-
-        // Navbar scroll effect
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('shadow-sm');
-            } else {
-                navbar.classList.remove('shadow-sm');
-            }
-        });
-    </script>
-    <!-- Firebase Integration -->
+    
+    <!-- Firebase -->
     <script type="module">
-        import { firebaseConfig } from './firebase-config.js';
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-        import { 
-            getFirestore, 
-            collection, 
-            query, 
-            where, 
-            getDocs,
-            orderBy,
-            limit
-        } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        import { getFirestore, collection, query, where, getDocs, orderBy, addDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        import { firebaseConfig } from './firebase-config.js';
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Function to create mentor card
-        function createMentorCard(mentor) {
-            return `
-                <div class="col-lg-6" data-aos="fade-up">
-                    <div class="mentor-card">
-                        <div class="match-score">${mentor.matchScore}% Match</div>
-                        <div class="mentor-avatar">
-                            ${mentor.name.charAt(0)}
-                        </div>
-                        <h3 class="mentor-name">${mentor.name}</h3>
-                        <p class="mentor-title">${mentor.title}</p>
-                        <p class="mentor-bio">${mentor.bio}</p>
-                        <div class="expertise-tags">
-                            ${mentor.expertise.map(tag => `
-                                <span class="expertise-tag">${tag}</span>
-                            `).join('')}
-                        </div>
-                        <button class="btn btn-primary w-100" onclick="requestMentorship('${mentor.id}')">
-                            Request Mentorship
-                        </button>
-                    </div>
-                </div>
-            `;
+        // Function to format date
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            const date = timestamp.toDate();
+            return new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            }).format(date);
         }
 
-        // Function to load mentors
+        // Function to format experience years
+        function formatExperience(years) {
+            if (!years) return 'Not specified';
+            return `${years} ${years === 1 ? 'year' : 'years'}`;
+        }
+
+        // Function to load and display mentors
         async function loadMentors() {
             try {
                 const mentorsGrid = document.getElementById('mentorsGrid');
-                mentorsGrid.innerHTML = '<div class="col-12 text-center"><div class="loading-spinner"></div></div>';
+                mentorsGrid.innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"></div></div>';
 
-                const mentorsRef = collection(db, 'mentors');
-                const q = query(mentorsRef, orderBy('matchScore', 'desc'), limit(10));
+                // Get filter values
+                const industry = document.getElementById('industryFilter').value;
+                const expertise = document.getElementById('expertiseFilter').value;
+                const availability = document.getElementById('availabilityFilter').value;
+                const sortBy = document.getElementById('sortBy').value;
+
+                // Build query
+                let mentorsRef = collection(db, 'mentors');
+                let q = query(mentorsRef, orderBy('createdAt', 'desc'));
+
                 const querySnapshot = await getDocs(q);
+                let mentors = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
 
-                const mentors = [];
-                querySnapshot.forEach(doc => {
-                    mentors.push({ id: doc.id, ...doc.data() });
-                });
+                // Apply filters client-side
+                if (industry) {
+                    mentors = mentors.filter(mentor => mentor.industry === industry);
+                }
+                if (expertise) {
+                    mentors = mentors.filter(mentor => mentor.expertiseLevel === expertise);
+                }
+                if (availability) {
+                    mentors = mentors.filter(mentor => mentor.availability === availability);
+                }
 
-                mentorsGrid.innerHTML = mentors.map(mentor => createMentorCard(mentor)).join('');
+                // Apply sorting
+                switch(sortBy) {
+                    case 'experience':
+                        mentors.sort((a, b) => (b.yearsOfExperience || 0) - (a.yearsOfExperience || 0));
+                        break;
+                    case 'recent':
+                        mentors.sort((a, b) => (b.lastActive?.toDate() || 0) - (a.lastActive?.toDate() || 0));
+                        break;
+                    case 'match':
+                        mentors.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+                        break;
+                }
+
+                if (mentors.length === 0) {
+                    mentorsGrid.innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                No mentors found matching your criteria. Try adjusting your filters.
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                mentorsGrid.innerHTML = mentors.map(mentor => {
+                    return `
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="mentor-card position-relative">
+                                <div class="match-percentage">
+                                    <i class="fas fa-star text-warning"></i>
+                                    ${mentor.rating ? mentor.rating.toFixed(1) : 'New'}
+                                </div>
+                                <div class="text-center mb-3">
+                                    <img src="${mentor.profilePicture || `https://ui-avatars.com/api/?name=${mentor.firstName}+${mentor.lastName}&background=0D8ABC&color=fff`}" 
+                                         alt="${mentor.firstName} ${mentor.lastName}" 
+                                         class="mentor-avatar mb-3">
+                                    <h4 class="mb-1">${mentor.firstName} ${mentor.lastName}</h4>
+                                    <p class="text-muted mb-2">
+                                        <i class="fas fa-briefcase me-2"></i>
+                                        ${mentor.title || 'Mentor'} at ${mentor.company || 'Company'}
+                                    </p>
+                                    <div class="badge bg-primary mb-2">
+                                        <i class="fas fa-industry me-1"></i>
+                                        ${mentor.industry || 'Industry not specified'}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <h6 class="mb-2"><i class="fas fa-star me-2"></i>Expertise</h6>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        ${(mentor.expertise || ['General']).map(exp => 
+                                            `<span class="expertise-badge">${exp}</span>`
+                                        ).join('')}
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span><i class="fas fa-history me-2"></i>Experience</span>
+                                        <strong>${formatExperience(mentor.yearsOfExperience)}</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span><i class="fas fa-calendar me-2"></i>Availability</span>
+                                        <strong>${mentor.availability || 'Not specified'}</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fas fa-users me-2"></i>Total Reviews</span>
+                                        <strong>${mentor.totalReviews || 0}</strong>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <h6 class="mb-2"><i class="fas fa-comment-alt me-2"></i>Bio</h6>
+                                    <p class="text-muted small">${mentor.bio || 'No bio provided'}</p>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary connect-btn flex-grow-1" onclick="requestMentor('${mentor.id}')">
+                                        <i class="fas fa-handshake me-2"></i>Connect
+                                    </button>
+                                    <a href="${mentor.linkedinProfile || '#'}" 
+                                       class="btn btn-outline-primary" 
+                                       target="_blank"
+                                       ${!mentor.linkedinProfile ? 'disabled' : ''}>
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
             } catch (error) {
                 console.error('Error loading mentors:', error);
                 document.getElementById('mentorsGrid').innerHTML = `
                     <div class="col-12">
                         <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>
                             Error loading mentors. Please try again later.
                         </div>
                     </div>
@@ -512,60 +338,44 @@
             }
         }
 
-        // Function to filter mentors
-        async function filterMentors() {
-            const industry = document.getElementById('industryFilter').value;
-            const expertise = document.getElementById('expertiseFilter').value;
-            const experience = document.getElementById('experienceFilter').value;
+        // Add event listeners for filters
+        document.getElementById('industryFilter').addEventListener('change', loadMentors);
+        document.getElementById('expertiseFilter').addEventListener('change', loadMentors);
+        document.getElementById('availabilityFilter').addEventListener('change', loadMentors);
+        document.getElementById('sortBy').addEventListener('change', loadMentors);
 
-            const mentorsGrid = document.getElementById('mentorsGrid');
-            mentorsGrid.innerHTML = '<div class="col-12 text-center"><div class="loading-spinner"></div></div>';
-
+        // Function to handle mentor connection request
+        window.requestMentor = async function(mentorId) {
             try {
-                let q = collection(db, 'mentors');
-                const constraints = [];
-
-                if (industry) constraints.push(where('industry', '==', industry));
-                if (expertise) constraints.push(where('expertise', 'array-contains', expertise));
-                if (experience) constraints.push(where('experience', '==', experience));
-
-                if (constraints.length > 0) {
-                    q = query(q, ...constraints, orderBy('matchScore', 'desc'));
-                } else {
-                    q = query(q, orderBy('matchScore', 'desc'), limit(10));
+                const user = auth.currentUser;
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
                 }
 
-                const querySnapshot = await getDocs(q);
-                const mentors = [];
-                querySnapshot.forEach(doc => {
-                    mentors.push({ id: doc.id, ...doc.data() });
+                // Create a connection request in Firestore
+                const connectionRef = collection(db, 'connectionRequests');
+                await addDoc(connectionRef, {
+                    mentorId: mentorId,
+                    startupId: user.uid,
+                    status: 'pending',
+                    createdAt: new Date()
                 });
 
-                mentorsGrid.innerHTML = mentors.map(mentor => createMentorCard(mentor)).join('');
+                alert('Connection request sent to mentor! They will review your request soon.');
             } catch (error) {
-                console.error('Error filtering mentors:', error);
-                mentorsGrid.innerHTML = `
-                    <div class="col-12">
-                        <div class="alert alert-danger">
-                            Error filtering mentors. Please try again later.
-                        </div>
-                    </div>
-                `;
+                console.error('Error requesting mentor:', error);
+                alert('Error sending connection request. Please try again.');
             }
-        }
-
-        // Add event listeners to filters
-        document.getElementById('industryFilter').addEventListener('change', filterMentors);
-        document.getElementById('expertiseFilter').addEventListener('change', filterMentors);
-        document.getElementById('experienceFilter').addEventListener('change', filterMentors);
+        };
 
         // Initialize the page
         onAuthStateChanged(auth, async (user) => {
-            if (!user) {
+            if (user) {
+                await loadMentors();
+            } else {
                 window.location.href = 'login.html';
-                return;
             }
-            await loadMentors();
         });
     </script>
 </body>
