@@ -343,6 +343,26 @@
                 window.location.href = 'login.html';
             }
         });
+
+        // Add this function where you handle the chat request
+        async function createChatNotification(mentorId, founderId, chatRoomId) {
+            try {
+                await addDoc(collection(db, 'notifications'), {
+                    type: 'chat_request',
+                    mentorId: mentorId,
+                    founderId: founderId,
+                    chatRoomId: chatRoomId,
+                    read: false,
+                    createdAt: new Date()
+                });
+            } catch (error) {
+                console.error('Error creating notification:', error);
+            }
+        }
+
+        // Call this function when creating a new chat room
+        // Add this to your existing chat initialization code where you create the chat room
+        await createChatNotification(mentorId, currentUser.uid, roomId);
     </script>
 </body>
 </html>
