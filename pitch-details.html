@@ -513,24 +513,67 @@
         }
 
         // Function to submit evaluation
-        async function submitEvaluation() {
+        window.submitEvaluation = async function() {
+            const submitBtn = document.querySelector('.btn-primary');
+            
             try {
-                const submitBtn = document.querySelector('.btn-primary');
+                // Validate all fields
+                const marketPotential = document.getElementById('marketPotential').value;
+                const productInnovation = document.getElementById('productInnovation').value;
+                const financialViability = document.getElementById('financialViability').value;
+                const teamCapability = document.getElementById('teamCapability').value;
+                const feedback = document.getElementById('feedback').value.trim();
+
+                // Check if any field is empty
+                if (!marketPotential || !productInnovation || !financialViability || !teamCapability || !feedback) {
+                    throw new Error('Please fill in all fields');
+                }
+
+                // Disable button and show loading state
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
 
+                const user = auth.currentUser;
+                if (!user) throw new Error('You must be logged in to submit an evaluation');
+
                 const evaluation = {
-                    marketPotential: document.getElementById('marketPotential').value,
-                    productInnovation: document.getElementById('productInnovation').value,
-                    financialViability: document.getElementById('financialViability').value,
-                    teamCapability: document.getElementById('teamCapability').value,
-                    feedback: document.getElementById('feedback').value,
+                    marketPotential: parseInt(marketPotential),
+                    productInnovation: parseInt(productInnovation),
+                    financialViability: parseInt(financialViability),
+                    teamCapability: parseInt(teamCapability),
+                    feedback: feedback,
+                    mentorId: user.uid,
                     timestamp: Timestamp.now()
                 };
 
                 // Add evaluation to the evaluations subcollection
-                const evaluationsRef = collection(db, 'pitches', pitchId, 'evaluations');
+                const evaluationsRef = collection(db, `pitches/${pitchId}/evaluations`);
                 await addDoc(evaluationsRef, evaluation);
+
+                // Update pitch status to 'reviewed'
+                const pitchRef = doc(db, 'pitches', pitchId);
+                await updateDoc(pitchRef, {
+                    status: 'reviewed',
+                    lastReviewedAt: Timestamp.now(),
+                    lastReviewedBy: user.uid
+                });
+
+                // Calculate average scores
+                const averageScore = (
+                    parseInt(marketPotential) +
+                    parseInt(productInnovation) +
+                    parseInt(financialViability) +
+                    parseInt(teamCapability)
+                ) / 4;
+
+                // Update pitch with scores
+                await updateDoc(pitchRef, {
+                    averageScore: averageScore,
+                    marketPotentialScore: parseInt(marketPotential),
+                    productInnovationScore: parseInt(productInnovation),
+                    financialViabilityScore: parseInt(financialViability),
+                    teamCapabilityScore: parseInt(teamCapability)
+                });
 
                 // Show success message
                 const alertDiv = document.createElement('div');
@@ -539,7 +582,7 @@
                     <i class="fas fa-check-circle me-2"></i>
                     Evaluation submitted successfully!
                 `;
-                document.querySelector('.rating-section').insertBefore(alertDiv, document.querySelector('.btn-primary'));
+                document.querySelector('.rating-section').insertBefore(alertDiv, submitBtn);
 
                 // Reset form
                 document.getElementById('marketPotential').value = '';
@@ -548,19 +591,26 @@
                 document.getElementById('teamCapability').value = '';
                 document.getElementById('feedback').value = '';
 
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Submit Evaluation';
+                // Redirect after 2 seconds
+                setTimeout(() => {
+                    window.location.href = 'mentor-dashboard.html';
+                }, 2000);
+
             } catch (error) {
                 console.error('Error submitting evaluation:', error);
                 const alertDiv = document.createElement('div');
                 alertDiv.className = 'alert alert-danger';
                 alertDiv.innerHTML = `
                     <i class="fas fa-exclamation-circle me-2"></i>
-                    Error submitting evaluation. Please try again.
+                    ${error.message || 'Error submitting evaluation. Please try again.'}
                 `;
-                document.querySelector('.rating-section').insertBefore(alertDiv, document.querySelector('.btn-primary'));
+                document.querySelector('.rating-section').insertBefore(alertDiv, submitBtn);
+                
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Submit Evaluation';
             }
-        }
+        };
 
         // Initialize the page
         onAuthStateChanged(auth, async (user) => {
@@ -568,6 +618,15 @@
                 window.location.href = 'login.html';
                 return;
             }
+
+            // Check if user is a mentor
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (!userDoc.exists() || userDoc.data().userType !== 'mentor') {
+                window.location.href = 'index.html';
+                alert('Only mentors can access this page');
+                return;
+            }
+
             await loadPitchDetails();
         });
     </script>
