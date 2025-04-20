@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Notifications - PitchFrame</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .notifications-container {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            padding: 2rem 0;
+        }
+
+        .notification-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .notification-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .notification-card.unread {
+            border-left: 4px solid #0d6efd;
+        }
+
+        .notification-time {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .founder-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .badge-dot.online {
+            background-color: #198754;
+        }
+
+        .badge-dot.offline {
+            background-color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="notifications-container">
+        <div class="container">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2>Notifications</h2>
+                    <p class="text-muted mb-0">View your connection requests and messages</p>
+                </div>
+                <a href="index.html" class="text-decoration-none">
+                    <h4 class="mb-0"><strong>Pitch<span class="text-primary">Frame</span></strong></h4>
+                </a>
+            </div>
+
+            <!-- Notifications List -->
+            <div id="notificationsList">
+                <!-- Notifications will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { 
+            getFirestore, 
+            collection, 
+            query, 
+            where, 
+            orderBy, 
+            getDocs,
+            onSnapshot,
+            doc,
+            getDoc,
+            updateDoc
+        } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        import { firebaseConfig } from './firebase-config.js';
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Function to format date
+        function formatDate(timestamp) {
+            if (!timestamp) return '';
+            const date = timestamp.toDate();
+            const now = new Date();
+            const diff = now - date;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            if (days === 0) {
+                return new Intl.DateTimeFormat('en-US', {
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true
+                }).format(date);
+            } else if (days === 1) {
+                return 'Yesterday';
+            } else {
+                return new Intl.DateTimeFormat('en-US', {
+                    month: 'short',
+                    day: 'numeric'
+                }).format(date);
+            }
+        }
+
+        // Function to load notifications
+        async function loadNotifications(userId) {
+            const notificationsList = document.getElementById('notificationsList');
+            notificationsList.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div></div>';
+
+            try {
+                // Query connection requests
+                const connectionsRef = collection(db, 'connectionRequests');
+                const q = query(
+                    connectionsRef,
+                    where('mentorId', '==', userId),
+                    orderBy('createdAt', 'desc')
+                );
+
+                // Real-time listener for notifications
+                onSnapshot(q, async (snapshot) => {
+                    let notifications = [];
+
+                    for (const change of snapshot.docChanges()) {
+                        if (change.type === 'added' || change.type === 'modified') {
+                            const request = change.doc.data();
+                            const founderDoc = await getDoc(doc(db, 'users', request.startupId));
+                            const founderData = founderDoc.exists() ? founderDoc.data() : null;
+
+                            if (founderData) {
+                                notifications.push({
+                                    id: change.doc.id,
+                                    ...request,
+                                    founder: founderData
+                                });
+                            }
+                        }
+                    }
+
+                    if (notifications.length === 0) {
+                        notificationsList.innerHTML = `
+                            <div class="text-center text-muted my-5">
+                                <i class="fas fa-bell fa-3x mb-3"></i>
+                                <h5>No notifications yet</h5>
+                                <p>When founders request to connect with you, they'll appear here.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    notificationsList.innerHTML = notifications.map(notification => `
+                        <div class="notification-card p-3 ${notification.read ? '' : 'unread'}">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="${notification.founder.profilePicture || `https://ui-avatars.com/api/?name=${notification.founder.firstName}+${notification.founder.lastName}&background=0D8ABC&color=fff`}" 
+                                     alt="${notification.founder.firstName}" 
+                                     class="founder-avatar">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h5 class="mb-1">${notification.founder.firstName} ${notification.founder.lastName}</h5>
+                                            <p class="mb-1 text-muted">Requested to connect with you</p>
+                                        </div>
+                                        <small class="notification-time">${formatDate(notification.createdAt)}</small>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-primary btn-sm me-2" onclick="window.location.href='chat.html?roomId=${notification.chatRoomId}'">
+                                            <i class="fas fa-comments me-1"></i> Open Chat
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm" onclick="viewProfile('${notification.startupId}')">
+                                            <i class="fas fa-user me-1"></i> View Profile
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                });
+
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+                notificationsList.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Error loading notifications. Please try again later.
+                    </div>
+                `;
+            }
+        }
+
+        // Function to view founder profile
+        window.viewProfile = (founderId) => {
+            // Implement profile viewing functionality
+            window.location.href = `founder-profile.html?id=${founderId}`;
+        };
+
+        // Initialize the page
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Verify user is a mentor
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists() && userDoc.data().userType === 'mentor') {
+                    await loadNotifications(user.uid);
+                } else {
+                    window.location.href = 'login.html';
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Add this function to show notification count
+        async function updateNotificationBadge(userId) {
+            try {
+                const q = query(
+                    collection(db, 'connectionRequests'),
+                    where('mentorId', '==', userId),
+                    where('read', '==', false)
+                );
+                
+                onSnapshot(q, (snapshot) => {
+                    const count = snapshot.docs.length;
+                    const badge = document.getElementById('notificationBadge');
+                    if (badge) {
+                        badge.textContent = count;
+                        badge.style.display = count > 0 ? 'inline' : 'none';
+                    }
+                });
+            } catch (error) {
+                console.error('Error updating notification badge:', error);
+            }
+        }
+    </script>
+</body>
+</html>
