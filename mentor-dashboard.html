@@ -326,7 +326,7 @@
                         <p class="dashboard-subtitle">Review and provide feedback on startup pitches</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                        <button class="btn btn-new-review">
+                        <button class="btn btn-new-review" onclick="window.location.href='pitch-submission.html'">
                         <i class="fas fa-plus me-2"></i>New Review
                     </button>
                     </div>
@@ -383,34 +383,24 @@
     
     <!-- Firebase Authentication -->
     <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            collection, 
+            query, 
+            where, 
+            orderBy, 
+            getDocs 
+        } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
         import { firebaseConfig } from './firebase-config.js';
 
-        const auth = getAuth();
-        const db = getFirestore();
-
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                // Not logged in, redirect to login
-                window.location.href = 'login.html';
-                return;
-            }
-
-            try {
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                const userData = userDoc.data();
-
-                if (userData?.userType !== 'mentor') {
-                    // Not a mentor, redirect to home
-                    window.location.href = 'index.html';
-                    alert('Access denied. This page is only for mentors.');
-                }
-            } catch (error) {
-                console.error('Error checking user role:', error);
-                window.location.href = 'index.html';
-            }
-        });
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
         // Function to format date
         function formatDate(timestamp) {
@@ -428,9 +418,34 @@
             return date.toLocaleDateString();
         }
 
+        // Function to format currency
+        function formatCurrency(amount) {
+            if (!amount && amount !== 0) return 'Not Specified';
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
         // Function to load pending reviews
         async function loadPendingReviews() {
             try {
+                const tableBody = document.querySelector('tbody');
+                if (!tableBody) return;
+
+                // Show loading state
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+
                 const pitchesRef = collection(db, 'pitches');
                 const q = query(
                     pitchesRef,
@@ -441,25 +456,26 @@
                 const querySnapshot = await getDocs(q);
                 const pendingReviews = [];
 
-                for (const docSnapshot of querySnapshot.docs) {
-                    const pitchData = docSnapshot.data();
+                querySnapshot.forEach((doc) => {
+                    const pitchData = doc.data();
                     pendingReviews.push({
-                        id: docSnapshot.id,
+                        id: doc.id,
                         companyName: pitchData.companyName || 'Unknown Company',
                         industry: pitchData.industry || 'Not Specified',
                         revenue: pitchData.revenue || 0,
                         createdAt: pitchData.createdAt,
                     });
-                }
-
-                // Update pending reviews table
-                const tableBody = document.querySelector('tbody');
-                if (!tableBody) return;
+                });
 
                 if (pendingReviews.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="5" class="text-center">No pending reviews</td>
+                            <td colspan="5" class="text-center">
+                                <div class="text-muted">
+                                    <i class="fas fa-inbox fa-2x mb-3"></i>
+                                    <p>No pending reviews available</p>
+                                </div>
+                            </td>
                         </tr>
                     `;
                 } else {
@@ -482,7 +498,7 @@
                             </td>
                             <td>${formatDate(review.createdAt)}</td>
                             <td>
-                                <button class="btn btn-review" onclick="window.location.href='his?id=${review.id}'">
+                                <button class="btn btn-review" onclick="window.location.href='pitch-details.html?id=${review.id}'">
                                     <i class="fas fa-eye me-1"></i> Review
                                 </button>
                             </td>
@@ -496,23 +512,51 @@
                 if (tableBody) {
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="5" class="text-center text-danger">Error loading reviews. Please try again later.</td>
+                            <td colspan="5" class="text-center">
+                                <div class="text-danger">
+                                    <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
+                                    <p>Error loading reviews. Please try again later.</p>
+                                    <button class="btn btn-sm btn-outline-primary mt-2" onclick="loadPendingReviews()">
+                                        <i class="fas fa-sync-alt me-1"></i> Retry
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                     `;
                 }
             }
         }
 
-        // Add this helper function to format currency
-        function formatCurrency(amount) {
-            if (!amount && amount !== 0) return 'Not Specified';
-            return new Intl.NumberFormat('en-IN', {
-                style: 'currency',
-                currency: 'INR',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(amount);
-        }
+        // Make loadPendingReviews available globally
+        window.loadPendingReviews = loadPendingReviews;
+
+        // Check authentication and load data
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                // Not logged in, redirect to login
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.data();
+
+                if (userData?.userType !== 'mentor') {
+                    // Not a mentor, redirect to home
+                    window.location.href = 'index.html';
+                    alert('Access denied. This page is only for mentors.');
+                    return;
+                }
+
+                // Load pending reviews after confirming user is a mentor
+                await loadPendingReviews();
+
+            } catch (error) {
+                console.error('Error checking user role:', error);
+                window.location.href = 'index.html';
+            }
+        });
 
         // Navbar scroll effect
         window.addEventListener('scroll', function() {
