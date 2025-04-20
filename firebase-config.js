@@ -45,7 +45,12 @@ const db = getFirestore(app);
 const storage = getStorage(app, undefined, {
     customDomain: undefined,
     cors: {
-        origin: ['http://localhost:8000', 'http://127.0.0.1:8000'],
+        origin: [
+            'http://localhost:8000', 
+            'http://127.0.0.1:8000',
+            'https://exquisite-puppy-fb8537.netlify.app',
+            'https://exquisite-puppy-fb8537.netlify.app/'
+        ],
         methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
         maxAge: 3600
