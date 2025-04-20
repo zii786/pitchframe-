@@ -1,9 +1,8 @@
 import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-import { getApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+import { getApp, initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
 
-// Get the existing Firebase app instance instead of initializing a new one
-const app = getApp();
-const db = getFirestore(app);
+// Use the globally available Firebase app instance
+const db = getFirestore(window.firebaseApp);
 
 // DOM elements
 const chatbotToggle = document.getElementById('chatbotToggle');
