@@ -684,7 +684,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-        import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
         import { firebaseConfig } from './firebase-config.js';
 
         // Initialize Firebase
@@ -825,21 +825,24 @@
             }
         });
 
-        // Check authentication state
-        onAuthStateChanged(auth, (user) => {
-            if (!user) {
+        // Check authentication and load data
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Verify user is not a mentor
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists() && userDoc.data().userType !== 'mentor') {
+                    await loadUserPitches(user.uid);
+                } else {
+                    window.location.href = 'login.html';
+                }
+            } else {
                 window.location.href = 'login.html';
             }
         });
 
-        // Navbar scroll effect
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 50) {
-                document.querySelector('.navbar').classList.add('scrolled');
-            } else {
-                document.querySelector('.navbar').classList.remove('scrolled');
-            }
-        });
+        // Initialize navigation
+        import { initNavigation } from './navigation.js';
+        initNavigation();
     </script>
 </body>
 

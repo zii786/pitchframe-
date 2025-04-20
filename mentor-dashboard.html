@@ -532,31 +532,22 @@
 
         // Check authentication and load data
         onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                // Not logged in, redirect to login
-                window.location.href = 'login.html';
-                return;
-            }
-
-            try {
+            if (user) {
+                // Verify user is a mentor
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
-                const userData = userDoc.data();
-
-                if (userData?.userType !== 'mentor') {
-                    // Not a mentor, redirect to home
-                    window.location.href = 'index.html';
-                    alert('Access denied. This page is only for mentors.');
-                    return;
+                if (userDoc.exists() && userDoc.data().userType === 'mentor') {
+                    await loadPendingReviews();
+                } else {
+                    window.location.href = 'login.html';
                 }
-
-                // Load pending reviews after confirming user is a mentor
-                await loadPendingReviews();
-
-            } catch (error) {
-                console.error('Error checking user role:', error);
-                window.location.href = 'index.html';
+            } else {
+                window.location.href = 'login.html';
             }
         });
+
+        // Initialize navigation
+        import { initNavigation } from './navigation.js';
+        initNavigation();
 
         // Navbar scroll effect
         window.addEventListener('scroll', function() {
