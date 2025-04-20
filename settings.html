@@ -229,23 +229,23 @@
                             </a>
                         </div>
                         <nav class="nav flex-column">
-                            <a class="nav-link" href="AI_analyzer.html">
+                            <a class="nav-link" href="AI_analyzer.html" data-translate="aiAnalysis">
                                 <i class="fas fa-brain"></i>
                                 AI Analysis
                             </a>
-                            <a class="nav-link" href="pitch-submission.html">
+                            <a class="nav-link" href="pitch-submission.html" data-translate="submitPitch">
                                 <i class="fas fa-paper-plane"></i>
                                 Submit Pitch
                             </a>
-                            <a class="nav-link" href="history.html">
+                            <a class="nav-link" href="history.html" data-translate="history">
                                 <i class="fas fa-chart-line"></i>
-                                History </a>
-                          
-                            <a class="nav-link active" href="settings.html">
+                                History
+                            </a>
+                            <a class="nav-link active" href="settings.html" data-translate="settings">
                                 <i class="fas fa-cog"></i>
                                 Settings
                             </a>
-                            <a class="nav-link" href="#" id="logoutBtn">
+                            <a class="nav-link" href="#" id="logoutBtn" data-translate="logout">
                                 <i class="fas fa-sign-out-alt"></i>
                                 Logout
                             </a>
@@ -589,31 +589,30 @@
 
         // Function to update UI with selected language
         function updateLanguage(lang) {
+            console.log('Updating language to:', lang);
             const langTranslations = translations[lang];
-            if (!langTranslations) return;
+            if (!langTranslations) {
+                console.error('No translations found for language:', lang);
+                return;
+            }
 
             // Update all translatable elements
-            document.querySelectorAll('[data-translate]').forEach(element => {
+            const elements = document.querySelectorAll('[data-translate]');
+            console.log('Found translatable elements:', elements.length);
+            
+            elements.forEach(element => {
                 const key = element.getAttribute('data-translate');
                 if (langTranslations[key]) {
-                    element.textContent = langTranslations[key];
-                }
-            });
-
-            // Update navigation links
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                const text = link.textContent.trim();
-                if (text === 'AI Analysis') {
-                    link.textContent = langTranslations.aiAnalysis;
-                } else if (text === 'Submit Pitch') {
-                    link.textContent = langTranslations.submitPitch;
-                } else if (text === 'History') {
-                    link.textContent = langTranslations.history;
-                } else if (text === 'Settings') {
-                    link.textContent = langTranslations.settings;
-                } else if (text === 'Logout') {
-                    link.textContent = langTranslations.logout;
+                    // For navigation links, preserve the icon
+                    if (element.classList.contains('nav-link')) {
+                        const icon = element.querySelector('i');
+                        element.innerHTML = icon.outerHTML + ' ' + langTranslations[key];
+                    } else {
+                        element.textContent = langTranslations[key];
+                    }
+                    console.log('Updated element:', key, 'to:', langTranslations[key]);
+                } else {
+                    console.warn('No translation found for key:', key);
                 }
             });
         }
@@ -621,12 +620,15 @@
         // Function to load user preferences
         async function loadUserPreferences(user) {
             try {
+                console.log('Loading preferences for user:', user.uid);
                 const prefsDoc = await getDoc(doc(db, 'user_preferences', user.uid));
                 if (prefsDoc.exists()) {
                     const prefs = prefsDoc.data();
+                    console.log('Loaded preferences:', prefs);
                     
                     // Set language
                     const language = prefs.language || 'en';
+                    console.log('Setting language to:', language);
                     document.getElementById('language').value = language;
                     updateLanguage(language);
 
@@ -641,6 +643,11 @@
                     document.getElementById('engagement').checked = prefs.focusAreas?.includes('engagement') || true;
                     document.getElementById('marketAnalysis').checked = prefs.focusAreas?.includes('marketAnalysis') || true;
                     document.getElementById('financialAnalysis').checked = prefs.focusAreas?.includes('financialAnalysis') || false;
+                } else {
+                    console.log('No preferences found, using defaults');
+                    // Set default language
+                    document.getElementById('language').value = 'en';
+                    updateLanguage('en');
                 }
             } catch (error) {
                 console.error('Error loading preferences:', error);
@@ -651,10 +658,13 @@
         document.getElementById('language').addEventListener('change', async (event) => {
             try {
                 const language = event.target.value;
+                console.log('Language changed to:', language);
+                
                 await updateDoc(doc(db, 'user_preferences', auth.currentUser.uid), {
                     language,
                     updatedAt: Timestamp.now()
                 });
+                
                 updateLanguage(language);
             } catch (error) {
                 console.error('Error updating language:', error);
@@ -699,6 +709,7 @@
                 window.location.href = 'login.html';
                 return;
             }
+            console.log('User authenticated:', user.uid);
             await loadUserPreferences(user);
             await loadUserProfile(user.uid);
         });
