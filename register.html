@@ -12,19 +12,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-    </script>
     <style>
         .register-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
             background-color: #f8f9fa;
-            padding: 2rem 0;
+            padding: 2rem 0
         }
         .register-card {
             max-width: 500px;
@@ -33,7 +27,7 @@
             padding: 2rem;
             background: white;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
         .register-logo {
             text-align: center;
@@ -141,6 +135,24 @@
             transform: translateX(-2px);
         }
     </style>
+    <!-- Vanta.js for background animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            VANTA.BIRDS({
+                el: ".register-container",
+                mouseControls: true,
+                touchControls: true,
+                gyroControls: false,
+                scale: 1.00,
+                scaleMobile: 1.00,
+                backgroundColor: null, // Transparent background
+                color1: 0x4a90e2, // Your primary blue
+                quantity: 3.00
+            });
+        });
+    </script>
 </head>
 <body>
     
@@ -231,15 +243,14 @@
     
     <!-- Firebase Authentication -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-        import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-        import { firebaseConfig } from './firebase-config.js';
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        import {
+            auth,
+            db,
+            createUserWithEmailAndPassword,
+            fetchSignInMethodsForEmail,
+            doc,
+            setDoc
+        } from './firebase-config.js';
 
         let mentorModal;
         let currentUser;
@@ -397,20 +408,42 @@
                 currentUser = userCredential.user;
 
                 // Store basic user data
-                await setDoc(doc(db, 'users', currentUser.uid), {
+                const userProfile = {
                     firstName,
                     lastName,
                     email,
                     userType,
-                    createdAt: new Date()
-                });
+                    createdAt: new Date(),
+                    profileCompleted: false
+                };
+                await setDoc(doc(db, 'users', currentUser.uid), userProfile);
+
+                // Create role-specific profile document immediately
+                const typeSpecificProfile = {
+                    createdAt: new Date(),
+                    userId: currentUser.uid
+                };
+
+                if (userType === 'startup') {
+                    await setDoc(doc(db, 'startups', currentUser.uid), {
+                        ...typeSpecificProfile,
+                        companyName: '', industry: '', stage: '', description: ''
+                    });
+                } else if (userType === 'investor') {
+                    await setDoc(doc(db, 'investors', currentUser.uid), {
+                        ...typeSpecificProfile,
+                        investmentFocus: [], preferredStages: []
+                    });
+                } else if (userType === 'mentor') {
+                    // For mentors, we will show the modal. The onAuthStateChanged will handle it.
+                }
 
                 // If user is registering as a mentor, show the mentor details modal
                 if (userType === 'mentor') {
-                    mentorModal?.show();
-                } else {
-                    window.location.href = 'index.html';
+                    // The onAuthStateChanged listener will handle showing the modal
                 }
+                // The onAuthStateChanged listener will handle the redirect for other user types.
+
             } catch (error) {
                 console.error('Registration error:', error);
                 let errorMsg = 'An error occurred during registration. Please try again.';
@@ -418,21 +451,23 @@
                 switch (error.code) {
                     case 'auth/email-already-in-use':
                         errorMsg = 'This email is already registered. <a href="login.html" class="alert-link">Click here to login</a>';
+                        showError(errorMsg, true);
                         break;
                     case 'auth/invalid-email':
                         errorMsg = 'Please enter a valid email address';
-                        break;
-                    case 'auth/operation-not-allowed':
-                        errorMsg = 'Email/password registration is not enabled. Please contact support.';
+                        showError(errorMsg);
                         break;
                     case 'auth/weak-password':
-                        errorMsg = 'Please choose a stronger password';
+                        errorMsg = 'Please choose a stronger password that meets the requirements.';
+                        showError(errorMsg);
                         break;
+                    default:
+                        showError(errorMsg);
                 }
-                
-                showError(errorMsg, true);
             }
         });
+
+
 
         // Show error message
         function showError(message, isHtml = false) {
@@ -579,5 +614,6 @@
             </div>
         </div>
     </div>
+    <script type="module" src="auth-guard.js"></script>
 </body>
 </html> 

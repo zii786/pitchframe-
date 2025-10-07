@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+ent="same-origin-allow-popups">
 
     <title>PitchFrame - Empower Your Startup Journey</title>
     <!-- Bootstrap CSS -->
@@ -66,6 +70,30 @@
             border-bottom-left-radius: 5px;
         }
 
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px 0;
+            align-self: flex-start;
+        }
+
+        .suggestion-btn {
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .suggestion-btn:hover {
+            background-color: #e0e0e0;
+            border-color: #ccc;
+            transform: translateY(-1px);
+        }
+
         .chatbot-input {
             padding: 15px;
             border-top: 1px solid #eee;
@@ -123,6 +151,326 @@
         .role-mentor [data-role="mentor"] {
             display: block;
         }
+
+        /* PitchFrame Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes slideInFromTop {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200px 0;
+            }
+            100% {
+                background-position: calc(200px + 100%) 0;
+            }
+        }
+
+        /* Animation Classes */
+        .animate-fadeInUp {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .animate-fadeInLeft {
+            animation: fadeInLeft 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .animate-fadeInRight {
+            animation: fadeInRight 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .animate-slideInFromTop {
+            animation: slideInFromTop 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .animate-bounceIn {
+            animation: bounceIn 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Hero Section Animations */
+        .hero h1 {
+            animation: fadeInUp 1s ease-out 0.2s forwards;
+            opacity: 0;
+        }
+
+        .hero p {
+            animation: fadeInUp 1s ease-out 0.4s forwards;
+            opacity: 0;
+        }
+
+        .hero .btn {
+            animation: fadeInUp 1s ease-out 0.6s forwards;
+            opacity: 0;
+        }
+
+        .hero-image {
+            animation: fadeInRight 1s ease-out 0.8s forwards;
+            opacity: 0;
+        }
+
+        .hero {
+            position: relative;
+            background: url('pics/header.webp') no-repeat center center;
+            background-size: cover;
+            color: white;
+            z-index: 1;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Dark overlay for text readability */
+            z-index: -1;
+        }
+
+        /* Feature Cards Animations */
+        .feature-card {
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .feature-card.animate-in {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        /* Icon Animations */
+        .icon-wrapper {
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .icon-wrapper {
+            transform: scale(1.1) rotate(5deg);
+            color: #007bff;
+        }
+
+        /* Button Animations */
+        .btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,123,255,0.3);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        /* Navbar Animation */
+        .navbar {
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background-color: rgba(0,0,0,0.95) !important;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Footer Animation */
+        .footer {
+            animation: fadeInUp 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scroll Animations */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Navbar Link Animations */
+        .navbar-nav .nav-item .nav-link {
+            position: relative;
+            transition: all 0.3s ease-out;
+            padding-bottom: 8px; /* Add space for the underline */
+        }
+
+        .navbar-nav .nav-item .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--bs-primary); /* Use Bootstrap primary color */
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease-out;
+        }
+
+        .navbar-nav .nav-item .nav-link:hover {
+            transform: translateY(-3px);
+        }
+
+        .navbar-nav .nav-item .nav-link:hover::after,
+        .navbar-nav .nav-item .nav-link.active::after {
+            transform: scaleX(1);
+        }
+
+        /* Particle Background Effect */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(0,123,255,0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .particle:nth-child(1) { width: 10px; height: 10px; left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { width: 15px; height: 15px; left: 20%; animation-delay: 1s; }
+        .particle:nth-child(3) { width: 8px; height: 8px; left: 30%; animation-delay: 2s; }
+        .particle:nth-child(4) { width: 12px; height: 12px; left: 40%; animation-delay: 3s; }
+        .particle:nth-child(5) { width: 6px; height: 6px; left: 50%; animation-delay: 4s; }
+        .particle:nth-child(6) { width: 14px; height: 14px; left: 60%; animation-delay: 5s; }
+        .particle:nth-child(7) { width: 9px; height: 9px; left: 70%; animation-delay: 6s; }
+        .particle:nth-child(8) { width: 11px; height: 11px; left: 80%; animation-delay: 7s; }
+        .particle:nth-child(9) { width: 7px; height: 7px; left: 90%; animation-delay: 8s; }
     </style>
 </head>
 <body>
@@ -153,15 +501,16 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <h1 class="display-4 fw-bold mb-4">Transform Your Startup Journey with <span class="text-primary">PitchFrame</span></h1>
+                    <h1 class="display-4 fw-bold mb-4">Transform Your Startup Journey with <span class="text-primary animate-pulse">PitchFrame</span></h1>
                     <p class="lead mb-4"><a href="https://docs.google.com/forms/d/e/1FAIpQLSfhF481v0eWdEhqWRP2n3kqkYzDOnRo9uxO9GmIEmnhS5l2lQ/viewform?usp=sharing"></a>ultimate platform for startups to submit pitches, receive mentor feedback, track progress, and accelerate growth.</a></p>
                     <div class="d-flex gap-3">
-                        <a href="register.html" class="btn btn-primary btn-lg">Apply Here</a>
-                        <a href="login.html" class="btn btn-outline-primary btn-lg">Mentor Login</a>
+                        <a href="register.html" class="btn btn-primary btn-lg animate-float">Apply Here</a>
+                        <a href="login.html" class="btn btn-outline-primary btn-lg animate-float" style="animation-delay: 0.5s;">Mentor Login</a>
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80" alt="Startup Team" class="img-fluid rounded-4 hero-image">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80" alt="Startup Team" class="img-fluid rounded-4 hero-image animate-float">
+                    <!-- Image removed to use background image for the whole section -->
                 </div>
             </div>
         </div>
@@ -170,14 +519,27 @@
     <!-- Features Section -->
     <section id="features" class="features py-5">
         <div class="container">
-            <div class="text-center mb-5">
+            <div class="text-center mb-5 scroll-reveal">
                 <h2 class="section-title">Powerful Features for Startups & Mentors</h2>
                 <p class="section-subtitle">Everything you need to pitch, improve, and grow your startup</p>
             </div>
             
             <div class="row g-4">
                 <!-- Feature 1 -->
-                <div class="col-md-6">
+                <div class="col-md-6 scroll-reveal">
+                    <a href="pitch-submission.html" class="text-decoration-none">
+                    <div class="feature-card">
+                        <div class="icon-wrapper">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <h3>Submit Pitch</h3>
+                        <p>Upload your pitch deck and share your startup story with our community of mentors and investors.</p>
+                    </div>
+                    </a>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="col-md-6 scroll-reveal">
                     <a href="AI_analyzer.html" class="text-decoration-none">
                     <div class="feature-card">
                         <div class="icon-wrapper">
@@ -189,8 +551,8 @@
                     </a>
                 </div>
                 
-                <!-- Feature 2 -->
-                <div class="col-md-6">
+                <!-- Feature 3 -->
+                <div class="col-md-6 scroll-reveal">
                     <a href="https://docs.google.com/forms/d/e/1FAIpQLSfhF481v0eWdEhqWRP2n3kqkYzDOnRo9uxO9GmIEmnhS5l2lQ/viewform?usp=sharing" class="text-decoration-none">
                     <div class="feature-card">
                         <div class="icon-wrapper">
@@ -202,8 +564,8 @@
                     </a>
                 </div>
                 
-                <!-- Feature 3 -->
-                <div class="col-md-6">
+                <!-- Feature 4 -->
+                <div class="col-md-6 scroll-reveal">
                     <a href="mentor-matching.html" class="text-decoration-none">
                     <div class="feature-card">
                         <div class="icon-wrapper">
@@ -213,6 +575,39 @@
                         <p>Get paired with ideal mentors based on your domain, stage, and problem statement.</p>
                     </div>
                     </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats" class="stats py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5 scroll-reveal">
+                <h2 class="section-title">Our Impact in Numbers</h2>
+                <p class="section-subtitle">Join a growing community of innovators and experts.</p>
+            </div>
+            <div class="row text-center">
+                <div class="col-md-4 scroll-reveal">
+                    <div class="stat-item">
+                        <i class="fas fa-rocket fa-3x text-primary mb-3"></i>
+                        <h3 class="display-4 fw-bold stat-number" data-target="500">0</h3>
+                        <p class="lead">Startups Accelerated</p>
+                    </div>
+                </div>
+                <div class="col-md-4 scroll-reveal">
+                    <div class="stat-item">
+                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                        <h3 class="display-4 fw-bold stat-number" data-target="150">0</h3>
+                        <p class="lead">Mentors Onboard</p>
+                    </div>
+                </div>
+                <div class="col-md-4 scroll-reveal">
+                    <div class="stat-item">
+                        <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
+                        <h3 class="display-4 fw-bold stat-number" data-target="1200">0</h3>
+                        <p class="lead">Pitches Analyzed</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -295,17 +690,20 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Vanta.js for background animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.dots.min.js"></script>
+    
     <!-- Firebase Authentication -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-        import { firebaseConfig } from './firebase-config.js';
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        import {
+            auth,
+            db,
+            onAuthStateChanged,
+            signOut,
+            doc,
+            getDoc
+        } from './firebase-config.js';
 
         // Function to update navigation based on user role
         async function updateNavigation(user) {
@@ -378,6 +776,282 @@
     <script type="module">
         import { initNavigation } from './navigation.js';
         initNavigation();
+    </script>
+
+    <!-- PitchFrame Animation Scripts -->
+    <script>
+        // Initialize Vanta.js
+        VANTA.DOTS({
+            el: "#home",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x4a90e2, // Your primary blue
+            backgroundColor: null, // Set to null for transparency
+            showLines: false
+        });
+
+        // Scroll Reveal Animation
+        function initScrollReveal() {
+            const scrollElements = document.querySelectorAll('.scroll-reveal');
+            
+            const elementInView = (el, dividend = 1) => {
+                const elementTop = el.getBoundingClientRect().top;
+                return (
+                    elementTop <= (window.innerHeight || document.documentElement.clientHeight) / dividend
+                );
+            };
+
+            const displayScrollElement = (element) => {
+                element.classList.add('revealed');
+            };
+
+            const hideScrollElement = (element) => {
+                element.classList.remove('revealed');
+            };
+
+            const handleScrollAnimation = () => {
+                scrollElements.forEach((el) => {
+                    if (elementInView(el, 1.25)) {
+                        displayScrollElement(el);
+                    } else {
+                        hideScrollElement(el);
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', () => {
+                handleScrollAnimation();
+            });
+
+            // Initial check
+            handleScrollAnimation();
+        }
+
+        // Navbar Scroll Effect
+        function initNavbarScroll() {
+            const navbar = document.querySelector('.navbar');
+            
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+        }
+
+        // Feature Cards Staggered Animation
+        function initFeatureCardsAnimation() {
+            const featureCards = document.querySelectorAll('.feature-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('animate-in');
+                        }, index * 200); // Stagger animation by 200ms
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            featureCards.forEach(card => {
+                observer.observe(card);
+            });
+        }
+
+        // Particle Animation Enhancement
+        function initParticleAnimation() {
+            const particles = document.querySelectorAll('.particle');
+            
+            particles.forEach((particle, index) => {
+                // Randomize animation duration
+                const duration = 4 + Math.random() * 4; // 4-8 seconds
+                particle.style.animationDuration = `${duration}s`;
+                
+                // Randomize starting position
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Randomize animation delay
+                particle.style.animationDelay = `${Math.random() * 2}s`;
+            });
+        }
+
+        // Button Click Animation
+        function initButtonAnimations() {
+            const buttons = document.querySelectorAll('.btn');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Create ripple effect
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+        }
+
+        // Animated Stats Counter
+        function initStatsCounter() {
+            const counters = document.querySelectorAll('.stat-number');
+            const speed = 200; // The lower the slower
+
+            const animateCounter = (counter) => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const inc = target / speed;
+
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + inc);
+                    setTimeout(() => animateCounter(counter), 1);
+                } else {
+                    counter.innerText = target.toLocaleString() + '+';
+                }
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounter(entry.target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.5
+            });
+
+            counters.forEach(counter => {
+                observer.observe(counter);
+            });
+        }
+
+        // Add ripple effect CSS
+        const rippleCSS = `
+            .btn {
+                position: relative;
+                overflow: hidden;
+            }
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.6);
+                transform: scale(0);
+                animation: ripple-animation 0.6s linear;
+                pointer-events: none;
+            }
+            @keyframes ripple-animation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        
+        const style = document.createElement('style');
+        style.textContent = rippleCSS;
+        document.head.appendChild(style);
+
+        // Typing Animation for Hero Title
+        function initTypingAnimation() {
+            const titleElement = document.querySelector('.hero h1');
+            const originalText = titleElement.textContent;
+            const pitchFrameSpan = titleElement.querySelector('.text-primary');
+            
+            if (pitchFrameSpan) {
+                const pitchFrameText = pitchFrameSpan.textContent;
+                pitchFrameSpan.textContent = '';
+                
+                setTimeout(() => {
+                    let i = 0;
+                    const typeWriter = () => {
+                        if (i < pitchFrameText.length) {
+                            pitchFrameSpan.textContent += pitchFrameText.charAt(i);
+                            i++;
+                            setTimeout(typeWriter, 100);
+                        }
+                    };
+                    typeWriter();
+                }, 2000); // Start typing after 2 seconds
+            }
+        }
+
+        // Typing Animation for Feature Headings
+        function initFeatureHeadingTypingAnimation() {
+            const featureCards = document.querySelectorAll('#features .feature-card');
+
+            const typeWriter = (element, text, n = 0) => {
+                if (n < text.length) {
+                    element.textContent = text.substring(0, n + 1);
+                    setTimeout(() => {
+                        typeWriter(element, text, n + 1);
+                    }, 50); // Typing speed in milliseconds
+                }
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const heading = entry.target.querySelector('h3');
+                        if (heading && !heading.dataset.typed) {
+                            heading.dataset.typed = 'true'; // Mark as typed to prevent re-animation
+                            const originalText = heading.textContent;
+                            heading.textContent = ''; // Clear text before typing
+                            typeWriter(heading, originalText);
+                            observer.unobserve(entry.target); // Stop observing once animated
+                        }
+                    }
+                });
+            }, { threshold: 0.6 }); // Trigger when 60% of the card is visible
+
+            featureCards.forEach(card => {
+                observer.observe(card);
+            });
+        }
+
+        // Initialize all animations when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initScrollReveal();
+            initNavbarScroll();
+            initFeatureCardsAnimation();
+            initParticleAnimation();
+            initButtonAnimations();
+            initTypingAnimation();
+            initStatsCounter();
+            initFeatureHeadingTypingAnimation();
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
     </script>
 </body>
 </html>

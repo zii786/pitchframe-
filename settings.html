@@ -453,15 +453,14 @@
     
     <!-- Firebase Authentication -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-        import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-        import { firebaseConfig } from './firebase-config.js';
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        import {
+            auth,
+            db,
+            onAuthStateChanged,
+            doc,
+            getDoc,
+            updateDoc
+        } from './firebase-config.js';
 
         // Function to load user profile data
         async function loadUserProfile(userId) {
@@ -537,7 +536,7 @@
             logoutBtn.addEventListener('click', async (e) => {
                 e.preventDefault();
                 try {
-                    await auth.signOut();
+                    await signOut(auth);
                     window.location.href = 'login.html';
                 } catch (error) {
                     console.error('Error logging out:', error);

@@ -21,18 +21,23 @@ service firebase.storage {
       return request.resource.metadata.isLink == true;
     }
 
-    // Pitch deck rules
-    match /pitch-decks/{userId}/{fileName} {
+    // Pitches rules
+    match /pitches/{uid}/{fileName} {
       allow read: if isAuthenticated() 
-                  && (isOwner(userId) || resource.metadata.isPublic == true);
+                  && (isOwner(uid) || resource.metadata.isPublic == true);
       allow write: if isAuthenticated() 
-                   && isOwner(userId) 
+                   && isOwner(uid) 
                    && (isValidFileType() || isValidLinkSubmission())
                    && (isValidLinkSubmission() || request.resource.size < 10 * 1024 * 1024); // 10MB limit for files only
+    }
+
+    // Test folder for Firebase testing
+    match /test/{fileName} {
+      allow read, write: if isAuthenticated();
     }
 
     match /{allPaths=**} {
       allow read, write: if false;  // Secure default rule
     }
   }
-} 
+}

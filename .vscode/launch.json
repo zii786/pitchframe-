@@ -7,8 +7,8 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Open AI_analyzer.html",
-            "file": "d:\\PitchFrame-1\\AI_analyzer.html"
+             "name": "Open AI_analyzer.html",
+            "file": "${workspaceFolder}/AI_analyzer.html"
         }
     ]
 }

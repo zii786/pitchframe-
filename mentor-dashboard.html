@@ -372,7 +372,7 @@
                         <p class="dashboard-subtitle">Review and provide feedback on startup pitches</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                        <button class="btn btn-new-review" onclick="window.location.href='pitch-submission.html'">
+                        <button class="btn btn-new-review" onclick="window.location.href='AI_analyzer.html'">
                         <i class="fas fa-plus me-2"></i>New Review
                     </button>
                     </div>
@@ -429,10 +429,10 @@
     
     <!-- Firebase Authentication -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
         import { 
-            getFirestore, 
+            auth,
+            db,
+            onAuthStateChanged,
             doc, 
             getDoc, 
             collection, 
@@ -442,14 +442,8 @@
             getDocs, 
             onSnapshot,
             limit,
-            updateDoc 
-        } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-        import { firebaseConfig } from './firebase-config.js';
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+            updateDoc
+        } from './firebase-config.js';
 
         let unreadNotificationsCount = 0;
 
@@ -581,87 +575,6 @@
         // Make loadPendingReviews available globally
         window.loadPendingReviews = loadPendingReviews;
 
-        // Add the notifications function
-        async function loadNotifications(userId) {
-            try {
-                const notificationsRef = collection(db, 'notifications');
-                const q = query(
-                    notificationsRef,
-                    where('mentorId', '==', userId),
-                    where('type', '==', 'chat_request'),
-                    orderBy('createdAt', 'desc'),
-                    limit(10)
-                );
-
-                onSnapshot(q, async (snapshot) => {
-                    const notificationsList = document.getElementById('notificationsList');
-                    const notificationBadge = document.getElementById('notificationBadge');
-                    
-                    unreadNotificationsCount = snapshot.docs.filter(doc => !doc.data().read).length;
-                    
-                    if (unreadNotificationsCount > 0) {
-                        notificationBadge.style.display = 'block';
-                        notificationBadge.textContent = unreadNotificationsCount;
-                    } else {
-                        notificationBadge.style.display = 'none';
-                    }
-
-                    if (snapshot.empty) {
-                        notificationsList.innerHTML = `
-                            <div class="p-3 text-center text-muted">
-                                <p class="mb-0">No new notifications</p>
-                            </div>
-                        `;
-                        return;
-                    }
-
-                    notificationsList.innerHTML = '';
-                    for (const doc of snapshot.docs) {
-                        const notification = doc.data();
-                        const founderDoc = await getDoc(doc(db, 'users', notification.founderId));
-                        const founderData = founderDoc.exists() ? founderDoc.data() : null;
-
-                        const notificationElement = document.createElement('div');
-                        notificationElement.className = `notification-item ${notification.read ? '' : 'unread'}`;
-                        notificationElement.innerHTML = `
-                            <div class="d-flex align-items-center">
-                                <img src="${founderData?.profilePicture || `https://ui-avatars.com/api/?name=${encodeURIComponent(founderData?.firstName || 'User')}`}" 
-                                     class="rounded-circle me-2" width="32" height="32">
-                                <div class="flex-grow-1">
-                                    <p class="mb-0">
-                                        <strong>${founderData?.firstName || 'User'}</strong> wants to connect with you
-                                    </p>
-                                    <small class="notification-time">${formatDate(notification.createdAt)}</small>
-                                </div>
-                            </div>
-                            <div class="mt-2">
-                                <button class="btn btn-sm btn-primary" onclick="openChat('${notification.chatRoomId}')">
-                                    <i class="fas fa-comments me-1"></i> Open Chat
-                                </button>
-                            </div>
-                        `;
-                        notificationsList.appendChild(notificationElement);
-
-                        notificationElement.addEventListener('click', async () => {
-                            if (!notification.read) {
-                                await updateDoc(doc(db, 'notifications', doc.id), {
-                                    read: true
-                                });
-                            }
-                        });
-                    }
-                });
-
-            } catch (error) {
-                console.error('Error loading notifications:', error);
-            }
-        }
-
-        // Add chat opening function
-        window.openChat = (chatRoomId) => {
-            window.location.href = `chat.html?roomId=${chatRoomId}`;
-        };
-
         // Update the onAuthStateChanged listener
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
@@ -679,8 +592,7 @@
                     return;
                 }
 
-                // Load both notifications and pending reviews
-                await loadNotifications(user.uid);
+                // Load pending reviews
                 await loadPendingReviews();
 
             } catch (error) {

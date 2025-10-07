@@ -87,26 +87,19 @@
     
     <!-- Firebase -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
         import { 
-            getFirestore, 
+            auth,
+            db,
+            onAuthStateChanged,
             collection, 
             query, 
             where, 
             orderBy, 
-            getDocs,
             onSnapshot,
             doc,
             getDoc,
             updateDoc
-        } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-        import { firebaseConfig } from './firebase-config.js';
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        } from './firebase-config.js';
 
         // Function to format date
         function formatDate(timestamp) {

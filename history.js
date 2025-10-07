@@ -1,15 +1,29 @@
 // Import Firebase configuration and services
-import { auth, db, storage } from './firebase-config.js';
-import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-import { collection, query, where, orderBy, getDocs } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-import { ref, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js';
+import {
+    auth,
+    db,
+    storage,
+    onAuthStateChanged,
+    signOut,
+    collection,
+    query,
+    where,
+    orderBy,
+    getDocs,
+    addDoc,
+    doc,
+    getDoc,
+    ref,
+    getDownloadURL,
+    uploadBytesResumable
+} from './firebase-config.js';
 
 // Check authentication state
 onAuthStateChanged(auth, (user) => {
     if (!user) {
         window.location.href = 'login.html';
     } else {
-        loadAnalysisHistory(user);
+        loadAnalysisHistory();
     }
 });
 
@@ -83,26 +97,26 @@ async function handleFileUpload(file, isLink = false, linkUrl = null) {
                 }
             };
 
-            // Create an empty file with metadata in Firebase Storage
-            const storageRef = firebase.storage().ref();
-            const fileRef = storageRef.child(filename);
-            await fileRef.putString('', 'raw', metadata);
+            const storageRef = ref(storage, filename);
+            const emptyBlob = new Blob(['']);
+            await uploadBytesResumable(storageRef, emptyBlob, { customMetadata: metadata });
 
-            // Save link metadata to Firestore
-            await firebase.firestore().collection('pitch_decks').add({
+            // Save link metadata to Firestore (using 'pitches' collection)
+            await addDoc(collection(db, 'pitches'), {
                 userId: auth.currentUser.uid,
-                filename: 'External Link',
-                downloadURL: linkUrl,
+                companyName: 'External Link',
+                fileName: 'External Link',
+                fileUrl: linkUrl,
                 uploadType: 'link',
-                uploadDate: firebase.firestore.FieldValue.serverTimestamp(),
-                status: 'processing'
+                createdAt: new Date(),
+                status: 'pending'
             });
 
             // Hide progress bar and show success
             uploadProgress.classList.add('d-none');
             bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
             alert('Link submitted successfully! Analysis will begin shortly.');
-            loadAnalysisHistory(auth.currentUser);
+            loadAnalysisHistory();
             return;
         }
 
@@ -114,50 +128,45 @@ async function handleFileUpload(file, isLink = false, linkUrl = null) {
             return;
         }
 
-        // Upload file to Firebase Storage
-        const storageRef = firebase.storage().ref();
-        const fileRef = storageRef.child(filename);
-        const uploadTask = fileRef.put(file);
+        const storageRef = ref(storage, filename);
+        const uploadTask = uploadBytesResumable(storageRef, file);
 
         // Monitor upload progress
-        uploadTask.on('state_changed', 
-            (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                progressBar.style.width = `${progress}%`;
-            },
-            (error) => {
-                console.error('Upload error:', error);
-                alert('Error uploading file: ' + error.message);
-                uploadProgress.classList.add('d-none');
-            },
-            async () => {
-                // Get download URL
-                const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+        uploadTask.on('state_changed', (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            progressBar.style.width = `${progress}%`;
+        }, (error) => {
+            console.error('Upload error:', error);
+            alert('Error uploading file: ' + error.message);
+            uploadProgress.classList.add('d-none');
+        }, async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
 
-                // Save file metadata to Firestore
-                await firebase.firestore().collection('pitch_decks').add({
-                    userId: auth.currentUser.uid,
-                    filename: file.name,
-                    downloadURL: downloadURL,
-                    uploadType: 'file',
-                    uploadDate: firebase.firestore.FieldValue.serverTimestamp(),
-                    status: 'processing'
-                });
+            // Save file metadata to Firestore (using 'pitches' collection)
+            // This part is likely handled by pitch-submission.html now,
+            // but adding it here makes the modal upload functional.
+            await addDoc(collection(db, 'pitches'), {
+                userId: auth.currentUser.uid,
+                companyName: file.name.split('.')[0], // Guess company name from filename
+                fileName: file.name,
+                fileUrl: downloadURL,
+                uploadType: 'file',
+                createdAt: new Date(),
+                status: 'pending'
+            });
 
-                // Hide progress bar
-                uploadProgress.classList.add('d-none');
-                bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
-                alert('File uploaded successfully! Analysis will begin shortly.');
-                loadAnalysisHistory(auth.currentUser);
-            }
-        );
+            // Hide progress bar
+            uploadProgress.classList.add('d-none');
+            bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
+            alert('File uploaded successfully! Analysis will begin shortly.');
+            loadAnalysisHistory();
+        });
     } catch (error) {
         console.error('Error:', error);
         alert('Error: ' + error.message);
         uploadProgress.classList.add('d-none');
     }
 }
-
 // Add link submission handler
 function handleLinkSubmission(linkUrl) {
     if (!linkUrl) {
@@ -249,7 +258,7 @@ async function loadAnalysisHistory() {
         // Show error state with retry button
         const analysisList = document.getElementById('analysisList');
         analysisList.innerHTML = `
-            <div class="text-center py-4">
+            <div class="alert alert-danger text-center py-4">
                 <i class="fas fa-exclamation-circle fa-3x text-danger mb-3"></i>
                 <h5>Error loading analysis history</h5>
                 <p class="text-muted">${error.message}</p>
@@ -260,12 +269,13 @@ async function loadAnalysisHistory() {
         `;
 
         // If the error is about missing index, show helpful message
-        if (error.code === 'failed-precondition' && error.message.includes('index')) {
+        if (error.code === 'failed-precondition') {
             analysisList.innerHTML += `
-                <div class="alert alert-info mt-3">
-                    <i class="fas fa-info-circle"></i>
-                    <strong>First-time setup:</strong> The system is creating necessary database indexes. 
-                    This may take a few minutes. Please try again shortly.
+                <div class="alert alert-warning mt-3">
+                    <h5 class="alert-heading"><i class="fas fa-database me-2"></i>Database Index Required</h5>
+                    <p>Your filters require a database index. This is a one-time setup. Please click the link below to create it in Firebase, then wait a few minutes and refresh the page.</p>
+                    <hr>
+                    <a href="${error.message.split('here: ')[1]}" target="_blank" class="btn btn-warning">Create Firestore Index</a>
                 </div>
             `;
         }
@@ -296,7 +306,7 @@ function createAnalysisCard(data, id) {
     const statusClass = `status-${data.status}`;
     const statusText = data.status.charAt(0).toUpperCase() + data.status.slice(1);
     
-    let scoreHtml = '';
+    let scoreHtml = '<div class="analysis-score"></div>'; // Placeholder
     if (data.status === 'completed' && data.analysis) {
         const avgScore = ((data.analysis.clarityScore + data.analysis.engagementScore) / 2).toFixed(1);
         scoreHtml = `
@@ -310,7 +320,7 @@ function createAnalysisCard(data, id) {
     card.innerHTML = `
         <div class="d-flex justify-content-between align-items-start">
             <div>
-                <h5 class="mb-1">${data.companyName}</h5>
+                <h5 class="mb-1">${data.companyName || data.fileName}</h5>
                 <div class="analysis-date mb-2">Submitted on ${date}</div>
                 <span class="analysis-status ${statusClass}">${statusText}</span>
             </div>
@@ -321,11 +331,11 @@ function createAnalysisCard(data, id) {
             <p class="mb-2 text-muted">Industry: ${data.industry}</p>
         </div>
         <div class="mt-3">
-            <button class="btn btn-outline-primary btn-sm" onclick="window.location.href='${data.pitchDeckUrl}'">
+            <button class="btn btn-outline-primary btn-sm" onclick="viewPitchDeck('${data.fileUrl}')">
                 <i class="fas fa-file-download me-2"></i>View Pitch Deck
             </button>
-            ${data.status === 'completed' ? `
-                <button class="btn btn-outline-success btn-sm ms-2" onclick="viewAnalysis('${id}')">
+            ${data.status === 'analyzed' || data.status === 'completed' ? `
+                <button class="btn btn-outline-success btn-sm ms-2" onclick="viewAnalysis('${id}', event)">
                     <i class="fas fa-chart-bar me-2"></i>View Analysis
                 </button>
             ` : ''}
@@ -336,52 +346,56 @@ function createAnalysisCard(data, id) {
 }
 
 // View analysis details
-window.viewAnalysis = function(id) {
-    sessionStorage.setItem('currentAnalysisId', id);
-    window.location.href = 'AI_analyzer.html';
+window.viewAnalysis = function(id, event) {
+    event.stopPropagation(); // Prevent card click
+    window.location.href = `AI_analyzer.html?pitchId=${id}`;
 };
 
 // Download analysis report
 async function downloadReport(id) {
     try {
-        const doc = await firebase.firestore().collection('pitch_decks').doc(id).get();
-        if (doc.exists) {
-            const data = doc.data();
-            if (data.status === 'completed' && data.analysis) {
-                // Create a downloadable report
-                const report = {
-                    filename: data.filename,
-                    uploadDate: data.uploadDate.toDate().toLocaleDateString(),
-                    analysis: data.analysis
-                };
-                
-                // Convert to JSON and create download
-                const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${data.filename.replace(/\.[^/.]+$/, '')}_analysis.json`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }
+        const pitchDoc = await getDoc(doc(db, "pitches", id));
+        if (!pitchDoc.exists) {
+            throw new Error("Pitch not found");
+        }
+        const data = pitchDoc.data();
+        if ((data.status === 'completed' || data.status === 'analyzed') && data.analysis) {
+            // Create a downloadable report
+            const report = {
+                filename: data.fileName,
+                uploadDate: data.createdAt.toDate().toLocaleDateString(),
+                analysis: data.analysis
+            };
+            
+            // Convert to JSON and create download
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${data.fileName.replace(/\.[^/.]+$/, '')}_analysis.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } else {
+            alert("Analysis is not yet complete for this pitch.");
         }
     } catch (error) {
         console.error('Error downloading report:', error);
         alert('Error downloading report: ' + error.message);
     }
 }
+window.downloadReport = downloadReport;
 
 // Add filter change handlers
-document.getElementById('dateFilter').addEventListener('change', () => loadAnalysisHistory(auth.currentUser));
-document.getElementById('statusFilter').addEventListener('change', () => loadAnalysisHistory(auth.currentUser));
-document.getElementById('sortBy').addEventListener('change', () => loadAnalysisHistory(auth.currentUser));
+document.getElementById('dateFilter').addEventListener('change', loadAnalysisHistory);
+document.getElementById('statusFilter').addEventListener('change', loadAnalysisHistory);
+document.getElementById('sortBy').addEventListener('change', loadAnalysisHistory);
 
 // Add this function to handle viewing pitch decks
-function viewPitchDeck(pitchDeckUrl, uploadType) {
+window.viewPitchDeck = function(pitchDeckUrl, uploadType = 'file') {
     if (!pitchDeckUrl) {
-        showError('No pitch deck available');
+        alert('No pitch deck available');
         return;
     }
 
@@ -390,46 +404,7 @@ function viewPitchDeck(pitchDeckUrl, uploadType) {
         window.open(pitchDeckUrl, '_blank');
     } else {
         // For uploaded files, handle Firebase Storage URLs
-        const storageRef = ref(storage, pitchDeckUrl);
-        getDownloadURL(storageRef)
-            .then((url) => {
-                window.open(url, '_blank');
-            })
-            .catch((error) => {
-                console.error('Error getting pitch deck:', error);
-                showError('Error accessing pitch deck: ' + error.message);
-            });
+        // The URL from Firestore is already a public download URL
+        window.open(pitchDeckUrl, '_blank');
     }
 }
-
-// Update the createHistoryCard function to include upload type
-function createHistoryCard(pitch) {
-    const date = pitch.createdAt.toDate();
-    const formattedDate = date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-
-    return `
-        <div class="history-card">
-            <div class="history-header">
-                <h3>${pitch.companyName}</h3>
-                <span class="badge ${getStatusBadgeClass(pitch.status)}">${pitch.status}</span>
-            </div>
-            <p class="submission-date">Submitted on ${formattedDate}</p>
-            <div class="history-actions">
-                <button class="btn btn-primary" onclick="viewPitchDeck('${pitch.pitchDeckUrl}', '${pitch.uploadType || 'file'}')">
-                    <i class="fas ${pitch.uploadType === 'link' ? 'fa-external-link-alt' : 'fa-file-download'} me-2"></i>
-                    View Pitch Deck
-                </button>
-                ${pitch.status === 'reviewed' ? `
-                    <button class="btn btn-success" onclick="viewFeedback('${pitch.id}')">
-                        <i class="fas fa-comment-alt me-2"></i>
-                        View Feedback
-                    </button>
-                ` : ''}
-            </div>
-        </div>
-    `;
-} 

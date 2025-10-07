@@ -1,0 +1,12 @@
+I1004 15:10:39.992423   58680 load.go:31] Reloading schema and connectors...
+I1004 15:10:40.015679   58680 control.go:94] [/emulator/pitches 91e4] UpdateResources(): done
+Schema: sources: schema\schema.gql [2140B] 
+Connector "default": sources: connector\mutations.gql [1266B] connector\queries.gql [1880B] 
+I1004 15:10:40.032698   58680 collector.go:107] schema extensions wrote into "E:\\PitchFrame\\dataconnect\\.dataconnect\\schema"
+Generated sources: prelude.gql [73251B] 
+I1004 15:10:40.032698   58680 load.go:109] Finished reloading
+I1004 15:10:40.040527   58680 dev.go:102] Listening on address (HTTP + gRPC): 127.0.0.1:9399
+I1004 15:10:40.040527   58680 dev.go:102] Listening on address (HTTP + gRPC): [::1]:9399
+I1004 15:10:43.273634   58680 control.go:94] [/emulator/pitches a711] UpdateResources(): done
+Schema: sources: schema\schema.gql [2140B] 
+Connector "default": sources: connector\mutations.gql [1266B] connector\queries.gql [1880B] 

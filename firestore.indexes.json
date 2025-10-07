@@ -1,38 +1,4 @@
 {
-  "indexes": [
-    {
-      "collectionGroup": "pitch_decks",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "userId", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "DESCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "analysis_results",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "pitchDeckId", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "DESCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "user_history",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "userId", "order": "ASCENDING" },
-        { "fieldPath": "viewedAt", "order": "DESCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "mentors",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "industry", "order": "ASCENDING" },
-        { "fieldPath": "matchScore", "order": "DESCENDING" },
-        { "fieldPath": "__name__", "order": "DESCENDING" }
-      ]
-    }
-  ],
+  "indexes": [],
   "fieldOverrides": []
-} 
+}

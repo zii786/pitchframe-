@@ -1,101 +1,99 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { 
-    getAuth, 
+    getAuth,
+    onAuthStateChanged,
+    signOut,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     sendPasswordResetEmail,
-    signOut,
-    onAuthStateChanged
-} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+    GoogleAuthProvider,
+    signInWithPopup,
+    getRedirectResult,
+    fetchSignInMethodsForEmail,
+    connectAuthEmulator,
+    EmailAuthProvider,
+    updateProfile,
+    deleteUser,
+    reauthenticateWithCredential
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { 
-    getFirestore, 
-    collection, 
-    doc, 
+    getFirestore,
+    collection,
+    doc,
+    getDoc,
     setDoc,
-    getDoc, 
-    updateDoc
-} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-import { getStorage, ref } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js';
+    updateDoc,
+    addDoc,
+    query,
+    where,
+    orderBy,
+    getDocs,
+    connectFirestoreEmulator
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
-
-
+// Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
-  authDomain: "pitchframe-6967a.firebaseapp.com",
-  databaseURL: "https://pitchframe-6967a-default-rtdb.firebaseio.com",
-  projectId: "pitchframe-6967a",
-  storageBucket: "pitchframe-6967a.firebasestorage.app",
-  messagingSenderId: "801200566992",
-  appId: "1:801200566992:web:d4460e0f21707aaab724d5"
+    apiKey: "AIzaSyCKPLJWseR3pr6zH-ejWKV5LU2UXJhUNlE",
+    authDomain: "pitchframe-ismail.firebaseapp.com",
+    projectId: "pitchframe-ismail",
+    storageBucket: "pitchframe-ismail.firebasestorage.app",
+    messagingSenderId: "912391061237",
+    appId: "1:912391061237:web:26b27963efcc3f5ddf4fbc"
 };
 
-// Initialize Firebase only if it hasn't been initialized
-let app;
-try {
-    app = initializeApp(firebaseConfig);
-} catch (error) {
-    // If Firebase is already initialized, get the existing instance
-    app = getApp();
-}
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase services with CORS settings
+// Initialize Firebase services
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app, undefined, {
-    customDomain: undefined,
-    cors: {
-        origin: [
-            'http://localhost:8000', 
-            'http://127.0.0.1:8000',
-            'https://exquisite-puppy-fb8537.netlify.app',
-            'https://exquisite-puppy-fb8537.netlify.app/',
-            'https://pitchframe-6967a.firebaseapp.com',
-            'https://pitchframe-6967a.web.app'
-        ],
-        methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
-        maxAge: 3600
+const storage = getStorage(app);
+
+// Connect to emulators in development
+if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    console.log("Connecting to local Firebase emulators...");
+    try {
+        connectAuthEmulator(auth, 'http://localhost:9099');
+        connectFirestoreEmulator(db, 'localhost', 8080);
+    } catch (error) {
+        console.log("Emulators already connected or not available");
     }
-});
+}
 
-// Set CORS configuration
-const corsSettings = {
-  origin: ['http://localhost:8000', 'http://127.0.0.1:8000'],
-  methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Content-Length', 'User-Agent', 'x-goog-resumable'],
-  maxAge: 3600
-};
-
-const storageRef = ref(storage);
-
-// Function to handle user registration
+// Authentication functions
 async function registerUser(email, password, firstName, lastName, userType) {
     try {
-        // First create the user authentication
+        console.log('Starting user registration...');
+        
+        // Create user with email and password
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         
-        // Then create the user profile
+        console.log('User created:', user.uid);
+        
+        // Create user profile document
         const userProfile = {
             firstName: firstName,
             lastName: lastName,
             email: email,
             userType: userType,
             createdAt: new Date(),
-            profileComplete: false,
+            profileComplete: true,
             uid: user.uid
         };
-
-        // Create user document
+        
+        // Save user profile to Firestore
         await setDoc(doc(db, 'users', user.uid), userProfile);
-
+        console.log('User profile saved to Firestore');
+        
         // Create type-specific profile
         const typeSpecificProfile = {
             createdAt: new Date(),
             userId: user.uid
         };
-
+        
         if (userType === 'startup') {
             await setDoc(doc(db, 'startups', user.uid), {
                 ...typeSpecificProfile,
@@ -117,7 +115,8 @@ async function registerUser(email, password, firstName, lastName, userType) {
                 preferredStages: []
             });
         }
-
+        
+        console.log('Registration completed successfully');
         return userCredential;
     } catch (error) {
         console.error('Registration error:', error);
@@ -125,87 +124,151 @@ async function registerUser(email, password, firstName, lastName, userType) {
     }
 }
 
-// Function to handle user login
 async function loginUser(email, password) {
     try {
+        console.log('Starting user login...');
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log('Login successful:', userCredential.user.uid);
         return userCredential;
     } catch (error) {
+        console.error('Login error:', error);
         throw error;
     }
 }
 
-// Function to handle password reset
+async function loginWithGoogle() {
+    try {
+        console.log('Starting Google login...');
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        console.log('Google login successful:', result.user.uid);
+        return result;
+    } catch (error) {
+        console.error('Google login error:', error);
+        throw error;
+    }
+}
+
 async function resetPassword(email) {
     try {
+        console.log('Sending password reset email...');
         await sendPasswordResetEmail(auth, email);
+        console.log('Password reset email sent');
     } catch (error) {
+        console.error('Password reset error:', error);
         throw error;
     }
 }
 
-// Function to handle user logout
 async function logoutUser() {
     try {
+        console.log('Logging out user...');
         await signOut(auth);
+        console.log('Logout successful');
     } catch (error) {
+        console.error('Logout error:', error);
         throw error;
     }
 }
 
-// Function to check if user is logged in
-function checkAuthState(callback) {
+function getCurrentUser() {
+    return auth.currentUser;
+}
+
+export function onAuthStateChange(callback) {
     return onAuthStateChanged(auth, callback);
 }
 
-// Function to get user profile data
+// Firestore functions
 async function getUserProfile(userId) {
-    const userDoc = await getDoc(doc(db, 'users', userId));
-    return userDoc.exists() ? userDoc.data() : null;
+    try {
+        const userDoc = await getDoc(doc(db, 'users', userId));
+        return userDoc.exists() ? userDoc.data() : null;
+    } catch (error) {
+        console.error('Error getting user profile:', error);
+        throw error;
+    }
 }
 
-// Function to update user profile
 async function updateUserProfile(userId, data) {
-    await updateDoc(doc(db, 'users', userId), {
-        ...data,
-        updatedAt: new Date()
-    });
+    try {
+        await updateDoc(doc(db, 'users', userId), {
+            ...data,
+            updatedAt: new Date()
+        });
+    } catch (error) {
+        console.error('Error updating user profile:', error);
+        throw error;
+    }
 }
 
-// Function to get startup profile
-async function getStartupProfile(userId) {
-    const startupDoc = await getDoc(doc(db, 'startups', userId));
-    return startupDoc.exists() ? startupDoc.data() : null;
+// Storage functions
+export async function uploadFile(file, path) {
+    try {
+        const storageRef = ref(storage, path);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+        
+        return new Promise((resolve, reject) => {
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                    // Progress tracking
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload progress:', progress + '%');
+                },
+                (error) => {
+                    console.error('Upload error:', error);
+                    reject(error);
+                },
+                async () => {
+                    try {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                        resolve(downloadURL);
+                    } catch (error) {
+                        reject(error);
+                    }
+                }
+            );
+        });
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        throw error;
+    }
 }
 
-// Function to get mentor profile
-async function getMentorProfile(userId) {
-    const mentorDoc = await getDoc(doc(db, 'mentors', userId));
-    return mentorDoc.exists() ? mentorDoc.data() : null;
-}
-
-// Function to get investor profile
-async function getInvestorProfile(userId) {
-    const investorDoc = await getDoc(doc(db, 'investors', userId));
-    return investorDoc.exists() ? investorDoc.data() : null;
-}
-
-// Export functions and variables
+// Export Firebase services and functions
 export {
-    auth,
-    db,
-    storage,
-    storageRef,
-    corsSettings,
-    firebaseConfig,
-    registerUser,
-    loginUser,
-    resetPassword,
-    logoutUser,
-    checkAuthState,
-    getUserProfile,
-    updateUserProfile,
-    getStartupProfile,
-    getMentorProfile,
-    getInvestorProfile
+  auth,
+  db,
+  storage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  onAuthStateChanged,
+  signOut,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  sendPasswordResetEmail,
+  updateProfile,
+  deleteUser,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+  registerUser,
+  loginUser,
+  loginWithGoogle,
+  resetPassword,
+  logoutUser,
+  getUserProfile,
+  updateUserProfile,
+  updateDoc,
+  fetchSignInMethodsForEmail
 };
