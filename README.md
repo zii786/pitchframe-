@@ -81,10 +81,7 @@ This project is designed as a frontend prototype. For a full production version,
 5. Add file storage and video embedding functionality
 6. Implement the AI analysis systems
 
-## License
-
-MIT License
-
 ## Contact
 
-For more information, reach out to the PitchFrame team at info@pitchframe.com 
+
+For more information, reach out to the PitchFrame team at mr.oscopeismail@gmail.com
