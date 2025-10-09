@@ -33,11 +33,65 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
-// Import environment loader
-import { getFirebaseConfig, isDevelopment } from './env-loader.js';
+// Environment configuration loader with fallbacks
+function loadFirebaseConfig() {
+    // Try to load from environment variables first
+    try {
+        // Check if we're in a Vite environment
+        if (typeof import.meta !== 'undefined' && import.meta.env) {
+            const config = {
+                apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+                authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+                projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+                storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+                messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+                appId: import.meta.env.VITE_FIREBASE_APP_ID
+            };
+            
+            // Check if all values are present
+            const hasAllValues = Object.values(config).every(value => value && value !== 'your-firebase-api-key-here');
+            if (hasAllValues) {
+                console.log('Using environment variables for Firebase configuration');
+                return config;
+            }
+        }
+        
+        // Try to load from window.env (injected by script)
+        if (typeof window !== 'undefined' && window.env) {
+            const config = {
+                apiKey: window.env.VITE_FIREBASE_API_KEY || window.env.FIREBASE_API_KEY,
+                authDomain: window.env.VITE_FIREBASE_AUTH_DOMAIN || window.env.FIREBASE_AUTH_DOMAIN,
+                projectId: window.env.VITE_FIREBASE_PROJECT_ID || window.env.FIREBASE_PROJECT_ID,
+                storageBucket: window.env.VITE_FIREBASE_STORAGE_BUCKET || window.env.FIREBASE_STORAGE_BUCKET,
+                messagingSenderId: window.env.VITE_FIREBASE_MESSAGING_SENDER_ID || window.env.FIREBASE_MESSAGING_SENDER_ID,
+                appId: window.env.VITE_FIREBASE_APP_ID || window.env.FIREBASE_APP_ID
+            };
+            
+            // Check if all values are present
+            const hasAllValues = Object.values(config).every(value => value && value !== 'your-firebase-api-key-here');
+            if (hasAllValues) {
+                console.log('Using injected environment variables for Firebase configuration');
+                return config;
+            }
+        }
+    } catch (error) {
+        console.warn('Failed to load environment variables:', error);
+    }
+    
+    // Fallback to hardcoded values (for development/testing)
+    console.log('Using fallback Firebase configuration');
+    return {
+        apiKey: "AIzaSyCKPLJWseR3pr6zH-ejWKV5LU2UXJhUNlE",
+        authDomain: "pitchframe-ismail.firebaseapp.com",
+        projectId: "pitchframe-ismail",
+        storageBucket: "pitchframe-ismail.firebasestorage.app",
+        messagingSenderId: "912391061237",
+        appId: "1:912391061237:web:26b27963efcc3f5ddf4fbc"
+    };
+}
 
 // Firebase configuration
-const firebaseConfig = getFirebaseConfig();
+const firebaseConfig = loadFirebaseConfig();
 
 // Validate required configuration
 function validateFirebaseConfig(config) {
@@ -61,6 +115,13 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 
 // Connect to emulators in development
+function isDevelopment() {
+    return location.hostname === 'localhost' || 
+           location.hostname === '127.0.0.1' ||
+           (typeof window !== 'undefined' && window.env && window.env.VITE_DEV_MODE === 'true') ||
+           (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_DEV_MODE === 'true');
+}
+
 if (isDevelopment()) {
     console.log("Connecting to local Firebase emulators...");
     try {

@@ -1,11 +1,71 @@
-// AI Configuration File with Environment Variables
-// This file loads configuration from environment variables
+// AI Configuration File with Environment Variables and Fallbacks
+// This file loads configuration from environment variables with fallbacks
 
-// Import environment loader
-import { getAIConfig } from './env-loader.js';
+// Environment configuration loader with fallbacks
+function loadAIConfig() {
+    try {
+        // Check if we're in a Vite environment
+        if (typeof import.meta !== 'undefined' && import.meta.env) {
+            const config = {
+                OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY,
+                OPENAI_API_URL: import.meta.env.VITE_OPENAI_API_URL,
+                ANTHROPIC_API_KEY: import.meta.env.VITE_ANTHROPIC_API_KEY,
+                ANTHROPIC_API_URL: import.meta.env.VITE_ANTHROPIC_API_URL,
+                USE_AI_SERVICE: import.meta.env.VITE_USE_AI_SERVICE,
+                MAX_CONTENT_LENGTH: parseInt(import.meta.env.VITE_MAX_CONTENT_LENGTH),
+                ANALYSIS_TIMEOUT: parseInt(import.meta.env.VITE_ANALYSIS_TIMEOUT),
+                DEV_MODE: import.meta.env.VITE_DEV_MODE === 'true',
+                DEBUG_MODE: import.meta.env.VITE_DEBUG_MODE === 'true'
+            };
+            
+            // Check if we have valid values
+            if (config.OPENAI_API_KEY && config.OPENAI_API_KEY !== 'your-openai-api-key-here') {
+                console.log('Using environment variables for AI configuration');
+                return config;
+            }
+        }
+        
+        // Try to load from window.env (injected by script)
+        if (typeof window !== 'undefined' && window.env) {
+            const config = {
+                OPENAI_API_KEY: window.env.VITE_OPENAI_API_KEY || window.env.OPENAI_API_KEY,
+                OPENAI_API_URL: window.env.VITE_OPENAI_API_URL || window.env.OPENAI_API_URL,
+                ANTHROPIC_API_KEY: window.env.VITE_ANTHROPIC_API_KEY || window.env.ANTHROPIC_API_KEY,
+                ANTHROPIC_API_URL: window.env.VITE_ANTHROPIC_API_URL || window.env.ANTHROPIC_API_URL,
+                USE_AI_SERVICE: window.env.VITE_USE_AI_SERVICE || window.env.USE_AI_SERVICE,
+                MAX_CONTENT_LENGTH: parseInt(window.env.VITE_MAX_CONTENT_LENGTH || window.env.MAX_CONTENT_LENGTH),
+                ANALYSIS_TIMEOUT: parseInt(window.env.VITE_ANALYSIS_TIMEOUT || window.env.ANALYSIS_TIMEOUT),
+                DEV_MODE: window.env.VITE_DEV_MODE === 'true' || window.env.DEV_MODE === 'true',
+                DEBUG_MODE: window.env.VITE_DEBUG_MODE === 'true' || window.env.DEBUG_MODE === 'true'
+            };
+            
+            // Check if we have valid values
+            if (config.OPENAI_API_KEY && config.OPENAI_API_KEY !== 'your-openai-api-key-here') {
+                console.log('Using injected environment variables for AI configuration');
+                return config;
+            }
+        }
+    } catch (error) {
+        console.warn('Failed to load AI environment variables:', error);
+    }
+    
+    // Fallback to default values (mock mode for testing)
+    console.log('Using fallback AI configuration (mock mode)');
+    return {
+        OPENAI_API_KEY: 'your-openai-api-key-here',
+        OPENAI_API_URL: 'https://api.openai.com/v1/chat/completions',
+        ANTHROPIC_API_KEY: 'your-anthropic-api-key-here',
+        ANTHROPIC_API_URL: 'https://api.anthropic.com/v1/messages',
+        USE_AI_SERVICE: 'mock',
+        MAX_CONTENT_LENGTH: 4000,
+        ANALYSIS_TIMEOUT: 30000,
+        DEV_MODE: false,
+        DEBUG_MODE: false
+    };
+}
 
 // Load configuration
-const envConfig = getAIConfig();
+const envConfig = loadAIConfig();
 
 // Validate API keys
 function validateAPIKeys(config) {
