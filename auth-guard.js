@@ -1,4 +1,4 @@
-import { auth, db, onAuthStateChanged, getDoc, doc } from './firebase-config.js';
+import { auth, db, onAuthStateChanged, getDoc, doc, updateMentorAvailability } from './firebase-config.js';
 
 const currentPage = window.location.pathname.split('/').pop();
 
@@ -8,7 +8,8 @@ const protectedPages = [
     'pitch-submission.html',
     'settings.html',
     'history.html',
-    'chat.html'
+    'chat.html',
+    'mentor-matching.html'
 ];
 
 onAuthStateChanged(auth, async (user) => {
@@ -21,6 +22,16 @@ onAuthStateChanged(auth, async (user) => {
             const userDoc = await getDoc(userDocRef);
             if (userDoc.exists()) {
                 const userData = userDoc.data();
+                
+                // Update mentor availability if they're a mentor
+                if (userData.userType === 'mentor') {
+                    try {
+                        await updateMentorAvailability(user.uid, true);
+                    } catch (error) {
+                        console.error('Error updating mentor availability:', error);
+                    }
+                }
+                
                 switch (userData.userType) {
                     case 'mentor':
                         window.location.href = 'mentor-dashboard.html';

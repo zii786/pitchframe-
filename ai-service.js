@@ -34,27 +34,129 @@ async function initializePDFJS() {
     }
 }
 
-// Enhanced text extraction from PDF
-async function extractTextFromPDF(fileUrl) {
+// Enhanced text extraction from PDF using Cloud Function
+async function extractTextFromPDF(fileUrl, userId, docId) {
     try {
-        await initializePDFJS();
+        console.log('Attempting PDF text extraction via Cloud Function...');
         
-        const response = await fetch(fileUrl);
-        const arrayBuffer = await response.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+        // Import Firebase Functions
+        const { getFunctions, httpsCallable } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js');
+        const { getApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
         
-        let fullText = '';
-        for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const textContent = await page.getTextContent();
-            const pageText = textContent.items.map(item => item.str).join(' ');
-            fullText += `Page ${i}: ${pageText}\n\n`;
+        const functions = getFunctions(getApp());
+        const analyzePitchProxy = httpsCallable(functions, 'analyzePitchProxy');
+        
+        // Call Cloud Function to extract text and analyze
+        const result = await analyzePitchProxy({
+            fileUrl: fileUrl,
+            userId: userId,
+            docId: docId
+        });
+        
+        if (result.data.success) {
+            console.log('PDF text extraction successful via Cloud Function');
+            return result.data.extractedTextLength > 0 ? 'Text extracted successfully' : 'No text content found';
+        } else {
+            throw new Error('Cloud function failed to extract text');
+        }
+    } catch (error) {
+        console.error('Error extracting PDF text via Cloud Function:', error);
+        
+        // Provide user-friendly error messages
+        if (error.code === 'functions/unavailable') {
+            throw new Error('Analysis service is temporarily unavailable. Please try again later.');
+        } else if (error.code === 'functions/deadline-exceeded') {
+            throw new Error('Analysis is taking longer than expected. Please try again.');
+        } else if (error.code === 'functions/resource-exhausted') {
+            throw new Error('Analysis service is currently overloaded. Please try again in a few minutes.');
         }
         
+        // Fallback to client-side extraction if Cloud Function fails
+        console.log('Falling back to client-side PDF extraction...');
+        return await extractTextFromPDFFallback(fileUrl);
+    }
+}
+
+// Fallback PDF extraction using PDF.js
+async function extractTextFromPDFFallback(fileUrl) {
+    try {
+        console.log('Starting client-side PDF extraction...');
+        await initializePDFJS();
+        
+        // Create a timeout for the fetch request
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+        
+        const response = await fetch(fileUrl, { 
+            signal: controller.signal,
+            mode: 'cors',
+            credentials: 'omit'
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const arrayBuffer = await response.arrayBuffer();
+        
+        if (arrayBuffer.byteLength === 0) {
+            throw new Error('PDF file is empty or corrupted');
+        }
+        
+        const pdf = await pdfjsLib.getDocument({
+            data: arrayBuffer,
+            verbosity: 0 // Reduce console output
+        }).promise;
+        
+        if (pdf.numPages === 0) {
+            throw new Error('PDF contains no pages');
+        }
+        
+        let fullText = '';
+        let extractedPages = 0;
+        
+        // Limit to first 10 pages to avoid timeout
+        const maxPages = Math.min(pdf.numPages, 10);
+        
+        for (let i = 1; i <= maxPages; i++) {
+            try {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                const pageText = textContent.items.map(item => item.str).join(' ');
+                
+                if (pageText.trim().length > 0) {
+                    fullText += `Page ${i}: ${pageText}\n\n`;
+                    extractedPages++;
+                }
+            } catch (pageError) {
+                console.warn(`Error extracting page ${i}:`, pageError);
+                // Continue with other pages
+            }
+        }
+        
+        if (extractedPages === 0) {
+            throw new Error('No text content could be extracted from the PDF');
+        }
+        
+        console.log(`Successfully extracted text from ${extractedPages} pages`);
         return fullText;
+        
     } catch (error) {
-        console.error('Error extracting PDF text:', error);
-        throw new Error('Failed to extract text from PDF');
+        console.error('Error extracting PDF text (fallback):', error);
+        
+        if (error.name === 'AbortError') {
+            throw new Error('PDF extraction timed out. Please try with a smaller file.');
+        } else if (error.message.includes('HTTP error')) {
+            throw new Error('Unable to access the PDF file. Please check your internet connection.');
+        } else if (error.message.includes('empty or corrupted')) {
+            throw new Error('The PDF file appears to be empty or corrupted. Please upload a valid PDF.');
+        } else if (error.message.includes('No text content')) {
+            throw new Error('The PDF does not contain extractable text. Please ensure the PDF has selectable text.');
+        } else {
+            throw new Error('Failed to extract text from PDF. Please try uploading a different file.');
+        }
     }
 }
 
@@ -75,10 +177,14 @@ async function extractTextFromPPT(fileUrl) {
 }
 
 // Main text extraction function
-async function extractTextFromFile(fileUrl, fileType) {
+async function extractTextFromFile(fileUrl, fileType, userId = null, docId = null) {
     try {
         if (fileType === 'application/pdf') {
-            return await extractTextFromPDF(fileUrl);
+            if (userId && docId) {
+                return await extractTextFromPDF(fileUrl, userId, docId);
+            } else {
+                return await extractTextFromPDFFallback(fileUrl);
+            }
         } else if (fileType.includes('powerpoint') || fileType.includes('presentation')) {
             return await extractTextFromPPT(fileUrl);
         } else {
@@ -438,6 +544,59 @@ export async function performAnalysis(db, doc, updateDoc, fileUrl, userId, docId
     try {
         console.log('Starting AI analysis...');
         
+        // For PDF files, use Cloud Function approach
+        if (fileType === 'application/pdf') {
+            try {
+                // Import Firebase Functions
+                const { getFunctions, httpsCallable } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js');
+                const { getApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+                
+                const functions = getFunctions(getApp());
+                const analyzePitchProxy = httpsCallable(functions, 'analyzePitchProxy');
+                
+                // Call Cloud Function to extract text and analyze
+                const result = await analyzePitchProxy({
+                    fileUrl: fileUrl,
+                    userId: userId,
+                    docId: docId
+                });
+                
+                if (result.data.success) {
+                    console.log('AI analysis completed via Cloud Function:', result.data.analysis);
+                    return result.data.analysis;
+                } else {
+                    throw new Error('Cloud function analysis failed');
+                }
+            } catch (error) {
+                console.error('Cloud Function analysis failed, falling back to client-side:', error);
+                // Fallback to client-side analysis
+                return await performClientSideAnalysis(fileUrl, fileType, userId, docId);
+            }
+        } else {
+            // For non-PDF files, use client-side analysis
+            return await performClientSideAnalysis(fileUrl, fileType, userId, docId);
+        }
+    } catch (error) {
+        console.error('Analysis error:', error);
+        
+        // Update Firestore with error status
+        try {
+            await updateDoc(doc(db, 'pitches', docId), {
+                status: 'error',
+                errorMessage: error.message,
+                analysisDate: new Date()
+            });
+        } catch (updateError) {
+            console.error('Error updating document with error status:', updateError);
+        }
+        
+        throw error;
+    }
+}
+
+// Client-side analysis fallback
+async function performClientSideAnalysis(fileUrl, fileType, userId, docId) {
+    try {
         // Extract text from the uploaded file
         const content = await extractTextFromFile(fileUrl, fileType);
         console.log('Text extracted from file:', content.substring(0, 200) + '...');
@@ -446,17 +605,9 @@ export async function performAnalysis(db, doc, updateDoc, fileUrl, userId, docId
         const analysis = await analyzePitchContent(content);
         console.log('AI analysis completed:', analysis);
         
-        // Update Firestore with analysis results
-        await updateDoc(doc(db, 'pitches', docId), {
-            status: 'completed',
-            analysis: analysis,
-            analysisDate: new Date(),
-            extractedContent: content.substring(0, 1000) // Store first 1000 chars for reference
-        });
-        
         return analysis;
     } catch (error) {
-        console.error('Analysis error:', error);
+        console.error('Client-side analysis error:', error);
         throw error;
     }
 }

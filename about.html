@@ -1,9 +1,10 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us | PitchFrame</title>
+    <title>About Us | PitchFrame - Empowering Startup Success</title>
+    <meta name="description" content="Learn about PitchFrame's mission to empower startups with AI-powered pitch analysis and expert mentorship. Discover our story, team, and commitment to startup success.">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -13,381 +14,240 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
     <style>
-        :root {
-            --primary-color: #2563eb;
-            --primary-light: #3b82f6;
-            --primary-dark: #1d4ed8;
-            --secondary-color: #7c3aed;
-            --accent-color: #6366f1;
-            --light-color: #f8fafc;
-            --dark-color: #0f172a;
-            --text-color: #334155;
-            --light-gray: #f1f5f9;
-            --medium-gray: #e2e8f0;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            --soft-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-            --hard-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--light-gray);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        /* Navigation */
-        .navbar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 15px 0;
-            transition: all 0.3s ease;
-        }
-
-        .navbar.scrolled {
-            background: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .navbar-brand {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 1.8rem;
-            letter-spacing: -0.5px;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            transition: all 0.3s ease;
-        }
-
-        .navbar-brand:hover {
-            transform: scale(1.05);
-        }
-
-        .nav-link {
-            font-weight: 500;
-            color: var(--text-color) !important;
-            padding: 0.5rem 1rem !important;
-            margin: 0 0.25rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--primary-color);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
-        }
-
-        .nav-link:hover::after {
-            transform: scaleX(1);
-        }
-
-        .nav-link:hover {
-            color: var(--primary-color) !important;
-            transform: translateY(-2px);
-        }
-
-        .nav-link.active {
-            color: var(--primary-color) !important;
-            font-weight: 600;
-        }
-
-        .nav-link.active::after {
-            transform: scaleX(1);
-        }
-
-        .btn-login {
-            background: var(--gradient);
-            color: white !important;
-            border: none;
-            padding: 0.5rem 1.5rem !important;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-        }
-
-        .navbar-toggler {
-            border: none;
-            padding: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .navbar-toggler:focus {
-            box-shadow: none;
-        }
-
-        .navbar-toggler:hover {
-            transform: scale(1.1);
-        }
-
-        @media (max-width: 991.98px) {
-            .navbar-collapse {
-                background: rgba(255, 255, 255, 0.98);
-                padding: 1rem;
-                border-radius: 12px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-                margin-top: 1rem;
-            }
-
-            .nav-link::after {
-                display: none;
-            }
-            
-            .nav-link:hover {
-                background: rgba(37, 99, 235, 0.1);
-            }
-            
-            .nav-link.active {
-                background: rgba(37, 99, 235, 0.1);
-            }
-
-            .btn-login {
-                margin-top: 1rem;
-                width: 100%;
-            }
-        }
-
-        /* Hero Section */
         .hero-section {
-            padding: 120px 0 80px;
-            background: url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80') no-repeat center center;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(124, 58, 237, 0.8)), url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2071&q=80') no-repeat center center;
             background-size: cover;
-            position: relative;
-            overflow: hidden;
+            color: white;
+            padding: 120px 0 80px;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
         }
 
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(248, 250, 252, 0.9);
-            backdrop-filter: blur(2px);
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            animation: fadeInUp 1s ease-out;
-        }
-
-        .hero-title {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            color: var(--dark-color);
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-            display: inline-block;
-        }
-
-        .hero-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100px;
-            height: 4px;
-            background: var(--gradient);
-            border-radius: 2px;
-        }
-
-        .hero-subtitle {
-            color: var(--text-color);
-            font-size: 1.25rem;
-            max-width: 700px;
-            margin: 0 auto 3rem;
-        }
-
-        /* About Content */
-        .about-section {
+        .section-padding {
             padding: 80px 0;
-            background-color: white;
         }
 
-        .mission-card, .vision-card {
+        .team-card {
             background: white;
-            border-radius: 16px;
-            padding: 2.5rem;
-            box-shadow: var(--soft-shadow);
-            transition: all 0.4s ease;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
             height: 100%;
-            position: relative;
-            overflow: hidden;
         }
 
-        .mission-card::before, .vision-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--gradient);
-        }
-
-        .mission-card:hover, .vision-card:hover {
+        .team-card:hover {
             transform: translateY(-10px);
-            box-shadow: var(--hard-shadow);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
-        .card-title {
-            font-family: 'Playfair Display', serif;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 1.5rem;
-            font-size: 1.8rem;
-        }
-
-        .card-text {
-            color: var(--text-color);
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
-
-        .icon-wrapper {
-            width: 60px;
-            height: 60px;
+        .team-avatar {
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            background: var(--gradient);
+            object-fit: cover;
+            margin: 0 auto 1.5rem;
+            display: block;
+            border: 4px solid #e2e8f0;
+        }
+
+        .value-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+            text-align: center;
+        }
+
+        .value-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .value-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 1.5rem;
-            animation: pulse 2s infinite;
-        }
-
-        .icon-wrapper i {
-            font-size: 1.8rem;
+            margin: 0 auto 1.5rem;
             color: white;
+            font-size: 2rem;
         }
 
-        /* Stats Section */
         .stats-section {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
             padding: 80px 0;
-            background: var(--light-gray);
         }
 
-        .stat-card {
+        .stat-item {
             text-align: center;
             padding: 2rem;
-            background: white;
-            border-radius: 16px;
-            box-shadow: var(--soft-shadow);
-            transition: all 0.4s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--hard-shadow);
         }
 
         .stat-number {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
             font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
         }
 
-        .stat-label {
-            color: var(--text-color);
-            font-size: 1.1rem;
-            font-weight: 500;
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
         }
 
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+            transform: translateX(-50%);
         }
 
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-            100% {
-                transform: scale(1);
-            }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+            width: 50%;
         }
 
-        /* Footer */
-        .footer {
-            background: var(--dark-color);
-            color: white;
-            padding: 40px 0;
+        .timeline-item:nth-child(odd) {
+            left: 0;
+            padding-right: 3rem;
+            text-align: right;
         }
 
-        .footer p {
-            margin-bottom: 0;
-            font-size: 0.95rem;
+        .timeline-item:nth-child(even) {
+            left: 50%;
+            padding-left: 3rem;
         }
 
-        /* Responsive Adjustments */
+        .timeline-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .timeline-content::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border: 15px solid transparent;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content::before {
+            right: -30px;
+            top: 20px;
+            border-left-color: white;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content::before {
+            left: -30px;
+            top: 20px;
+            border-right-color: white;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #2563eb;
+            border-radius: 50%;
+            top: 30px;
+            z-index: 2;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-dot {
+            right: -10px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: -10px;
+        }
+
         @media (max-width: 768px) {
-            .hero-title {
-                font-size: 2.5rem;
+            .timeline::before {
+                left: 20px;
             }
             
-            .hero-subtitle {
-                font-size: 1.1rem;
+            .timeline-item {
+                width: 100%;
+                left: 0 !important;
+                padding-left: 3rem !important;
+                padding-right: 0 !important;
+                text-align: left !important;
             }
             
-            .mission-card, .vision-card {
-                padding: 2rem;
+            .timeline-item:nth-child(odd) .timeline-content::before {
+                left: -30px;
+                right: auto;
+                border-left-color: transparent;
+                border-right-color: white;
+            }
+            
+            .timeline-item:nth-child(odd) .timeline-dot {
+                left: 10px;
+                right: auto;
             }
         }
     </style>
+
+    <script type="application/json" data-env>
+    {
+  "OPENAI_API_KEY": "sk-proj-0123456789abcdef0123456789abcdef",
+  "FIREBASE_API_KEY": "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
+  "FIREBASE_AUTH_DOMAIN": "pitchframe-6967a.firebaseapp.com",
+  "FIREBASE_PROJECT_ID": "pitchframe-6967a",
+  "FIREBASE_STORAGE_BUCKET": "pitchframe-6967a.firebasestorage.app",
+  "FIREBASE_MESSAGING_SENDER_ID": "801200566992",
+  "FIREBASE_APP_ID": "1:801200566992:web:9dc20d8ad085577eb724d5",
+  "PORT": "3000",
+  "NODE_ENV": "development",
+  "MAX_FILE_SIZE": "52428800  # 50MB in bytes",
+  "ALLOWED_FILE_TYPES": "application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  "MIN_CONTENT_LENGTH": "100",
+  "ANALYSIS_DEPTH": "standard  # basic, standard, detailed",
+  "JWT_SECRET": "your-jwt-secret-key",
+  "CORS_ORIGIN": "http://localhost:3000",
+  "SMTP_HOST": "smtp.gmail.com",
+  "SMTP_PORT": "587",
+  "SMTP_USER": "your-email@gmail.com",
+  "SMTP_PASS": "your-email-app-password"
+}
+    </script>
+    
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="index.html">PitchFrame</a>
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-rocket me-2"></i>
+                <strong>Pitch<span class="text-primary">Frame</span></strong>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.html#features">Features</a></li>
-                    <li class="nav-item"><a class="nav-link" href="pitch-submission.html">Submit Pitch</a></li>
-                    <li class="nav-item"><a class="nav-link" href="mentor-dashboard.html">Mentor Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="AI_analyzer.html">AI Analysis</a></li>
                     <li class="nav-item"><a class="nav-link active" href="about.html">About</a></li>
-                    <li class="nav-item"><a class="nav-link btn btn-login ms-lg-3 mt-2 mt-lg-0" href="login.html">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="pitch-submission.html">Submit Pitch</a></li>
+                    <li class="nav-item"><a class="nav-link" href="mentor-matching.html">Find Mentors</a></li>
+                    <li class="nav-item"><a class="nav-link" href="AI_analyzer.html">AI Analysis</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary ms-2 text-white px-4 rounded-pill" href="login.html">Login</a></li>
                 </ul>
             </div>
         </div>
@@ -396,39 +256,133 @@
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
-            <div class="hero-content text-center">
-                <h1 class="hero-title">About PitchFrame</h1>
-                <p class="hero-subtitle">
-                    At PitchFrame, we believe in empowering startups to succeed through innovation, feedback, and mentorship.
-                </p>
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-4">Empowering Startup Success Through Innovation</h1>
+                    <p class="lead fs-5 mb-4">We're on a mission to democratize access to expert mentorship and AI-powered insights, helping startups transform their ideas into successful businesses.</p>
+                    <div class="d-flex gap-3">
+                        <a href="register.html" class="btn btn-light btn-lg">Join Our Community</a>
+                        <a href="#story" class="btn btn-outline-light btn-lg">Our Story</a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- About Content -->
-    <section class="about-section">
+    <!-- Our Story Section -->
+    <section id="story" class="section-padding">
         <div class="container">
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="mission-card">
-                        <div class="icon-wrapper">
-                            <i class="fas fa-bullseye"></i>
+            <div class="row">
+                <div class="col-lg-6">
+                    <h2 class="display-5 fw-bold mb-4">Our Story</h2>
+                    <p class="lead mb-4">PitchFrame was born from a simple observation: brilliant startup ideas were failing not because they lacked merit, but because they lacked the right guidance and feedback.</p>
+                    <p class="mb-4">Founded in 2023 by a team of entrepreneurs, investors, and AI researchers, we recognized that the traditional startup ecosystem was leaving many promising ventures behind. Access to quality mentorship was limited, feedback was inconsistent, and the process of refining pitches was often inefficient.</p>
+                    <p class="mb-4">We set out to change this by combining the power of artificial intelligence with the wisdom of experienced mentors, creating a platform that could provide instant, actionable feedback while connecting startups with the right experts.</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary text-white rounded-circle p-3 me-3">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0">Innovation</h5>
+                                    <small class="text-muted">AI-powered insights</small>
+                                </div>
+                            </div>
                         </div>
-                        <h3 class="card-title">Our Mission</h3>
-                        <p class="card-text">
-                            Our mission is to bridge the gap between visionary founders and expert mentors, enhancing the startup journey with actionable insights and powerful tools.
-                        </p>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-success text-white rounded-circle p-3 me-3">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0">Community</h5>
+                                    <small class="text-muted">Expert mentorship</small>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="vision-card">
-                        <div class="icon-wrapper">
-                            <i class="fas fa-lightbulb"></i>
+                <div class="col-lg-6">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Our Team" class="img-fluid rounded-4 shadow-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Vision -->
+    <section class="section-padding bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-bullseye"></i>
                         </div>
-                        <h3 class="card-title">What We Do</h3>
-                        <p class="card-text">
-                            We provide a digital platform where startups can submit their pitches, receive AI analysis, and get matched with mentors who guide them to growth. Whether you're in ideation or scaling up, PitchFrame supports every step.
-                        </p>
+                        <h4 class="fw-bold mb-3">Our Mission</h4>
+                        <p class="text-muted">To democratize access to startup mentorship and AI-powered insights, enabling every entrepreneur to refine their pitch and accelerate their growth journey.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Our Vision</h4>
+                        <p class="text-muted">A world where every startup has access to expert guidance and intelligent feedback, creating a more inclusive and successful entrepreneurial ecosystem.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Our Values</h4>
+                        <p class="text-muted">Innovation, inclusivity, integrity, and impact. We believe in empowering entrepreneurs with the tools and connections they need to succeed.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-4">Our Journey</h2>
+                <p class="lead text-muted">From concept to platform, here's how PitchFrame evolved</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h5 class="fw-bold text-primary">Q1 2023</h5>
+                        <h4 class="fw-bold mb-3">The Idea</h4>
+                        <p>Recognizing the gap in startup mentorship, our founders began developing the concept for an AI-powered pitch analysis platform.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h5 class="fw-bold text-primary">Q2 2023</h5>
+                        <h4 class="fw-bold mb-3">Development Begins</h4>
+                        <p>Assembled a team of AI researchers, developers, and startup veterans to build the core platform and AI analysis engine.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h5 class="fw-bold text-primary">Q3 2023</h5>
+                        <h4 class="fw-bold mb-3">Beta Launch</h4>
+                        <p>Launched our beta platform with 50 selected startups and 20 expert mentors, gathering valuable feedback and refining our approach.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h5 class="fw-bold text-primary">Q4 2023</h5>
+                        <h4 class="fw-bold mb-3">Public Launch</h4>
+                        <p>Officially launched PitchFrame to the public, opening our platform to startups worldwide and expanding our mentor network.</p>
                     </div>
                 </div>
             </div>
@@ -438,29 +392,93 @@
     <!-- Stats Section -->
     <section class="stats-section">
         <div class="container">
-            <div class="row g-4">
-                <div class="col-md-3">
-                    <div class="stat-card">
+            <div class="row">
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
                         <div class="stat-number">500+</div>
-                        <div class="stat-label">Startups Supported</div>
+                        <p class="mb-0">Startups Helped</p>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="stat-card">
-                        <div class="stat-number">100+</div>
-                        <div class="stat-label">Expert Mentors</div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">150+</div>
+                        <p class="mb-0">Expert Mentors</p>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="stat-card">
-                        <div class="stat-number">4.8</div>
-                        <div class="stat-label">Average Rating</div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">1,200+</div>
+                        <p class="mb-0">Pitches Analyzed</p>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="stat-card">
-                        <div class="stat-number">24/7</div>
-                        <div class="stat-label">Support Available</div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">95%</div>
+                        <p class="mb-0">Success Rate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="section-padding bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-4">Meet Our Team</h2>
+                <p class="lead text-muted">The passionate individuals behind PitchFrame's success</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="team-card text-center">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=687&q=80" alt="Alex Chen" class="team-avatar">
+                        <h4 class="fw-bold mb-2">Alex Chen</h4>
+                        <p class="text-primary fw-semibold mb-3">CEO & Co-Founder</p>
+                        <p class="text-muted">Former startup founder with 10+ years in venture capital. Passionate about democratizing access to mentorship.</p>
+                        <div class="social-links">
+                            <a href="#" class="text-primary me-2"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="text-primary me-2"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="team-card text-center">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=687&q=80" alt="Sarah Johnson" class="team-avatar">
+                        <h4 class="fw-bold mb-2">Sarah Johnson</h4>
+                        <p class="text-primary fw-semibold mb-3">CTO & Co-Founder</p>
+                        <p class="text-muted">AI researcher and former Google engineer. Leads our technical innovation and AI development efforts.</p>
+                        <div class="social-links">
+                            <a href="#" class="text-primary me-2"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="text-primary me-2"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="team-card text-center">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=687&q=80" alt="Michael Rodriguez" class="team-avatar">
+                        <h4 class="fw-bold mb-2">Michael Rodriguez</h4>
+                        <p class="text-primary fw-semibold mb-3">Head of Mentorship</p>
+                        <p class="text-muted">Serial entrepreneur and startup advisor. Builds and manages our network of expert mentors.</p>
+                        <div class="social-links">
+                            <a href="#" class="text-primary me-2"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="text-primary me-2"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h2 class="display-5 fw-bold mb-4">Ready to Transform Your Startup Journey?</h2>
+                    <p class="lead mb-4">Join thousands of entrepreneurs who are already using PitchFrame to refine their pitches and accelerate their growth.</p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <a href="register.html" class="btn btn-primary btn-lg px-5">Get Started Today</a>
+                        <a href="contact.html" class="btn btn-outline-primary btn-lg px-5">Contact Us</a>
                     </div>
                 </div>
             </div>
@@ -468,60 +486,119 @@
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer py-5 bg-dark text-light">
         <div class="container">
             <div class="row">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="small mb-0">&copy; 2023 PitchFrame. All rights reserved.</p>
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h4 class="mb-4">
+                        <i class="fas fa-rocket me-2"></i>
+                        <strong>Pitch<span class="text-primary">Frame</span></strong>
+                    </h4>
+                    <p class="text-muted">Empowering startups with AI-powered pitch analysis and expert mentorship to accelerate their growth journey.</p>
                 </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <p class="small mb-0">Made with <i class="fas fa-heart text-danger"></i> for startup growth</p>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-3 text-white">Platform</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="pitch-submission.html" class="text-muted text-decoration-none">Submit Pitch</a></li>
+                        <li class="mb-2"><a href="mentor-dashboard.html" class="text-muted text-decoration-none">Mentor Dashboard</a></li>
+                        <li class="mb-2"><a href="AI_analyzer.html" class="text-muted text-decoration-none">AI Analysis</a></li>
+                    </ul>
                 </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-3 text-white">Company</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="about.html" class="text-muted text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="career.html" class="text-muted text-decoration-none">Careers</a></li>
+                        <li class="mb-2"><a href="blog.html" class="text-muted text-decoration-none">Blog</a></li>
+                        <li class="mb-2"><a href="contact.html" class="text-muted text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-3 text-white">Legal</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#privacy" class="text-muted text-decoration-none">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#terms" class="text-muted text-decoration-none">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2">
+                    <h5 class="mb-3 text-white">Connect</h5>
+                    <div class="social-links">
+                        <a href="#" class="me-3 text-primary"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="me-3 text-primary"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="me-3 text-primary"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-primary"><i class="fab fa-instagram fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4 border-secondary">
+            <div class="text-center">
+                <p class="mb-0 text-muted">&copy; 2024 PitchFrame. All rights reserved. Made with <i class="fas fa-heart text-danger"></i> for entrepreneurs.</p>
             </div>
         </div>
     </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    
+    <!-- Animation Script -->
     <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
         // Navbar scroll effect
         window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
             if (window.scrollY > 50) {
-                document.querySelector('.navbar').classList.add('scrolled');
+                navbar.classList.add('scrolled');
             } else {
-                document.querySelector('.navbar').classList.remove('scrolled');
+                navbar.classList.remove('scrolled');
             }
         });
 
-        // Animate elements on scroll
-        const animateOnScroll = function() {
-            const elements = document.querySelectorAll('.mission-card, .vision-card, .stat-card');
-            
-            elements.forEach(element => {
-                const elementPosition = element.getBoundingClientRect().top;
-                const windowHeight = window.innerHeight;
-                
-                if (elementPosition < windowHeight - 100) {
-                    element.style.opacity = '1';
-                    element.style.transform = 'translateY(0)';
+        // Animate stats on scroll
+        const animateStats = () => {
+            const stats = document.querySelectorAll('.stat-number');
+            const speed = 200;
+
+            const animateCounter = (counter) => {
+                const target = +counter.getAttribute('data-target') || +counter.textContent.replace(/[^\d]/g, '');
+                const count = +counter.textContent.replace(/[^\d]/g, '');
+                const inc = target / speed;
+
+                if (count < target) {
+                    counter.textContent = Math.ceil(count + inc);
+                    setTimeout(() => animateCounter(counter), 1);
+                } else {
+                    counter.textContent = target + (counter.textContent.includes('+') ? '+' : '') + (counter.textContent.includes('%') ? '%' : '');
                 }
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounter(entry.target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            stats.forEach(stat => {
+                observer.observe(stat);
             });
         };
 
-        // Initial animation
-        window.addEventListener('load', () => {
-            document.querySelectorAll('.mission-card, .vision-card, .stat-card').forEach(element => {
-                element.style.opacity = '0';
-                element.style.transform = 'translateY(20px)';
-                element.style.transition = 'all 0.6s ease-out';
-            });
-            
-            animateOnScroll();
-        });
-
-        // Animate on scroll
-        window.addEventListener('scroll', animateOnScroll);
+        document.addEventListener('DOMContentLoaded', animateStats);
     </script>
 </body>
 </html>

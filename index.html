@@ -4,10 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
+    <meta name="description" content="PitchFrame - The ultimate platform for startups to submit pitches, receive AI-powered analysis, and connect with expert mentors. Transform your startup journey today.">
+    <meta name="keywords" content="startup pitch, AI analysis, mentor feedback, entrepreneurship, pitch deck, startup funding, business mentorship">
+    <meta name="author" content="PitchFrame">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pitchframe.com/">
+    <meta property="og:title" content="PitchFrame - Empower Your Startup Journey">
+    <meta property="og:description" content="The ultimate platform for startups to submit pitches, receive AI-powered analysis, and connect with expert mentors.">
+    <meta property="og:image" content="https://pitchframe.com/pics/header.webp">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://pitchframe.com/">
+    <meta property="twitter:title" content="PitchFrame - Empower Your Startup Journey">
+    <meta property="twitter:description" content="The ultimate platform for startups to submit pitches, receive AI-powered analysis, and connect with expert mentors.">
+    <meta property="twitter:image" content="https://pitchframe.com/pics/header.webp">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://pitchframe.com/">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "PitchFrame",
+        "description": "AI-powered platform for startup pitch analysis and mentor feedback",
+        "url": "https://pitchframe.com",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "creator": {
+            "@type": "Organization",
+            "name": "PitchFrame",
+            "url": "https://pitchframe.com"
+        },
+        "featureList": [
+            "AI Pitch Analysis",
+            "Mentor Matching",
+            "Pitch Submission",
+            "Feedback System"
+        ]
+    }
+    </script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <meta http-equiv="Cross-Origin-Opener-Policy" contt="same-origin-allow-popups">
 
     <title>PitchFrame - Empower Your Startup Journey</title>
     <!-- Bootstrap CSS -->
@@ -302,10 +359,15 @@
 
         .hero {
             position: relative;
-            background: url('pics/header.webp') no-repeat center center;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(124, 58, 237, 0.8)), url('pics/header.webp') no-repeat center center;
             background-size: cover;
+            background-attachment: fixed;
             color: white;
             z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 0 80px;
         }
 
         .hero::before {
@@ -315,20 +377,97 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6); /* Dark overlay for text readability */
+            background: rgba(0, 0, 0, 0.3);
             z-index: -1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero .lead {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .hero .btn {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero .btn-primary {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+        }
+
+        .hero .btn-outline-primary {
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .hero .btn-outline-primary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: white;
+            color: white;
         }
 
         /* Feature Cards Animations */
         .feature-card {
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             opacity: 0;
             transform: translateY(30px);
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            border-color: rgba(37, 99, 235, 0.2);
+        }
+
+        .feature-card h3 {
+            color: #1a202c;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .feature-card p {
+            color: #4a5568;
+            line-height: 1.7;
+            margin-bottom: 0;
+            font-size: 1rem;
         }
 
         .feature-card.animate-in {
@@ -337,12 +476,23 @@
 
         /* Icon Animations */
         .icon-wrapper {
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
         }
 
         .feature-card:hover .icon-wrapper {
             transform: scale(1.1) rotate(5deg);
-            color: #007bff;
+            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.4);
         }
 
         /* Button Animations */
@@ -375,11 +525,41 @@
         /* Navbar Animation */
         .navbar {
             transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
         }
 
         .navbar.scrolled {
-            background-color: rgba(0,0,0,0.95) !important;
-            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.95) !important;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+        }
+
+        .navbar-nav .nav-link {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .navbar-nav .nav-link.active {
+            background: rgba(37, 99, 235, 0.2);
+            color: #60a5fa;
         }
 
         /* Footer Animation */
@@ -471,107 +651,188 @@
         .particle:nth-child(7) { width: 9px; height: 9px; left: 70%; animation-delay: 6s; }
         .particle:nth-child(8) { width: 11px; height: 11px; left: 80%; animation-delay: 7s; }
         .particle:nth-child(9) { width: 7px; height: 7px; left: 90%; animation-delay: 8s; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero .lead {
+                font-size: 1.1rem;
+            }
+            
+            .hero .btn {
+                padding: 12px 24px;
+                font-size: 1rem;
+            }
+            
+            .feature-card {
+                padding: 2rem;
+            }
+            
+            .icon-wrapper {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .hero {
+                padding: 100px 0 60px;
+                min-height: 80vh;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero .lead {
+                font-size: 1rem;
+            }
+            
+            .feature-card {
+                padding: 1.5rem;
+            }
+            
+            .hero .d-flex {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .hero .btn {
+                width: 100%;
+            }
+        }
     </style>
+
+    <script type="application/json" data-env>
+    {
+  "OPENAI_API_KEY": "sk-proj-0123456789abcdef0123456789abcdef",
+  "FIREBASE_API_KEY": "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
+  "FIREBASE_AUTH_DOMAIN": "pitchframe-6967a.firebaseapp.com",
+  "FIREBASE_PROJECT_ID": "pitchframe-6967a",
+  "FIREBASE_STORAGE_BUCKET": "pitchframe-6967a.firebasestorage.app",
+  "FIREBASE_MESSAGING_SENDER_ID": "801200566992",
+  "FIREBASE_APP_ID": "1:801200566992:web:9dc20d8ad085577eb724d5",
+  "PORT": "3000",
+  "NODE_ENV": "development",
+  "MAX_FILE_SIZE": "52428800  # 50MB in bytes",
+  "ALLOWED_FILE_TYPES": "application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  "MIN_CONTENT_LENGTH": "100",
+  "ANALYSIS_DEPTH": "standard  # basic, standard, detailed",
+  "JWT_SECRET": "your-jwt-secret-key",
+  "CORS_ORIGIN": "http://localhost:3000",
+  "SMTP_HOST": "smtp.gmail.com",
+  "SMTP_PORT": "587",
+  "SMTP_USER": "your-email@gmail.com",
+  "SMTP_PASS": "your-email-app-password"
+}
+    </script>
+    
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" role="navigation" aria-label="Main navigation">
         <div class="container">
-            <a class="navbar-brand" href="#"><strong>Pitch<span class="text-primary">Frame</span></strong></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <a class="navbar-brand fw-bold" href="#" aria-label="PitchFrame Home">
+                <i class="fas fa-rocket me-2" aria-hidden="true"></i>
+                <strong>Pitch<span class="text-primary">Frame</span></strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
-                    <li class="nav-item" data-role="founder"><a class="nav-link" href="pitch-submission.html">Submit Pitch</a></li>
-                    <li class="nav-item" data-role="mentor"><a class="nav-link" href="mentor-dashboard.html">Mentor Dashboard</a></li>
-                    <li class="nav-item" data-role="founder"><a class="nav-link" href="mentor-matching.html">Find Mentors</a></li>
-                    <li class="nav-item"><a class="nav-link" href="AI_analyzer.html">AI Analysis</a></li>
-                    <li class="nav-item"><a class="nav-link" href="settings.html">Settings</a></li>
-                    <li class="nav-item"><a class="nav-link btn btn-primary ms-2 text-white px-4" href="login.html">Login</a></li>
+                <ul class="navbar-nav ms-auto" role="menubar">
+                    <li class="nav-item" role="none"><a class="nav-link active" href="#home" role="menuitem" aria-current="page">Home</a></li>
+                    <li class="nav-item" role="none"><a class="nav-link" href="#features" role="menuitem">Features</a></li>
+                    <li class="nav-item" data-role="founder" role="none"><a class="nav-link" href="pitch-submission.html" role="menuitem">Submit Pitch</a></li>
+                    <li class="nav-item" data-role="mentor" role="none"><a class="nav-link" href="mentor-dashboard.html" role="menuitem">Mentor Dashboard</a></li>
+                    <li class="nav-item" data-role="founder" role="none"><a class="nav-link" href="mentor-matching.html" role="menuitem">Find Mentors</a></li>
+                    <li class="nav-item" role="none"><a class="nav-link" href="AI_analyzer.html" role="menuitem">AI Analysis</a></li>
+                    <li class="nav-item" role="none"><a class="nav-link" href="settings.html" role="menuitem">Settings</a></li>
+                    <li class="nav-item" role="none"><a class="nav-link btn btn-primary ms-2 text-white px-4 rounded-pill" href="login.html" role="menuitem">Login</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="hero">
+    <section id="home" class="hero" role="banner" aria-labelledby="hero-heading">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <h1 class="display-4 fw-bold mb-4">Transform Your Startup Journey with <span class="text-primary animate-pulse">PitchFrame</span></h1>
-                    <p class="lead mb-4"><a href="https://docs.google.com/forms/d/e/1FAIpQLSfhF481v0eWdEhqWRP2n3kqkYzDOnRo9uxO9GmIEmnhS5l2lQ/viewform?usp=sharing"></a>ultimate platform for startups to submit pitches, receive mentor feedback, track progress, and accelerate growth.</a></p>
-                    <div class="d-flex gap-3">
-                        <a href="register.html" class="btn btn-primary btn-lg animate-float">Apply Here</a>
-                        <a href="login.html" class="btn btn-outline-primary btn-lg animate-float" style="animation-delay: 0.5s;">Mentor Login</a>
+                    <h1 id="hero-heading" class="display-3 fw-bold mb-4">Transform Your Startup Journey with <span class="text-primary animate-pulse">PitchFrame</span></h1>
+                    <p class="lead mb-4 fs-5">The ultimate platform for startups to submit pitches, receive mentor feedback, track progress, and accelerate growth.</p>
+                    <div class="d-flex gap-3" role="group" aria-label="Hero action buttons">
+                        <a href="register.html" class="btn btn-primary btn-lg animate-float" role="button">Apply Here</a>
+                        <a href="login.html" class="btn btn-outline-primary btn-lg animate-float" style="animation-delay: 0.5s;" role="button">Mentor Login</a>
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80" alt="Startup Team" class="img-fluid rounded-4 hero-image animate-float">
-                    <!-- Image removed to use background image for the whole section -->
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80" alt="Diverse startup team collaborating on project" class="img-fluid rounded-4 hero-image animate-float">
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="features py-5">
+    <section id="features" class="features py-5" role="region" aria-labelledby="features-heading">
         <div class="container">
             <div class="text-center mb-5 scroll-reveal">
-                <h2 class="section-title">Powerful Features for Startups & Mentors</h2>
+                <h2 id="features-heading" class="section-title">Powerful Features for Startups & Mentors</h2>
                 <p class="section-subtitle">Everything you need to pitch, improve, and grow your startup</p>
             </div>
             
-            <div class="row g-4">
+            <div class="row g-4" role="list" aria-label="Platform features">
                 <!-- Feature 1 -->
-                <div class="col-md-6 scroll-reveal">
+                <div class="col-md-6 scroll-reveal" role="listitem">
                     <a href="pitch-submission.html" class="text-decoration-none">
-                    <div class="feature-card">
-                        <div class="icon-wrapper">
+                    <div class="feature-card" role="article" aria-labelledby="feature-1-heading">
+                        <div class="icon-wrapper" aria-hidden="true">
                             <i class="fas fa-file-upload"></i>
                         </div>
-                        <h3>Submit Pitch</h3>
+                        <h3 id="feature-1-heading">Submit Pitch</h3>
                         <p>Upload your pitch deck and share your startup story with our community of mentors and investors.</p>
                     </div>
                     </a>
                 </div>
                 
                 <!-- Feature 2 -->
-                <div class="col-md-6 scroll-reveal">
+                <div class="col-md-6 scroll-reveal" role="listitem">
                     <a href="AI_analyzer.html" class="text-decoration-none">
-                    <div class="feature-card">
-                        <div class="icon-wrapper">
+                    <div class="feature-card" role="article" aria-labelledby="feature-2-heading">
+                        <div class="icon-wrapper" aria-hidden="true">
                             <i class="fas fa-brain"></i>
                         </div>
-                        <h3>AI Pitch Analyzer</h3>
+                        <h3 id="feature-2-heading">AI Pitch Analyzer</h3>
                         <p>Get automated feedback on pitch quality, clarity, uniqueness, and market fit with our AI engine.</p>
                     </div>
                     </a>
                 </div>
                 
                 <!-- Feature 3 -->
-                <div class="col-md-6 scroll-reveal">
+                <div class="col-md-6 scroll-reveal" role="listitem">
                     <a href="https://docs.google.com/forms/d/e/1FAIpQLSfhF481v0eWdEhqWRP2n3kqkYzDOnRo9uxO9GmIEmnhS5l2lQ/viewform?usp=sharing" class="text-decoration-none">
-                    <div class="feature-card">
-                        <div class="icon-wrapper">
+                    <div class="feature-card" role="article" aria-labelledby="feature-3-heading">
+                        <div class="icon-wrapper" aria-hidden="true">
                             <i class="fas fa-comments"></i>
                         </div>
-                        <h3>Mentor Feedback</h3>
+                        <h3 id="feature-3-heading">Mentor Feedback</h3>
                         <p>Receive structured feedback from industry experts with actionable suggestions for improvement.</p>
                     </div>
                     </a>
                 </div>
                 
                 <!-- Feature 4 -->
-                <div class="col-md-6 scroll-reveal">
+                <div class="col-md-6 scroll-reveal" role="listitem">
                     <a href="mentor-matching.html" class="text-decoration-none">
-                    <div class="feature-card">
-                        <div class="icon-wrapper">
+                    <div class="feature-card" role="article" aria-labelledby="feature-4-heading">
+                        <div class="icon-wrapper" aria-hidden="true">
                             <i class="fas fa-handshake"></i>
                         </div>
-                        <h3>Mentor Matchmaking</h3>
+                        <h3 id="feature-4-heading">Mentor Matchmaking</h3>
                         <p>Get paired with ideal mentors based on your domain, stage, and problem statement.</p>
                     </div>
                     </a>
@@ -614,52 +875,60 @@
     </section>
 
     <!-- Footer -->
-    <footer class="footer py-5">
+    <footer class="footer py-5 bg-dark text-light">
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 mb-4 mb-lg-0">
-                    <h4 class="mb-4"><strong>Pitch<span class="text-primary">Frame</span></strong></h4>
-                    <p>Empowering startups with AI-powered pitch analysis and expert mentorship to accelerate their growth journey.</p>
+                    <h4 class="mb-4">
+                        <i class="fas fa-rocket me-2"></i>
+                        <strong>Pitch<span class="text-primary">Frame</span></strong>
+                    </h4>
+                    <p class="text-muted">Empowering startups with AI-powered pitch analysis and expert mentorship to accelerate their growth journey.</p>
+                    <div class="social-links mt-3">
+                        <a href="#" class="me-3 text-primary"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="me-3 text-primary"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="me-3 text-primary"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-primary"><i class="fab fa-instagram fa-lg"></i></a>
+                    </div>
                 </div>
                 <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
-                    <h5 class="mb-3">Platform</h5>
+                    <h5 class="mb-3 text-white">Platform</h5>
                     <ul class="list-unstyled">
-                        <li><a href="pitch-submission.html">Submit Pitch</a></li>
-                        <li><a href="mentor-dashboard.html">Mentor Dashboard</a></li>
-                        <li><a href="AI_analyzer.html">AI Analysis</a></li>
-                        <li><a href="settings.html">Settings</a></li>
+                        <li class="mb-2"><a href="pitch-submission.html" class="text-muted text-decoration-none">Submit Pitch</a></li>
+                        <li class="mb-2"><a href="mentor-dashboard.html" class="text-muted text-decoration-none">Mentor Dashboard</a></li>
+                        <li class="mb-2"><a href="AI_analyzer.html" class="text-muted text-decoration-none">AI Analysis</a></li>
+                        <li class="mb-2"><a href="settings.html" class="text-muted text-decoration-none">Settings</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
-                    <h5 class="mb-3">Company</h5>
+                    <h5 class="mb-3 text-white">Company</h5>
                     <ul class="list-unstyled">
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="career.html">Careers</a></li>
-                        <li><a href="blog.html">Blog</a></li>
-                        <li><a href="contact.html">Contact</a></li>
+                        <li class="mb-2"><a href="about.html" class="text-muted text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="career.html" class="text-muted text-decoration-none">Careers</a></li>
+                        <li class="mb-2"><a href="blog.html" class="text-muted text-decoration-none">Blog</a></li>
+                        <li class="mb-2"><a href="contact.html" class="text-muted text-decoration-none">Contact</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
-                    <h5 class="mb-3">Legal</h5>
+                    <h5 class="mb-3 text-white">Legal</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#privacy">Privacy Policy</a></li>
-                        <li><a href="#terms">Terms of Service</a></li>
-                        <li><a href="#cookies">Cookie Policy</a></li>
+                        <li class="mb-2"><a href="#privacy" class="text-muted text-decoration-none">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#terms" class="text-muted text-decoration-none">Terms of Service</a></li>
+                        <li class="mb-2"><a href="#cookies" class="text-muted text-decoration-none">Cookie Policy</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-2">
-                    <h5 class="mb-3">Connect</h5>
-                    <div class="social-links">
-                        <a href="#" class="me-2"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="me-2"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" class="me-2"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    <h5 class="mb-3 text-white">Newsletter</h5>
+                    <p class="text-muted small">Stay updated with our latest features and startup insights.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control form-control-sm" placeholder="Your email">
+                        <button class="btn btn-primary btn-sm" type="button">Subscribe</button>
                     </div>
                 </div>
             </div>
-            <hr class="my-4">
+            <hr class="my-4 border-secondary">
             <div class="text-center">
-                <p class="mb-0">&copy; 2023 PitchFrame. All rights reserved.</p>
+                <p class="mb-0 text-muted">&copy; 2024 PitchFrame. All rights reserved. Made with <i class="fas fa-heart text-danger"></i> for entrepreneurs.</p>
             </div>
         </div>
     </footer>

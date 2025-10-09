@@ -1,0 +1,24 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://pitchframe.com/sitemap.xml
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /private/
+Disallow: /firebase-tools/
+Disallow: /dataconnect/
+Disallow: /*.log
+Disallow: /firebase.json
+Disallow: /firestore.rules
+Disallow: /firestore.indexes.json
+Disallow: /storage.rules
+
+# Allow important pages
+Allow: /pitch-submission.html
+Allow: /AI_analyzer.html
+Allow: /mentor-matching.html
+Allow: /about.html
+Allow: /contact.html
+Allow: /career.html

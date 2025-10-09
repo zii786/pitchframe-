@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environment Variables Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .warning {
+            color: #ffc107;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Environment Variables Test</h1>
+    <p>This page tests if environment variables are loaded correctly.</p>
+
+    <div class="test-section">
+        <h2>Environment Loader Test</h2>
+        <div id="env-loader-test">Loading...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>Firebase Configuration Test</h2>
+        <div id="firebase-config-test">Loading...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>AI Configuration Test</h2>
+        <div id="ai-config-test">Loading...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>All Environment Variables</h2>
+        <pre id="all-env-vars">Loading...</pre>
+    </div>
+
+    <script type="module">
+        import envLoader, { getFirebaseConfig, getAIConfig, getContactConfig, getSocialConfig, getFeatureFlags } from './env-loader.js';
+
+        // Test environment loader
+        function testEnvironmentLoader() {
+            const testDiv = document.getElementById('env-loader-test');
+            try {
+                const allEnv = envLoader.getAll();
+                const envCount = Object.keys(allEnv).length;
+                
+                if (envCount > 0) {
+                    testDiv.innerHTML = `<span class="success">✅ Environment loader working - ${envCount} variables loaded</span>`;
+                } else {
+                    testDiv.innerHTML = `<span class="warning">⚠️ Environment loader working but no variables found</span>`;
+                }
+            } catch (error) {
+                testDiv.innerHTML = `<span class="error">❌ Environment loader failed: ${error.message}</span>`;
+            }
+        }
+
+        // Test Firebase configuration
+        function testFirebaseConfig() {
+            const testDiv = document.getElementById('firebase-config-test');
+            try {
+                const firebaseConfig = getFirebaseConfig();
+                const required = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
+                const missing = required.filter(key => !firebaseConfig[key]);
+                
+                if (missing.length === 0) {
+                    testDiv.innerHTML = `<span class="success">✅ Firebase configuration complete</span>`;
+                } else {
+                    testDiv.innerHTML = `<span class="warning">⚠️ Firebase configuration incomplete - missing: ${missing.join(', ')}</span>`;
+                }
+            } catch (error) {
+                testDiv.innerHTML = `<span class="error">❌ Firebase configuration failed: ${error.message}</span>`;
+            }
+        }
+
+        // Test AI configuration
+        function testAIConfig() {
+            const testDiv = document.getElementById('ai-config-test');
+            try {
+                const aiConfig = getAIConfig();
+                const warnings = [];
+                
+                if (aiConfig.USE_AI_SERVICE === 'openai' && aiConfig.OPENAI_API_KEY === 'your-openai-api-key-here') {
+                    warnings.push('OpenAI API key not configured');
+                }
+                
+                if (aiConfig.USE_AI_SERVICE === 'anthropic' && aiConfig.ANTHROPIC_API_KEY === 'your-anthropic-api-key-here') {
+                    warnings.push('Anthropic API key not configured');
+                }
+                
+                if (warnings.length === 0) {
+                    testDiv.innerHTML = `<span class="success">✅ AI configuration complete (using ${aiConfig.USE_AI_SERVICE})</span>`;
+                } else {
+                    testDiv.innerHTML = `<span class="warning">⚠️ AI configuration warnings: ${warnings.join(', ')}</span>`;
+                }
+            } catch (error) {
+                testDiv.innerHTML = `<span class="error">❌ AI configuration failed: ${error.message}</span>`;
+            }
+        }
+
+        // Display all environment variables
+        function displayAllEnvVars() {
+            const pre = document.getElementById('all-env-vars');
+            try {
+                const allEnv = envLoader.getAll();
+                pre.textContent = JSON.stringify(allEnv, null, 2);
+            } catch (error) {
+                pre.textContent = `Error loading environment variables: ${error.message}`;
+            }
+        }
+
+        // Run all tests
+        testEnvironmentLoader();
+        testFirebaseConfig();
+        testAIConfig();
+        displayAllEnvVars();
+    </script>
+</body>
+</html>

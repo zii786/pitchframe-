@@ -13,6 +13,7 @@ import {
     addDoc,
     doc,
     getDoc,
+    updateDoc,
     ref,
     getDownloadURL,
     uploadBytesResumable
@@ -189,6 +190,15 @@ async function loadAnalysisHistory() {
     try {
         // Show loading state
         const analysisList = document.getElementById('analysisList');
+        const refreshBtn = document.getElementById('refreshBtn');
+        
+        // Add loading animation to refresh button
+        if (refreshBtn) {
+            const icon = refreshBtn.querySelector('i');
+            icon.classList.add('fa-spin');
+            refreshBtn.disabled = true;
+        }
+        
         analysisList.innerHTML = `
             <div class="text-center py-4">
                 <div class="spinner-border text-primary" role="status">
@@ -236,10 +246,13 @@ async function loadAnalysisHistory() {
 
         if (querySnapshot.empty) {
             analysisList.innerHTML = `
-                <div class="text-center py-4">
-                    <i class="fas fa-history fa-3x text-muted mb-3"></i>
-                    <h5>No analysis history found</h5>
-                    <p class="text-muted">Upload a pitch deck to get started</p>
+                <div class="text-center py-5">
+                    <i class="fas fa-history fa-4x text-muted mb-4"></i>
+                    <h4 class="text-muted">No pitch submissions found</h4>
+                    <p class="text-muted mb-4">You haven't submitted any pitches yet. Start by uploading your first pitch deck!</p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                        <i class="fas fa-plus me-2"></i>Submit Your First Pitch
+                    </button>
                 </div>
             `;
             return;
@@ -279,6 +292,14 @@ async function loadAnalysisHistory() {
                 </div>
             `;
         }
+    } finally {
+        // Remove loading animation from refresh button
+        const refreshBtn = document.getElementById('refreshBtn');
+        if (refreshBtn) {
+            const icon = refreshBtn.querySelector('i');
+            icon.classList.remove('fa-spin');
+            refreshBtn.disabled = false;
+        }
     }
 }
 
@@ -302,41 +323,130 @@ function createAnalysisCard(data, id) {
     const card = document.createElement('div');
     card.className = 'analysis-card';
     
-    const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+    // Handle different date formats
+    let date = 'N/A';
+    if (data.createdAt) {
+        if (data.createdAt.seconds) {
+            date = new Date(data.createdAt.seconds * 1000).toLocaleDateString();
+        } else if (data.createdAt instanceof Date) {
+            date = data.createdAt.toLocaleDateString();
+        } else {
+            date = new Date(data.createdAt).toLocaleDateString();
+        }
+    }
+    
     const statusClass = `status-${data.status}`;
     const statusText = data.status.charAt(0).toUpperCase() + data.status.slice(1);
     
-    let scoreHtml = '<div class="analysis-score"></div>'; // Placeholder
-    if (data.status === 'completed' && data.analysis) {
-        const avgScore = ((data.analysis.clarityScore + data.analysis.engagementScore) / 2).toFixed(1);
+    // Calculate overall score
+    let scoreHtml = '';
+    if (data.status === 'completed' || data.status === 'analyzed') {
+        if (data.analysis && data.analysis.overallScore) {
+            const overallScore = data.analysis.overallScore;
+            scoreHtml = `
+                <div class="analysis-score">${overallScore}/10</div>
+                <div class="progress mt-2" style="height: 8px;">
+                    <div class="progress-bar bg-success" style="width: ${overallScore * 10}%"></div>
+                </div>
+            `;
+        } else if (data.analysis && data.analysis.clarityScore) {
+            const avgScore = Math.round(
+                (data.analysis.clarityScore + data.analysis.engagementScore + 
+                 data.analysis.marketFitScore + data.analysis.uniquenessScore + 
+                 data.analysis.financialViabilityScore + data.analysis.teamStrengthScore) / 6
+            );
+            scoreHtml = `
+                <div class="analysis-score">${avgScore}/10</div>
+                <div class="progress mt-2" style="height: 8px;">
+                    <div class="progress-bar bg-success" style="width: ${avgScore * 10}%"></div>
+                </div>
+            `;
+        }
+    } else if (data.status === 'analyzing') {
         scoreHtml = `
-            <div class="analysis-score">${avgScore}/10</div>
-            <div class="progress mt-2">
-                <div class="progress-bar" style="width: ${avgScore * 10}%"></div>
+            <div class="analysis-score text-warning">
+                <i class="fas fa-spinner fa-spin"></i>
             </div>
+            <div class="text-warning small">Analyzing...</div>
+        `;
+    } else if (data.status === 'error') {
+        scoreHtml = `
+            <div class="analysis-score text-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="text-danger small">Error</div>
         `;
     }
     
+    // Get company name and tagline
+    const companyName = data.companyName || data.fileName || 'Untitled Pitch';
+    const tagline = data.tagline || data.problem || 'No description available';
+    const industry = data.industry || 'Not specified';
+    const fundingStage = data.fundingStage || 'Not specified';
+    const fundingAmount = data.fundingAmount ? `$${data.fundingAmount.toLocaleString()}` : 'Not specified';
+    
     card.innerHTML = `
         <div class="d-flex justify-content-between align-items-start">
-            <div>
-                <h5 class="mb-1">${data.companyName || data.fileName}</h5>
-                <div class="analysis-date mb-2">Submitted on ${date}</div>
-                <span class="analysis-status ${statusClass}">${statusText}</span>
+            <div class="flex-grow-1">
+                <h5 class="mb-1">${companyName}</h5>
+                <div class="analysis-date mb-2">
+                    <i class="fas fa-calendar-alt me-1"></i>
+                    Submitted on ${date}
+                </div>
+                <span class="analysis-status ${statusClass}">
+                    <i class="fas fa-${getStatusIcon(data.status)} me-1"></i>
+                    ${statusText}
+                </span>
             </div>
-            ${scoreHtml}
+            <div class="text-end">
+                ${scoreHtml}
+            </div>
         </div>
+        
         <div class="mt-3">
-            <p class="mb-2">${data.tagline || ''}</p>
-            <p class="mb-2 text-muted">Industry: ${data.industry}</p>
+            <p class="mb-2 text-muted">
+                <i class="fas fa-tag me-1"></i>
+                ${tagline}
+            </p>
+            <div class="row">
+                <div class="col-md-6">
+                    <small class="text-muted">
+                        <i class="fas fa-industry me-1"></i>
+                        <strong>Industry:</strong> ${industry}
+                    </small>
+                </div>
+                <div class="col-md-6">
+                    <small class="text-muted">
+                        <i class="fas fa-layer-group me-1"></i>
+                        <strong>Stage:</strong> ${fundingStage}
+                    </small>
+                </div>
+            </div>
+            ${data.fundingAmount ? `
+                <div class="mt-1">
+                    <small class="text-muted">
+                        <i class="fas fa-dollar-sign me-1"></i>
+                        <strong>Funding:</strong> ${fundingAmount}
+                    </small>
+                </div>
+            ` : ''}
         </div>
-        <div class="mt-3">
-            <button class="btn btn-outline-primary btn-sm" onclick="viewPitchDeck('${data.fileUrl}')">
-                <i class="fas fa-file-download me-2"></i>View Pitch Deck
+        
+        <div class="mt-3 d-flex flex-wrap gap-2">
+            <button class="btn btn-outline-primary btn-sm" onclick="viewPitchDeck('${data.fileUrl}', '${data.fileName}')">
+                <i class="fas fa-file-download me-1"></i>View Pitch Deck
             </button>
             ${data.status === 'analyzed' || data.status === 'completed' ? `
-                <button class="btn btn-outline-success btn-sm ms-2" onclick="viewAnalysis('${id}', event)">
-                    <i class="fas fa-chart-bar me-2"></i>View Analysis
+                <button class="btn btn-outline-success btn-sm" onclick="viewAnalysis('${id}', event)">
+                    <i class="fas fa-chart-bar me-1"></i>View Analysis
+                </button>
+                <button class="btn btn-outline-info btn-sm" onclick="downloadReport('${id}')">
+                    <i class="fas fa-download me-1"></i>Download Report
+                </button>
+            ` : ''}
+            ${data.status === 'error' ? `
+                <button class="btn btn-outline-warning btn-sm" onclick="retryAnalysis('${id}')">
+                    <i class="fas fa-redo me-1"></i>Retry Analysis
                 </button>
             ` : ''}
         </div>
@@ -345,10 +455,60 @@ function createAnalysisCard(data, id) {
     return card;
 }
 
+// Helper function to get status icon
+function getStatusIcon(status) {
+    switch (status) {
+        case 'completed':
+        case 'analyzed':
+            return 'check-circle';
+        case 'analyzing':
+            return 'spinner';
+        case 'error':
+            return 'exclamation-triangle';
+        case 'pending':
+            return 'clock';
+        default:
+            return 'question-circle';
+    }
+}
+
 // View analysis details
 window.viewAnalysis = function(id, event) {
     event.stopPropagation(); // Prevent card click
     window.location.href = `AI_analyzer.html?pitchId=${id}`;
+};
+
+// Retry analysis for failed pitches
+window.retryAnalysis = async function(id) {
+    try {
+        const pitchDoc = await getDoc(doc(db, "pitches", id));
+        if (!pitchDoc.exists) {
+            throw new Error("Pitch not found");
+        }
+        
+        const data = pitchDoc.data();
+        
+        // Update status to analyzing
+        await updateDoc(doc(db, "pitches", id), {
+            status: 'analyzing',
+            errorMessage: null,
+            retryCount: (data.retryCount || 0) + 1,
+            lastRetryAt: new Date()
+        });
+        
+        // Import AI service and retry analysis
+        const { performAnalysis } = await import('./ai-service.js');
+        
+        // Trigger analysis
+        await performAnalysis(db, doc, updateDoc, data.fileUrl, data.userId, id, data.fileType);
+        
+        alert('Analysis retry initiated successfully!');
+        loadAnalysisHistory(); // Refresh the list
+        
+    } catch (error) {
+        console.error('Error retrying analysis:', error);
+        alert('Error retrying analysis: ' + error.message);
+    }
 };
 
 // Download analysis report
@@ -358,13 +518,24 @@ async function downloadReport(id) {
         if (!pitchDoc.exists) {
             throw new Error("Pitch not found");
         }
+        
         const data = pitchDoc.data();
+        
         if ((data.status === 'completed' || data.status === 'analyzed') && data.analysis) {
-            // Create a downloadable report
+            // Create a comprehensive report
             const report = {
-                filename: data.fileName,
-                uploadDate: data.createdAt.toDate().toLocaleDateString(),
-                analysis: data.analysis
+                companyName: data.companyName,
+                industry: data.industry,
+                tagline: data.tagline,
+                problem: data.problem,
+                solution: data.solution,
+                businessModel: data.businessModel,
+                fundingStage: data.fundingStage,
+                fundingAmount: data.fundingAmount,
+                uploadDate: data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A',
+                fileName: data.fileName,
+                analysis: data.analysis,
+                generatedAt: new Date().toISOString()
             };
             
             // Convert to JSON and create download
@@ -372,11 +543,13 @@ async function downloadReport(id) {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${data.fileName.replace(/\.[^/.]+$/, '')}_analysis.json`;
+            a.download = `${data.companyName || 'pitch'}_analysis_report.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+            
+            alert('Report downloaded successfully!');
         } else {
             alert("Analysis is not yet complete for this pitch.");
         }
@@ -393,18 +566,26 @@ document.getElementById('statusFilter').addEventListener('change', loadAnalysisH
 document.getElementById('sortBy').addEventListener('change', loadAnalysisHistory);
 
 // Add this function to handle viewing pitch decks
-window.viewPitchDeck = function(pitchDeckUrl, uploadType = 'file') {
+window.viewPitchDeck = function(pitchDeckUrl, fileName = '') {
     if (!pitchDeckUrl) {
         alert('No pitch deck available');
         return;
     }
 
-    if (uploadType === 'link') {
-        // For cloud storage links, open in new tab
-        window.open(pitchDeckUrl, '_blank');
-    } else {
-        // For uploaded files, handle Firebase Storage URLs
-        // The URL from Firestore is already a public download URL
-        window.open(pitchDeckUrl, '_blank');
+    try {
+        // Check if it's a Firebase Storage URL
+        if (pitchDeckUrl.includes('firebasestorage.googleapis.com')) {
+            // For Firebase Storage URLs, open in new tab
+            window.open(pitchDeckUrl, '_blank');
+        } else if (pitchDeckUrl.startsWith('http')) {
+            // For external URLs, open in new tab
+            window.open(pitchDeckUrl, '_blank');
+        } else {
+            // For local files or other formats, try to open
+            window.open(pitchDeckUrl, '_blank');
+        }
+    } catch (error) {
+        console.error('Error opening pitch deck:', error);
+        alert('Error opening pitch deck: ' + error.message);
     }
-}
+};

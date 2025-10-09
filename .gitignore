@@ -1,0 +1,359 @@
+# Firebase-based Web App .gitignore
+
+# Environment Variables and Secrets
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.staging
+*.env
+.env.*
+
+# Firebase Configuration (contains sensitive data)
+firebase-config.js
+firebase-config.local.js
+firebase-config.prod.js
+
+# AI Configuration (contains API keys)
+ai-config.js
+ai-config.local.js
+ai-config.prod.js
+
+# API Keys and Secrets
+api-keys.js
+secrets.js
+credentials.js
+config.js
+
+# Firebase Admin SDK Service Account Keys
+serviceAccountKey.json
+service-account-key.json
+firebase-adminsdk-*.json
+*-firebase-adminsdk-*.json
+
+# Firebase Emulator Data
+firebase-debug.log
+firebase-debug.*.log
+ui-debug.log
+emulator-debug.log
+pglite-debug.log
+dataconnect-debug.log
+
+# Firebase Functions
+functions/node_modules/
+functions/.env
+functions/.env.*
+functions/lib/
+functions/dist/
+functions/build/
+functions/.runtimeconfig.json
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Build outputs
+build/
+dist/
+out/
+lib/
+*.min.js
+*.min.css
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.bak
+*.backup
+*.old
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# User-specific files
+users.json
+user-data.json
+*.user.json
+
+# Firebase hosting cache
+.firebase/
+.firebaserc.local
+
+# Firebase emulator data
+firebase-emulator-data/
+
+# Local development files
+local-config.js
+dev-config.js
+test-config.js
+
+# Documentation that might contain secrets
+SETUP.md
+DEPLOYMENT.md
+SECRETS.md
+
+# Backup files
+*.backup
+*.bak
+backup/
+backups/
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Certificate files
+*.pem
+*.key
+*.crt
+*.cert
+*.p12
+*.pfx
+
+# Configuration files that might contain secrets
+config.local.js
+config.prod.js
+config.staging.js
+settings.local.js
+settings.prod.js
+
+# Test files with sensitive data
+test-data.json
+test-users.json
+test-config.json
+
+# Deployment scripts that might contain secrets
+deploy.sh
+deploy-local.sh
+deploy-prod.sh
+deploy-staging.sh
+
+# Monitoring and analytics keys
+analytics-config.js
+monitoring-config.js
+sentry-config.js
+
+# Third-party service configurations
+stripe-config.js
+paypal-config.js
+aws-config.js
+google-config.js
+
+# Local development tools
+.local/
+local/
+dev/
+development/
+
+# Package manager lock files (optional - uncomment if you want to ignore them)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Firebase project-specific files
+.firebaserc
+firebase.json.local
+firebase.json.backup
+
+# Cloud function environment files
+functions/.env
+functions/.env.*
+functions/config.json
+functions/.runtimeconfig.json
+
+# Firebase Data Connect
+dataconnect/.env
+dataconnect/.env.*
+dataconnect/config.json
+
+# Hosting files that shouldn't be committed
+.hosting/
+hosting/
+
+# Firebase CLI cache
+.firebase-cli/
+
+# Local SSL certificates
+ssl/
+certs/
+certificates/
+
+# Docker files (if using Docker)
+.dockerignore
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Terraform files (if using Infrastructure as Code)
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Kubernetes secrets
+k8s-secrets/
+kubernetes-secrets/
+
+# CI/CD files that might contain secrets
+.github/secrets/
+.gitlab-ci-secrets/
+azure-pipelines-secrets/
+jenkins-secrets/
+
+# Monitoring and logging
+logs/
+*.log
+log/
+
+# Performance monitoring
+performance-logs/
+perf-logs/
+
+# Security scan results
+security-scan-results/
+vulnerability-reports/
+
+# Code quality reports
+code-quality-reports/
+sonar-reports/
+
+# Test reports
+test-reports/
+coverage-reports/
+
+# Build artifacts
+artifacts/
+build-artifacts/
+
+# Temporary directories
+tmp/
+temp/
+temporary/

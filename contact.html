@@ -3,248 +3,382 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us | PitchFrame</title>
+    <title>Contact Us | PitchFrame - Get in Touch</title>
+    <meta name="description" content="Get in touch with PitchFrame. Contact our team for support, partnerships, or general inquiries. We're here to help your startup succeed.">
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
     <style>
-        :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --text-color: #2c3e50;
-            --light-bg: #f8f9fa;
-            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
+        .hero-section {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(124, 58, 237, 0.8)), url('https://images.unsplash.com/photo-1423666639041-f56000c27a9a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 120px 0 80px;
+            min-height: 50vh;
+            display: flex;
+            align-items: center;
         }
 
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            color: var(--text-color);
+        .contact-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
         }
 
-        .navbar {
-            background: rgba(44, 62, 80, 0.95) !important;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: var(--transition);
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
         }
 
-        .navbar-brand {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            transition: var(--transition);
+        .contact-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 2rem;
         }
 
-        .navbar-brand:hover {
-            transform: translateY(-2px);
+        .form-control, .form-select {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 18px;
+            transition: all 0.3s ease;
         }
 
-        .text-primary {
-            color: var(--primary-color) !important;
-        }
-
-        section {
-            padding: 5rem 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') center/cover;
-            opacity: 0.05;
-            z-index: -1;
-        }
-
-        h2 {
-            font-family: 'Playfair Display', serif;
-            color: var(--secondary-color);
-            margin-bottom: 1.5rem;
-            position: relative;
-            display: inline-block;
-        }
-
-        h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 3px;
-            background: var(--primary-color);
-            border-radius: 2px;
-        }
-
-        form {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 2.5rem;
-            border-radius: 15px;
-            box-shadow: var(--card-shadow);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        .form-label {
-            font-weight: 500;
-            color: var(--secondary-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .form-control {
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            transition: var(--transition);
-            background-color: rgba(255, 255, 255, 0.9);
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
-            background-color: white;
-        }
-
-        textarea.form-control {
-            min-height: 150px;
-            resize: vertical;
+        .form-control:focus, .form-select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.15);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), #357abd);
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
             border: none;
-            border-radius: 8px;
-            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            padding: 12px 30px;
             font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
         }
 
-        .btn-primary::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
-            transition: var(--transition);
-        }
-
-        .btn-primary:hover::after {
-            transform: translateX(100%);
-        }
-
-        .contact-info {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 2rem;
+        .info-card {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
             border-radius: 15px;
-            margin-top: 3rem;
-            box-shadow: var(--card-shadow);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: fadeInUp 0.8s ease-out 0.2s both;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #2563eb;
         }
 
-        .contact-info p {
-            margin-bottom: 1rem;
-            color: var(--secondary-color);
-            font-size: 1.1rem;
+        .map-container {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
-        .contact-info i {
-            color: var(--primary-color);
-            margin-right: 0.5rem;
-            font-size: 1.2rem;
-            transition: var(--transition);
-        }
-
-        .contact-info p:hover i {
-            transform: scale(1.2);
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .footer {
-            background: rgba(44, 62, 80, 0.95);
-            color: white;
-            padding: 2rem 0;
-            margin-top: 3rem;
-            backdrop-filter: blur(10px);
-        }
-
-        @media (max-width: 768px) {
-            section {
-                padding: 3rem 0;
-            }
-            
-            form {
-                padding: 1.5rem;
-            }
+        .section-padding {
+            padding: 80px 0;
         }
     </style>
+
+    <script type="application/json" data-env>
+    {
+  "OPENAI_API_KEY": "sk-proj-0123456789abcdef0123456789abcdef",
+  "FIREBASE_API_KEY": "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
+  "FIREBASE_AUTH_DOMAIN": "pitchframe-6967a.firebaseapp.com",
+  "FIREBASE_PROJECT_ID": "pitchframe-6967a",
+  "FIREBASE_STORAGE_BUCKET": "pitchframe-6967a.firebasestorage.app",
+  "FIREBASE_MESSAGING_SENDER_ID": "801200566992",
+  "FIREBASE_APP_ID": "1:801200566992:web:9dc20d8ad085577eb724d5",
+  "PORT": "3000",
+  "NODE_ENV": "development",
+  "MAX_FILE_SIZE": "52428800  # 50MB in bytes",
+  "ALLOWED_FILE_TYPES": "application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  "MIN_CONTENT_LENGTH": "100",
+  "ANALYSIS_DEPTH": "standard  # basic, standard, detailed",
+  "JWT_SECRET": "your-jwt-secret-key",
+  "CORS_ORIGIN": "http://localhost:3000",
+  "SMTP_HOST": "smtp.gmail.com",
+  "SMTP_PORT": "587",
+  "SMTP_USER": "your-email@gmail.com",
+  "SMTP_PASS": "your-email-app-password"
+}
+    </script>
+    
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="index.html"><strong>Pitch<span class="text-primary">Frame</span></strong></a>
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-rocket me-2"></i>
+                <strong>Pitch<span class="text-primary">Frame</span></strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="pitch-submission.html">Submit Pitch</a></li>
+                    <li class="nav-item"><a class="nav-link" href="mentor-matching.html">Find Mentors</a></li>
+                    <li class="nav-item"><a class="nav-link" href="AI_analyzer.html">AI Analysis</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary ms-2 text-white px-4 rounded-pill" href="login.html">Login</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
 
-    <!-- Contact Section -->
-    <section class="py-5">
+    <!-- Hero Section -->
+    <section class="hero-section">
         <div class="container">
-            <h2 class="mb-4 text-center">Contact Us</h2>
-            <p class="text-center mb-5 lead">We'd love to hear from you. Whether you're a startup, mentor, or investor, reach out!</p>
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-4">Get in Touch</h1>
+                    <p class="lead fs-5 mb-4">Have questions about PitchFrame? Need support with your pitch? Want to partner with us? We'd love to hear from you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <form>
+    <!-- Contact Form & Info -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="row">
+                <!-- Contact Form -->
+                <div class="col-lg-8 mb-5">
+                    <div class="contact-card">
+                        <h2 class="fw-bold mb-4">Send us a Message</h2>
+                        <form id="contactForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="firstName" class="form-label fw-semibold">First Name</label>
+                                    <input type="text" class="form-control" id="firstName" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="lastName" class="form-label fw-semibold">Last Name</label>
+                                    <input type="text" class="form-control" id="lastName" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label fw-semibold">Email Address</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label fw-semibold">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone">
+                                </div>
+                            </div>
                         <div class="mb-3">
-                            <label for="name" class="form-label">Your Name</label>
-                            <input type="text" class="form-control" id="name" placeholder="John Doe">
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email address</label>
-                            <input type="email" class="form-control" id="email" placeholder="name@example.com">
-                        </div>
-                        <div class="mb-3">
-                            <label for="message" class="form-label">Message</label>
-                            <textarea class="form-control" id="message" rows="5" placeholder="Write your message here..."></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary px-4">Send Message</button>
-                    </form>
+                                <label for="subject" class="form-label fw-semibold">Subject</label>
+                                <select class="form-select" id="subject" required>
+                                    <option value="">Select a subject</option>
+                                    <option value="general">General Inquiry</option>
+                                    <option value="support">Technical Support</option>
+                                    <option value="partnership">Partnership Opportunity</option>
+                                    <option value="mentor">Become a Mentor</option>
+                                    <option value="feedback">Feedback</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="message" class="form-label fw-semibold">Message</label>
+                                <textarea class="form-control" id="message" rows="6" placeholder="Tell us how we can help you..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="fas fa-paper-plane me-2"></i>Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
 
-                    <div class="contact-info text-center">
-                        <p><i class="fas fa-envelope"></i> support@pitchframe.com</p>
-                        <p><i class="fas fa-map-marker-alt"></i> 123 Startup Lane, Innovation City, 456789</p>
+                <!-- Contact Information -->
+                <div class="col-lg-4">
+                    <div class="contact-card">
+                        <h3 class="fw-bold mb-4">Contact Information</h3>
+                        
+                        <div class="info-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h5 class="fw-bold mb-2">Email Us</h5>
+                            <p class="text-muted mb-1">General inquiries</p>
+                            <a href="mailto:hello@pitchframe.com" class="text-primary">hello@pitchframe.com</a>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <h5 class="fw-bold mb-2">Support</h5>
+                            <p class="text-muted mb-1">Technical support</p>
+                            <a href="mailto:support@pitchframe.com" class="text-primary">support@pitchframe.com</a>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <h5 class="fw-bold mb-2">Partnerships</h5>
+                            <p class="text-muted mb-1">Business partnerships</p>
+                            <a href="mailto:partnerships@pitchframe.com" class="text-primary">partnerships@pitchframe.com</a>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <h5 class="fw-bold mb-2">Phone</h5>
+                            <p class="text-muted mb-1">Mon-Fri 9AM-6PM EST</p>
+                            <a href="tel:+1-555-0123" class="text-primary">+1 (555) 012-3456</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section-padding bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-4">Frequently Asked Questions</h2>
+                <p class="lead text-muted">Quick answers to common questions</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item border-0 mb-3 rounded-3 shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    How does PitchFrame's AI analysis work?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Our AI analyzes your pitch deck across multiple dimensions including clarity, engagement, market fit, uniqueness, financial viability, and team strength. It provides detailed feedback and actionable recommendations to help you improve your presentation.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 mb-3 rounded-3 shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    How do I become a mentor on PitchFrame?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    To become a mentor, simply register on our platform and select "Mentor" as your user type. Complete your profile with your expertise areas, experience, and availability. Our team will review your application and approve qualified mentors.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 mb-3 rounded-3 shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    Is PitchFrame free to use?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Yes! PitchFrame offers a free tier that includes basic AI analysis and access to our mentor network. We also offer premium plans with advanced features and priority support for growing startups.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 mb-3 rounded-3 shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    What file formats are supported for pitch decks?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We support PDF, PowerPoint (PPT), and PowerPoint XML (PPTX) files. The maximum file size is 10MB. For best results, we recommend using PDF format as it provides the most accurate text extraction.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 mb-3 rounded-3 shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                    How quickly will I receive feedback?
+                                </button>
+                            </h2>
+                            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    AI analysis is typically completed within 2-5 minutes of upload. Mentor feedback depends on mentor availability and response time, but most mentors respond within 24-48 hours.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Office Location -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-5">
+                    <h2 class="display-5 fw-bold mb-4">Visit Our Office</h2>
+                    <p class="lead mb-4">We're located in the heart of the startup ecosystem, surrounded by innovation and entrepreneurship.</p>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary text-white rounded-circle p-3 me-3">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Address</h6>
+                                    <p class="text-muted mb-0">123 Innovation Drive<br>San Francisco, CA 94105</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-success text-white rounded-circle p-3 me-3">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Office Hours</h6>
+                                    <p class="text-muted mb-0">Monday - Friday<br>9:00 AM - 6:00 PM PST</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <a href="https://maps.google.com" target="_blank" class="btn btn-outline-primary">
+                            <i class="fas fa-directions me-2"></i>Get Directions
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.835434509374!2d-122.3965324846814!3d37.774929279759!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8085808c66c8fdbd%3A0x3c282b15579c0e42!2sSan%20Francisco%2C%20CA!5e0!3m2!1sen!2sus!4v1634567890123!5m2!1sen!2sus" 
+                            width="100%" 
+                            height="400" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy">
+                        </iframe>
                     </div>
                 </div>
             </div>
@@ -252,12 +386,105 @@
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer py-5 bg-dark text-light">
         <div class="container">
-            <p class="mb-0">&copy; 2023 PitchFrame. All rights reserved.</p>
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h4 class="mb-4">
+                        <i class="fas fa-rocket me-2"></i>
+                        <strong>Pitch<span class="text-primary">Frame</span></strong>
+                    </h4>
+                    <p class="text-muted">Empowering startups with AI-powered pitch analysis and expert mentorship to accelerate their growth journey.</p>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-3 text-white">Platform</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="pitch-submission.html" class="text-muted text-decoration-none">Submit Pitch</a></li>
+                        <li class="mb-2"><a href="mentor-dashboard.html" class="text-muted text-decoration-none">Mentor Dashboard</a></li>
+                        <li class="mb-2"><a href="AI_analyzer.html" class="text-muted text-decoration-none">AI Analysis</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-3 text-white">Company</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="about.html" class="text-muted text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="career.html" class="text-muted text-decoration-none">Careers</a></li>
+                        <li class="mb-2"><a href="blog.html" class="text-muted text-decoration-none">Blog</a></li>
+                        <li class="mb-2"><a href="contact.html" class="text-muted text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-3 text-white">Legal</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#privacy" class="text-muted text-decoration-none">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#terms" class="text-muted text-decoration-none">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2">
+                    <h5 class="mb-3 text-white">Connect</h5>
+                    <div class="social-links">
+                        <a href="#" class="me-3 text-primary"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="me-3 text-primary"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="me-3 text-primary"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-primary"><i class="fab fa-instagram fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4 border-secondary">
+            <div class="text-center">
+                <p class="mb-0 text-muted">&copy; 2024 PitchFrame. All rights reserved. Made with <i class="fas fa-heart text-danger"></i> for entrepreneurs.</p>
+            </div>
         </div>
     </footer>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Contact Form Script -->
+    <script>
+        // Contact form handling
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
+            };
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+            submitBtn.disabled = true;
+            
+            // Simulate form submission (replace with actual API call)
+            setTimeout(() => {
+                // Show success message
+                alert('Thank you for your message! We\'ll get back to you within 24 hours.');
+                
+                // Reset form
+                this.reset();
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 2000);
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
 </body>
 </html>

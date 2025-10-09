@@ -33,11 +33,34 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
-// Import environment loader
-import { getFirebaseConfig, isDevelopment } from './env-loader.js';
+// Environment configuration loader
+function loadEnvironmentConfig() {
+    // Check if we're in a Vite environment
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+        return {
+            apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+            authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+            projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+            storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+            appId: import.meta.env.VITE_FIREBASE_APP_ID
+        };
+    }
+    
+    // Fallback for non-Vite environments or if env vars are not available
+    // This should be replaced with actual values in production
+    return {
+        apiKey: "AIzaSyCKPLJWseR3pr6zH-ejWKV5LU2UXJhUNlE",
+        authDomain: "pitchframe-ismail.firebaseapp.com",
+        projectId: "pitchframe-ismail",
+        storageBucket: "pitchframe-ismail.firebasestorage.app",
+        messagingSenderId: "912391061237",
+        appId: "1:912391061237:web:26b27963efcc3f5ddf4fbc"
+    };
+}
 
 // Firebase configuration
-const firebaseConfig = getFirebaseConfig();
+const firebaseConfig = loadEnvironmentConfig();
 
 // Validate required configuration
 function validateFirebaseConfig(config) {
@@ -61,15 +84,36 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 
 // Connect to emulators in development
-if (isDevelopment()) {
-    console.log("Connecting to local Firebase emulators...");
-    try {
-        connectAuthEmulator(auth, 'http://localhost:9099');
-        connectFirestoreEmulator(db, 'localhost', 8080);
-    } catch (error) {
-        console.log("Emulators already connected or not available");
+function connectToEmulators() {
+    const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const isDevMode = typeof import.meta !== 'undefined' && import.meta.env?.VITE_DEV_MODE === 'true';
+    
+    if (isLocalhost || isDevMode) {
+        console.log("Connecting to local Firebase emulators...");
+        try {
+            // Check for emulator host overrides
+            const authHost = typeof import.meta !== 'undefined' && import.meta.env?.VITE_FIREBASE_AUTH_EMULATOR_HOST;
+            const firestoreHost = typeof import.meta !== 'undefined' && import.meta.env?.VITE_FIREBASE_FIRESTORE_EMULATOR_HOST;
+            
+            if (authHost) {
+                connectAuthEmulator(auth, `http://${authHost}`);
+            } else {
+                connectAuthEmulator(auth, 'http://localhost:9099');
+            }
+            
+            if (firestoreHost) {
+                const [host, port] = firestoreHost.split(':');
+                connectFirestoreEmulator(db, host, parseInt(port));
+            } else {
+                connectFirestoreEmulator(db, 'localhost', 8080);
+            }
+        } catch (error) {
+            console.log("Emulators already connected or not available");
+        }
     }
 }
+
+connectToEmulators();
 
 // Authentication functions
 async function registerUser(email, password, firstName, lastName, userType) {

@@ -3,228 +3,630 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Careers | PitchFrame</title>
+    <title>Careers | PitchFrame - Join Our Team</title>
+    <meta name="description" content="Join PitchFrame and help us empower startups worldwide. Explore career opportunities, benefits, and our company culture.">
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
     <style>
-        :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --text-color: #2c3e50;
-            --light-bg: #f8f9fa;
-            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
+        .hero-section {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(124, 58, 237, 0.8)), url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-4.0.3&auto=format&fit=crop&w=2069&q=80') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 120px 0 80px;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
         }
 
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            color: var(--text-color);
+        .job-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        .navbar {
-            background: rgba(44, 62, 80, 0.95) !important;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: var(--transition);
-        }
-
-        .navbar-brand {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            transition: var(--transition);
-        }
-
-        .navbar-brand:hover {
-            transform: translateY(-2px);
-        }
-
-        .text-primary {
-            color: var(--primary-color) !important;
-        }
-
-        section {
-            padding: 5rem 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') center/cover;
-            opacity: 0.05;
-            z-index: -1;
-        }
-
-        h2 {
-            font-family: 'Playfair Display', serif;
-            color: var(--secondary-color);
-            margin-bottom: 1.5rem;
-            position: relative;
-            display: inline-block;
-        }
-
-        h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 3px;
-            background: var(--primary-color);
-            border-radius: 2px;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            border: none;
-            border-radius: 15px;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            transform: translateY(0);
-            animation: fadeInUp 0.8s ease-out;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .card:hover {
+        .job-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
         }
 
-        .card-title {
-            font-family: 'Playfair Display', serif;
-            color: var(--secondary-color);
+        .benefit-card {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .benefit-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .culture-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .culture-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .section-padding {
+            padding: 80px 0;
+        }
+
+        .job-type-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.875rem;
             font-weight: 600;
             margin-bottom: 1rem;
         }
 
-        .card-text {
-            color: #666;
-            margin-bottom: 1.5rem;
+        .job-type-fulltime {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), #357abd);
-            border: none;
-            border-radius: 8px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
+        .job-type-remote {
+            background: rgba(37, 99, 235, 0.1);
+            color: #2563eb;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+        .job-type-internship {
+            background: rgba(245, 158, 11, 0.1);
+            color: #d97706;
         }
 
-        .btn-primary::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
-            transition: var(--transition);
-        }
-
-        .btn-primary:hover::after {
-            transform: translateX(100%);
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .footer {
-            background: rgba(44, 62, 80, 0.95);
-            color: white;
-            padding: 2rem 0;
-            margin-top: 3rem;
-            backdrop-filter: blur(10px);
-        }
-
-        @media (max-width: 768px) {
-            section {
-                padding: 3rem 0;
-            }
-            
-            .card {
-                margin-bottom: 2rem;
-            }
+        .team-photo {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
     </style>
+
+    <script type="application/json" data-env>
+    {
+  "OPENAI_API_KEY": "sk-proj-0123456789abcdef0123456789abcdef",
+  "FIREBASE_API_KEY": "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
+  "FIREBASE_AUTH_DOMAIN": "pitchframe-6967a.firebaseapp.com",
+  "FIREBASE_PROJECT_ID": "pitchframe-6967a",
+  "FIREBASE_STORAGE_BUCKET": "pitchframe-6967a.firebasestorage.app",
+  "FIREBASE_MESSAGING_SENDER_ID": "801200566992",
+  "FIREBASE_APP_ID": "1:801200566992:web:9dc20d8ad085577eb724d5",
+  "PORT": "3000",
+  "NODE_ENV": "development",
+  "MAX_FILE_SIZE": "52428800  # 50MB in bytes",
+  "ALLOWED_FILE_TYPES": "application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  "MIN_CONTENT_LENGTH": "100",
+  "ANALYSIS_DEPTH": "standard  # basic, standard, detailed",
+  "JWT_SECRET": "your-jwt-secret-key",
+  "CORS_ORIGIN": "http://localhost:3000",
+  "SMTP_HOST": "smtp.gmail.com",
+  "SMTP_PORT": "587",
+  "SMTP_USER": "your-email@gmail.com",
+  "SMTP_PASS": "your-email-app-password"
+}
+    </script>
+    
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="index.html"><strong>Pitch<span class="text-primary">Frame</span></strong></a>
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-rocket me-2"></i>
+                <strong>Pitch<span class="text-primary">Frame</span></strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="pitch-submission.html">Submit Pitch</a></li>
+                    <li class="nav-item"><a class="nav-link" href="mentor-matching.html">Find Mentors</a></li>
+                    <li class="nav-item"><a class="nav-link" href="AI_analyzer.html">AI Analysis</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="career.html">Careers</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary ms-2 text-white px-4 rounded-pill" href="login.html">Login</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
 
-    <!-- Careers Section -->
-    <section class="py-5">
+    <!-- Hero Section -->
+    <section class="hero-section">
         <div class="container">
-            <h2 class="mb-4 text-center">Join the PitchFrame Team</h2>
-            <p class="text-center mb-5 lead">We're on a mission to transform startup journeys. Come build with us!</p>
-
-            <div class="row">
-                <!-- Job Opening 1 -->
-                <div class="col-md-6 mb-4">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Frontend Developer</h5>
-                            <p class="card-text">Build stunning, responsive UIs for our platform using React and Bootstrap.</p>
-                            <p class="mb-3"><strong>Location:</strong> Remote</p>
-                            <a href="mailto:prouggamer4543@gmail.com?subject=Frontend Developer Application" class="btn btn-primary">Apply Now</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Job Opening 2 -->
-                <div class="col-md-6 mb-4">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">AI/ML Engineer</h5>
-                            <p class="card-text">Develop and improve our AI pitch analysis engine with NLP and ML algorithms.</p>
-                            <p class="mb-3"><strong>Location:</strong> Hybrid (Pune/Bangalore)</p>
-                            <a href="mailto:prouggamer4543@gmail.com?subject=AI Engineer Application" class="btn btn-primary">Apply Now</a>
-                        </div>
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-4">Join Our Mission to Empower Startups</h1>
+                    <p class="lead fs-5 mb-4">Be part of a team that's revolutionizing how startups get feedback and mentorship. Help us build the future of entrepreneurship.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#open-positions" class="btn btn-light btn-lg">View Open Positions</a>
+                        <a href="#culture" class="btn btn-outline-light btn-lg">Our Culture</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
+    <!-- Why Work With Us -->
+    <section class="section-padding">
         <div class="container">
-            <p class="mb-0">&copy; 2023 PitchFrame. All rights reserved.</p>
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-4">Why Work at PitchFrame?</h2>
+                <p class="lead text-muted">We're building something meaningful, and we want you to be part of it</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Impact</h4>
+                        <p class="text-muted">Help thousands of startups succeed by providing them with the tools and guidance they need to grow.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Innovation</h4>
+                        <p class="text-muted">Work with cutting-edge AI technology and be part of shaping the future of startup mentorship.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Team</h4>
+                        <p class="text-muted">Join a diverse, talented team of passionate individuals who care about making a difference.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Growth</h4>
+                        <p class="text-muted">Continuous learning opportunities, mentorship, and career development in a fast-growing company.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Flexibility</h4>
+                        <p class="text-muted">Remote-first culture with flexible hours and the freedom to work from anywhere in the world.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Wellness</h4>
+                        <p class="text-muted">Comprehensive health benefits, mental health support, and unlimited PTO to maintain work-life balance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Company Culture -->
+    <section id="culture" class="section-padding bg-light">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-5">
+                    <h2 class="display-5 fw-bold mb-4">Our Culture</h2>
+                    <p class="lead mb-4">At PitchFrame, we believe that great products come from great teams. Our culture is built on trust, transparency, and a shared passion for helping entrepreneurs succeed.</p>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="culture-card">
+                                <h5 class="fw-bold mb-3"><i class="fas fa-lightbulb text-primary me-2"></i>Innovation First</h5>
+                                <p class="text-muted mb-0">We encourage experimentation and aren't afraid to fail fast and learn quickly.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="culture-card">
+                                <h5 class="fw-bold mb-3"><i class="fas fa-handshake text-success me-2"></i>Collaboration</h5>
+                                <p class="text-muted mb-0">We work together as one team, supporting each other's growth and success.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="culture-card">
+                                <h5 class="fw-bold mb-3"><i class="fas fa-balance-scale text-warning me-2"></i>Balance</h5>
+                                <p class="text-muted mb-0">We prioritize work-life balance and support our team's personal well-being.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="culture-card">
+                                <h5 class="fw-bold mb-3"><i class="fas fa-globe text-info me-2"></i>Diversity</h5>
+                                <p class="text-muted mb-0">We celebrate diversity and create an inclusive environment for everyone.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Our Team" class="img-fluid team-photo">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-4">Benefits & Perks</h2>
+                <p class="lead text-muted">We take care of our team so they can take care of our mission</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-dollar-sign fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Competitive Salary</h5>
+                        <p class="text-muted">Market-competitive compensation with equity options for all employees.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-success text-white rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-shield-alt fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Health & Wellness</h5>
+                        <p class="text-muted">Comprehensive health, dental, and vision insurance for you and your family.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-warning text-white rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-plane fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Unlimited PTO</h5>
+                        <p class="text-muted">Take time off when you need it. We trust you to manage your own schedule.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-info text-white rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-laptop fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Remote Work</h5>
+                        <p class="text-muted">Work from anywhere with a $2,000 annual stipend for home office setup.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-danger text-white rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-book fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Learning Budget</h5>
+                        <p class="text-muted">$3,000 annual budget for courses, conferences, and professional development.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-secondary text-white rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-utensils fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Meals & Snacks</h5>
+                        <p class="text-muted">Free lunch, snacks, and beverages when working from our office.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-dark text-white rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-dumbbell fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Fitness</h5>
+                        <p class="text-muted">Gym membership reimbursement and wellness program participation.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-baby fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Family Support</h5>
+                        <p class="text-muted">Paid parental leave, childcare assistance, and family-friendly policies.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Open Positions -->
+    <section id="open-positions" class="section-padding bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-4">Open Positions</h2>
+                <p class="lead text-muted">Join our team and help us build the future of startup mentorship</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="job-card">
+                        <div class="job-type-badge job-type-fulltime">Full-time</div>
+                        <h3 class="fw-bold mb-3">Senior Full-Stack Developer</h3>
+                        <p class="text-muted mb-3">We're looking for an experienced developer to help us scale our platform and build new features that will impact thousands of startups.</p>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Remote</small>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted"><i class="fas fa-clock me-1"></i>Full-time</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="fw-bold mb-2">Requirements:</h6>
+                            <ul class="text-muted small">
+                                <li>5+ years of full-stack development experience</li>
+                                <li>Proficiency in React, Node.js, and Python</li>
+                                <li>Experience with cloud platforms (AWS, GCP)</li>
+                                <li>Strong problem-solving skills</li>
+                            </ul>
+                        </div>
+                        <a href="mailto:careers@pitchframe.com?subject=Senior Full-Stack Developer Application" class="btn btn-primary">Apply Now</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="job-card">
+                        <div class="job-type-badge job-type-fulltime">Full-time</div>
+                        <h3 class="fw-bold mb-3">AI/ML Engineer</h3>
+                        <p class="text-muted mb-3">Help us improve our AI analysis engine and develop new machine learning models to provide better insights to startups.</p>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>San Francisco</small>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted"><i class="fas fa-clock me-1"></i>Full-time</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="fw-bold mb-2">Requirements:</h6>
+                            <ul class="text-muted small">
+                                <li>3+ years of ML/AI experience</li>
+                                <li>Experience with NLP and text analysis</li>
+                                <li>Proficiency in Python, TensorFlow/PyTorch</li>
+                                <li>PhD or MS in Computer Science preferred</li>
+                            </ul>
+                        </div>
+                        <a href="mailto:careers@pitchframe.com?subject=AI/ML Engineer Application" class="btn btn-primary">Apply Now</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="job-card">
+                        <div class="job-type-badge job-type-remote">Remote</div>
+                        <h3 class="fw-bold mb-3">Product Manager</h3>
+                        <p class="text-muted mb-3">Lead product strategy and work with our engineering team to build features that our users love.</p>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Remote</small>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted"><i class="fas fa-clock me-1"></i>Full-time</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="fw-bold mb-2">Requirements:</h6>
+                            <ul class="text-muted small">
+                                <li>3+ years of product management experience</li>
+                                <li>Experience with B2B SaaS products</li>
+                                <li>Strong analytical and communication skills</li>
+                                <li>Startup experience preferred</li>
+                            </ul>
+                        </div>
+                        <a href="mailto:careers@pitchframe.com?subject=Product Manager Application" class="btn btn-primary">Apply Now</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="job-card">
+                        <div class="job-type-badge job-type-internship">Internship</div>
+                        <h3 class="fw-bold mb-3">Marketing Intern</h3>
+                        <p class="text-muted mb-3">Gain hands-on experience in startup marketing while helping us grow our community of entrepreneurs and mentors.</p>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Remote</small>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted"><i class="fas fa-clock me-1"></i>Part-time</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="fw-bold mb-2">Requirements:</h6>
+                            <ul class="text-muted small">
+                                <li>Currently enrolled in marketing or related field</li>
+                                <li>Experience with social media and content creation</li>
+                                <li>Strong writing and communication skills</li>
+                                <li>Passion for startups and entrepreneurship</li>
+                            </ul>
+                        </div>
+                        <a href="mailto:careers@pitchframe.com?subject=Marketing Intern Application" class="btn btn-primary">Apply Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Application Process -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-4">Our Hiring Process</h2>
+                <p class="lead text-muted">We've designed our process to be transparent, efficient, and respectful of your time</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <span class="fw-bold fs-4">1</span>
+                        </div>
+                        <h5 class="fw-bold mb-2">Application</h5>
+                        <p class="text-muted">Submit your resume and cover letter. We'll review your application within 48 hours.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-success text-white rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <span class="fw-bold fs-4">2</span>
+                        </div>
+                        <h5 class="fw-bold mb-2">Initial Call</h5>
+                        <p class="text-muted">30-minute video call to discuss your background and learn about PitchFrame.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-warning text-white rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <span class="fw-bold fs-4">3</span>
+                        </div>
+                        <h5 class="fw-bold mb-2">Technical Interview</h5>
+                        <p class="text-muted">Skills assessment and technical discussion with our team members.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-info text-white rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <span class="fw-bold fs-4">4</span>
+                        </div>
+                        <h5 class="fw-bold mb-2">Final Interview</h5>
+                        <p class="text-muted">Meet the team and discuss how you'll contribute to our mission.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section-padding bg-primary text-white">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h2 class="display-5 fw-bold mb-4">Don't See Your Role?</h2>
+                    <p class="lead mb-4">We're always looking for talented individuals who share our passion for helping startups succeed. Send us your resume and let us know how you'd like to contribute.</p>
+                    <a href="mailto:careers@pitchframe.com?subject=General Application" class="btn btn-light btn-lg px-5">
+                        <i class="fas fa-paper-plane me-2"></i>Send Us Your Resume
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer py-5 bg-dark text-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h4 class="mb-4">
+                        <i class="fas fa-rocket me-2"></i>
+                        <strong>Pitch<span class="text-primary">Frame</span></strong>
+                    </h4>
+                    <p class="text-muted">Empowering startups with AI-powered pitch analysis and expert mentorship to accelerate their growth journey.</p>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-3 text-white">Platform</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="pitch-submission.html" class="text-muted text-decoration-none">Submit Pitch</a></li>
+                        <li class="mb-2"><a href="mentor-dashboard.html" class="text-muted text-decoration-none">Mentor Dashboard</a></li>
+                        <li class="mb-2"><a href="AI_analyzer.html" class="text-muted text-decoration-none">AI Analysis</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-3 text-white">Company</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="about.html" class="text-muted text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="career.html" class="text-muted text-decoration-none">Careers</a></li>
+                        <li class="mb-2"><a href="blog.html" class="text-muted text-decoration-none">Blog</a></li>
+                        <li class="mb-2"><a href="contact.html" class="text-muted text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-3 text-white">Legal</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#privacy" class="text-muted text-decoration-none">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#terms" class="text-muted text-decoration-none">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2">
+                    <h5 class="mb-3 text-white">Connect</h5>
+                    <div class="social-links">
+                        <a href="#" class="me-3 text-primary"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="me-3 text-primary"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="me-3 text-primary"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-primary"><i class="fab fa-instagram fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4 border-secondary">
+            <div class="text-center">
+                <p class="mb-0 text-muted">&copy; 2024 PitchFrame. All rights reserved. Made with <i class="fas fa-heart text-danger"></i> for entrepreneurs.</p>
+            </div>
         </div>
     </footer>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Scripts -->
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
 </body>
 </html>

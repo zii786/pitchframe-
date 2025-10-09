@@ -1,11 +1,39 @@
 // AI Configuration File with Environment Variables
 // This file loads configuration from environment variables
 
-// Import environment loader
-import { getAIConfig } from './env-loader.js';
+// Environment configuration loader
+function loadAIEnvironmentConfig() {
+    // Check if we're in a Vite environment
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+        return {
+            OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY || 'your-openai-api-key-here',
+            OPENAI_API_URL: import.meta.env.VITE_OPENAI_API_URL || 'https://api.openai.com/v1/chat/completions',
+            ANTHROPIC_API_KEY: import.meta.env.VITE_ANTHROPIC_API_KEY || 'your-anthropic-api-key-here',
+            ANTHROPIC_API_URL: import.meta.env.VITE_ANTHROPIC_API_URL || 'https://api.anthropic.com/v1/messages',
+            USE_AI_SERVICE: import.meta.env.VITE_USE_AI_SERVICE || 'mock',
+            MAX_CONTENT_LENGTH: parseInt(import.meta.env.VITE_MAX_CONTENT_LENGTH) || 4000,
+            ANALYSIS_TIMEOUT: parseInt(import.meta.env.VITE_ANALYSIS_TIMEOUT) || 30000,
+            DEV_MODE: import.meta.env.VITE_DEV_MODE === 'true',
+            DEBUG_MODE: import.meta.env.VITE_DEBUG_MODE === 'true'
+        };
+    }
+    
+    // Fallback for non-Vite environments
+    return {
+        OPENAI_API_KEY: 'your-openai-api-key-here',
+        OPENAI_API_URL: 'https://api.openai.com/v1/chat/completions',
+        ANTHROPIC_API_KEY: 'your-anthropic-api-key-here',
+        ANTHROPIC_API_URL: 'https://api.anthropic.com/v1/messages',
+        USE_AI_SERVICE: 'mock',
+        MAX_CONTENT_LENGTH: 4000,
+        ANALYSIS_TIMEOUT: 30000,
+        DEV_MODE: false,
+        DEBUG_MODE: false
+    };
+}
 
 // Load configuration
-const envConfig = getAIConfig();
+const envConfig = loadAIEnvironmentConfig();
 
 // Validate API keys
 function validateAPIKeys(config) {

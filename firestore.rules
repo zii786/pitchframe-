@@ -11,17 +11,36 @@ service cloud.firestore {
       return request.auth.uid == userId;
     }
 
+    function isValidUserType(userType) {
+      return userType in ['founder', 'mentor', 'investor'];
+    }
+
+    function isValidPitchStatus(status) {
+      return status in ['draft', 'submitted', 'analyzing', 'analyzed', 'completed', 'error'];
+    }
+
+    function hasValidEmail() {
+      return request.auth.token.email != null && request.auth.token.email_verified == true;
+    }
+
     // Allow users to create their own profile
     match /users/{userId} {
-      allow create: if isAuthenticated() && isOwner(userId);
+      allow create: if isAuthenticated() 
+                   && isOwner(userId)
+                   && hasValidEmail()
+                   && isValidUserType(request.resource.data.userType);
       allow read: if isAuthenticated();
-      allow update: if isAuthenticated() && isOwner(userId);
+      allow update: if isAuthenticated() 
+                   && isOwner(userId)
+                   && isValidUserType(request.resource.data.userType);
       allow delete: if isAuthenticated() && isOwner(userId);
     }
 
     // Startup profiles
     match /startups/{userId} {
-      allow create: if isAuthenticated() && isOwner(userId);
+      allow create: if isAuthenticated() 
+                   && isOwner(userId)
+                   && hasValidEmail();
       allow read: if isAuthenticated();
       allow update: if isAuthenticated() && isOwner(userId);
       allow delete: if isAuthenticated() && isOwner(userId);
@@ -29,7 +48,9 @@ service cloud.firestore {
 
     // Mentor profiles
     match /mentors/{userId} {
-      allow create: if isAuthenticated() && isOwner(userId);
+      allow create: if isAuthenticated() 
+                   && isOwner(userId)
+                   && hasValidEmail();
       allow read: if isAuthenticated();
       allow update: if isAuthenticated() && isOwner(userId);
       allow delete: if isAuthenticated() && isOwner(userId);
@@ -37,7 +58,9 @@ service cloud.firestore {
 
     // Investor profiles
     match /investors/{userId} {
-      allow create: if isAuthenticated() && isOwner(userId);
+      allow create: if isAuthenticated() 
+                   && isOwner(userId)
+                   && hasValidEmail();
       allow read: if isAuthenticated();
       allow update: if isAuthenticated() && isOwner(userId);
       allow delete: if isAuthenticated() && isOwner(userId);
@@ -46,10 +69,13 @@ service cloud.firestore {
     // Pitch submissions
     match /pitches/{pitchId} {
       allow create: if isAuthenticated() 
-                   && request.resource.data.userId == request.auth.uid;
+                   && request.resource.data.userId == request.auth.uid
+                   && hasValidEmail()
+                   && isValidPitchStatus(request.resource.data.status);
       allow read: if isAuthenticated();
       allow update: if isAuthenticated() 
-                   && resource.data.userId == request.auth.uid;
+                   && resource.data.userId == request.auth.uid
+                   && isValidPitchStatus(request.resource.data.status);
       allow delete: if isAuthenticated() 
                    && resource.data.userId == request.auth.uid;
     }
@@ -57,7 +83,8 @@ service cloud.firestore {
     // Pitch decks for AI analysis
     match /pitch_decks/{pitchId} {
       allow create: if isAuthenticated() 
-                   && request.resource.data.userId == request.auth.uid;
+                   && request.resource.data.userId == request.auth.uid
+                   && hasValidEmail();
       allow read: if isAuthenticated() 
                   && (resource.data.userId == request.auth.uid || resource.data.isPublic == true);
       allow update: if isAuthenticated() 
@@ -68,7 +95,7 @@ service cloud.firestore {
 
     // Analysis results
     match /analysis_results/{analysisId} {
-      allow create: if isAuthenticated();
+      allow create: if isAuthenticated() && hasValidEmail();
       allow read: if isAuthenticated();
       allow update: if isAuthenticated();
       allow delete: if isAuthenticated();
@@ -77,13 +104,27 @@ service cloud.firestore {
     // User history
     match /user_history/{historyId} {
       allow create: if isAuthenticated() 
-                   && request.resource.data.userId == request.auth.uid;
+                   && request.resource.data.userId == request.auth.uid
+                   && hasValidEmail();
       allow read: if isAuthenticated() 
                   && resource.data.userId == request.auth.uid;
       allow update: if isAuthenticated() 
                    && resource.data.userId == request.auth.uid;
       allow delete: if isAuthenticated() 
                    && resource.data.userId == request.auth.uid;
+    }
+
+    // Mentor matching and feedback
+    match /mentor_feedback/{feedbackId} {
+      allow create: if isAuthenticated() && hasValidEmail();
+      allow read: if isAuthenticated();
+      allow update: if isAuthenticated();
+      allow delete: if isAuthenticated();
+    }
+
+    // System logs (admin only)
+    match /system_logs/{logId} {
+      allow read, write: if false; // Only accessible via admin SDK
     }
 
     // Test collection for Firebase testing

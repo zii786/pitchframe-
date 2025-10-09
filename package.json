@@ -1,0 +1,38 @@
+{
+  "name": "pitchframe",
+  "version": "1.0.0",
+  "description": "AI-powered startup pitch analysis platform",
+  "main": "index.html",
+  "scripts": {
+    "dev": "firebase emulators:start",
+    "build": "node inject-env.js && firebase deploy",
+    "deploy": "firebase deploy",
+    "inject-env": "node inject-env.js",
+    "start": "firebase serve",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "startup",
+    "pitch",
+    "ai",
+    "analysis",
+    "mentorship",
+    "firebase"
+  ],
+  "author": "PitchFrame Team",
+  "license": "MIT",
+  "devDependencies": {
+    "firebase-tools": "^12.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zii786/pitchframe-.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zii786/pitchframe-/issues"
+  },
+  "homepage": "https://pitchframe.com"
+}
