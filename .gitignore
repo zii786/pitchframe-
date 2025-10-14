@@ -357,3 +357,4 @@ build-artifacts/
 tmp/
 temp/
 temporary/
+.firebase/hosting..cache
