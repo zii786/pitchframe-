@@ -501,12 +501,12 @@
     <script type="application/json" data-env>
     {
   "OPENAI_API_KEY": "sk-proj-0123456789abcdef0123456789abcdef",
-  "FIREBASE_API_KEY": "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
-  "FIREBASE_AUTH_DOMAIN": "pitchframe-6967a.firebaseapp.com",
-  "FIREBASE_PROJECT_ID": "pitchframe-6967a",
-  "FIREBASE_STORAGE_BUCKET": "pitchframe-6967a.firebasestorage.app",
-  "FIREBASE_MESSAGING_SENDER_ID": "801200566992",
-  "FIREBASE_APP_ID": "1:801200566992:web:9dc20d8ad085577eb724d5",
+  "FIREBASE_API_KEY": "AIzaSyCKPLJWseR3pr6zH-ejWKV5LU2UXJhUNlE",
+  "FIREBASE_AUTH_DOMAIN": "pitchframe-ismail.firebaseapp.com",
+  "FIREBASE_PROJECT_ID": "pitchframe-ismail",
+  "FIREBASE_STORAGE_BUCKET": "pitchframe-ismail.appspot.com",
+  "FIREBASE_MESSAGING_SENDER_ID": "912391061237",
+  "FIREBASE_APP_ID": "1:912391061237:web:26b27963efcc3f5ddf4fbc",
   "PORT": "3000",
   "NODE_ENV": "development",
   "MAX_FILE_SIZE": "52428800  # 50MB in bytes",
@@ -555,7 +555,7 @@
                     <div class="card glass-card">
                         <div class="card-body">
                             <h2 class="card-title">Craft Your Investment Pitch</h2>
-                            <p class="card-subtitle">Complete this form to submit your pitch for expert review and feedback</p>
+                            <p class="card-subtitle">Complete this form to get AI-powered analysis of your pitch content</p>
 
                             <form id="pitchForm">
                                 <div class="form-section">
@@ -657,11 +657,15 @@
                                 </div>
 
                                 <div class="form-section">
-                                    <h5 class="form-section-title"><i class="fas fa-file-pdf"></i> Pitch Deck</h5>
+                                    <h5 class="form-section-title"><i class="fas fa-file-pdf"></i> Pitch Deck (Optional)</h5>
+                                    <div class="alert alert-info mb-3">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <strong>Note:</strong> File uploads are simulated for demonstration purposes. Only the text content you enter above will be analyzed by our AI.
+                                    </div>
                                     <div class="upload-area" id="uploadArea">
                                         <i class="fas fa-cloud-upload-alt"></i>
-                                        <h5 class="upload-text">Upload Your Pitch Deck</h5>
-                                        <p class="upload-subtext">PDF, PPT, or PPTX (Max 10MB)</p>
+                                        <h5 class="upload-text">Upload Your Pitch Deck (Simulated)</h5>
+                                        <p class="upload-subtext">PDF, PPT, or PPTX (Max 10MB) - For UI demonstration only</p>
                                         <input type="file" id="pitchDeck" class="d-none" accept=".pdf,.ppt,.pptx">
                                     </div>
                                     <div id="fileInfo" class="file-info-container">
@@ -680,7 +684,7 @@
 
                                 <div class="d-grid mt-5">
                                     <button type="submit" class="btn btn-primary btn-lg py-3">
-                                        <i class="fas fa-paper-plane me-2"></i> Submit Pitch
+                                        <i class="fas fa-chart-line me-2"></i> Analyze Pitch Text
                                     </button>
                                 </div>
                             </form>
@@ -710,215 +714,367 @@
 
     <!-- Firebase -->
     <script type="module">
-        import {
-            auth,
-            db,
-            storage,
-            onAuthStateChanged,
-            collection,
-            addDoc,
-            doc,
-            updateDoc,
-            ref,
-            getDownloadURL
-        } from './firebase-config.js';
-        import { uploadBytesResumable } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
-        import { performAnalysis } from './ai-service.js';
+        // Wait for DOM to be ready before loading Firebase config
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load Firebase configuration after DOM is ready
+            const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+            const { 
+                getAuth,
+                onAuthStateChanged,
+                connectAuthEmulator
+            } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+            const { 
+                getFirestore,
+                collection,
+                doc,
+                updateDoc,
+                addDoc,
+                connectFirestoreEmulator
+            } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+            const { performAnalysis } = await import('./ai-service.js');
 
-        // DOM Elements
-        const pitchForm = document.getElementById('pitchForm');
-        const fileInput = document.getElementById('pitchDeck');
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInfoContainer = document.getElementById('fileInfo');
-        const fileName = document.getElementById('fileName');
-        const removeFile = document.getElementById('removeFile');
-        const uploadProgress = document.getElementById('uploadProgress');
-        const progressContainer = uploadProgress.parentElement;
-        
-        // Character counters
-        const taglineCounter = document.getElementById('tagline-counter');
-        const problemCounter = document.getElementById('problem-counter');
-        const solutionCounter = document.getElementById('solution-counter');
-        const businessModelCounter = document.getElementById('businessModel-counter');
-        
-        const inputsToCount = [
-            { input: document.getElementById('tagline'), counter: taglineCounter, max: 60 },
-            { input: document.getElementById('problem'), counter: problemCounter, max: 500 },
-            { input: document.getElementById('solution'), counter: solutionCounter, max: 500 },
-            { input: document.getElementById('businessModel'), counter: businessModelCounter, max: 300 },
-        ];
-
-        inputsToCount.forEach(({input, counter, max}) => {
-            input.addEventListener('input', () => {
-                counter.textContent = input.value.length;
-                updateCounterStyle(counter, input.value.length, max);
-            });
-        });
-        
-        function updateCounterStyle(counterElement, currentLength, maxLength) {
-            counterElement.classList.remove('warning', 'danger');
-            if (currentLength > maxLength) {
-                counterElement.classList.add('danger');
-            } else if (currentLength > maxLength * 0.9) {
-                counterElement.classList.add('warning');
-            }
-        }
-
-        // File upload handling
-        uploadArea.addEventListener('click', () => fileInput.click());
-        
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                if (file.size > 10 * 1024 * 1024) { // 10MB limit
-                    alert('File size exceeds 10MB limit. Please choose a smaller file.');
-                    fileInput.value = ''; // Reset file input
-                    return;
-                }
-                fileName.textContent = `File selected: ${file.name}`;
-                uploadArea.style.display = 'none';
-                fileInfoContainer.style.display = 'block';
-                progressContainer.style.display = 'none';
-                uploadProgress.style.width = '0%';
-            }
-        });
-        
-        removeFile.addEventListener('click', () => {
-            fileInput.value = '';
-            uploadArea.style.display = 'block';
-            fileInfoContainer.style.display = 'none';
-        });
-
-        // Main logic gated by authentication state
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // User is logged in, enable form submission
-                pitchForm.addEventListener('submit', handleSubmit(user));
-            } else {
-                // User is not logged in, disable form and redirect
-                alert('You must be logged in to submit a pitch.');
-                window.location.href = 'login.html';
-            }
-        });
-
-        function handleSubmit(user) {
-            return async (e) => {
-                e.preventDefault();
-                
-                if (!fileInput.files.length) {
-                    alert('Please upload your pitch deck.');
-                    return;
-                }
-
-                const submitBtn = pitchForm.querySelector('button[type="submit"]');
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = `
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    Uploading & Analyzing...
-                `;
-                
-                // Show progress message
-                const progressMessage = document.createElement('div');
-                progressMessage.className = 'alert alert-info mt-3';
-                progressMessage.innerHTML = `
-                    <i class="fas fa-info-circle me-2"></i>
-                    <strong>Processing your pitch...</strong><br>
-                    <small>This may take a few moments. Please don't close this page.</small>
-                `;
-                pitchForm.appendChild(progressMessage);
-
-                try {
-                    const file = fileInput.files[0];
-                    
-                    // 1. Upload file to Firebase Storage with progress
-                    const storageRef = ref(storage, `pitches/${user.uid}/${Date.now()}_${file.name}`);
-                    const uploadTask = uploadBytesResumable(storageRef, file);
-
-                    progressContainer.style.display = 'block';
-
-                    uploadTask.on('state_changed', 
-                        (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            uploadProgress.style.width = progress + '%';
-                        },
-                        (error) => {
-                            console.error("Upload failed:", error);
-                            alert("File upload failed. Please try again.");
-                            // Re-enable form
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i> Submit Pitch';
-                            // Remove progress message
-                            if (progressMessage && progressMessage.parentNode) {
-                                progressMessage.parentNode.removeChild(progressMessage);
-                            }
-                        },
-                        async () => {
-                            // Upload completed successfully, now get the download URL
-                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-
-                            // Create pitch data
-                            const pitchData = {
-                                userId: user.uid,
-                                companyName: document.getElementById('companyName').value,
-                                industry: document.getElementById('industry').value,
-                                tagline: document.getElementById('tagline').value,
-                                problem: document.getElementById('problem').value,
-                                solution: document.getElementById('solution').value,
-                                businessModel: document.getElementById('businessModel').value,
-                                fundingStage: document.getElementById('fundingStage').value,
-                                fundingAmount: parseFloat(document.getElementById('fundingAmount').value),
-                                revenue: document.getElementById('revenue').value ? 
-                                    parseFloat(document.getElementById('revenue').value) : null,
-                                fileUrl: downloadURL,
-                                fileName: file.name,
-                                fileType: file.type,
-                                fileSize: file.size,
-                                createdAt: new Date(),
-                                status: 'analyzing' // Set status to analyzing
-                            };
-
-                            // 2. Add document to 'pitches' collection
-                            const docRef = await addDoc(collection(db, 'pitches'), pitchData);
-                            
-                            // 3. Trigger AI analysis (Cloud Function or client-side fallback)
-                            try {
-                                const analysis = await performAnalysis(db, doc, updateDoc, downloadURL, user.uid, docRef.id, file.type);
-                                
-                                // 4. Update the pitch document with the analysis results (if not already updated by Cloud Function)
-                                await updateDoc(doc(db, 'pitches', docRef.id), {
-                                    analysis: analysis,
-                                    status: 'analyzed'
-                                });
-                                
-                                // 5. Redirect to the analysis page
-                                window.location.href = `AI_analyzer.html?pitchId=${docRef.id}`;
-                            } catch (analysisError) {
-                                console.error('Analysis failed:', analysisError);
-                                
-                                // Update status to error
-                                await updateDoc(doc(db, 'pitches', docRef.id), {
-                                    status: 'error',
-                                    errorMessage: analysisError.message
-                                });
-                                
-                                // Show error message to user
-                                alert('Analysis failed. Your pitch has been submitted but analysis could not be completed. Please try again later.');
-                                window.location.href = `AI_analyzer.html?pitchId=${docRef.id}`;
-                            }
+            // Load Firebase configuration from script tag
+            function loadFirebaseConfig() {
+                const envScript = document.querySelector('script[type="application/json"][data-env]');
+                if (envScript) {
+                    try {
+                        const envData = JSON.parse(envScript.textContent);
+                        const config = {
+                            apiKey: envData.FIREBASE_API_KEY,
+                            authDomain: envData.FIREBASE_AUTH_DOMAIN,
+                            projectId: envData.FIREBASE_PROJECT_ID,
+                            storageBucket: envData.FIREBASE_STORAGE_BUCKET,
+                            messagingSenderId: envData.FIREBASE_MESSAGING_SENDER_ID,
+                            appId: envData.FIREBASE_APP_ID
+                        };
+                        
+                        // Check if all values are present
+                        const hasAllValues = Object.values(config).every(value => value && value !== 'your-firebase-api-key-here');
+                        if (hasAllValues) {
+                            console.log('Using script tag environment variables for Firebase configuration');
+                            return config;
                         }
-                    );
-                } catch (error) {
-                    console.error('Error submitting pitch:', error);
-                    alert('An unexpected error occurred. Please try again.');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i> Submit Pitch';
+                    } catch (error) {
+                        console.warn('Failed to parse environment variables from script tag:', error);
+                    }
                 }
-            };
-        }
+                
+                // Fallback to hardcoded values
+                console.log('Using fallback Firebase configuration');
+                return {
+                    apiKey: "AIzaSyCKPLJWseR3pr6zH-ejWKV5LU2UXJhUNlE",
+                    authDomain: "pitchframe-ismail.firebaseapp.com",
+                    projectId: "pitchframe-ismail",
+                    storageBucket: "pitchframe-ismail.appspot.com",
+                    messagingSenderId: "912391061237",
+                    appId: "1:912391061237:web:26b27963efcc3f5ddf4fbc"
+                };
+            }
 
-        // Initialize navigation
-        import { initNavigation } from './navigation.js';
-        initNavigation();
+            // Initialize Firebase
+            const firebaseConfig = loadFirebaseConfig();
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+
+            // DOM Elements
+            const pitchForm = document.getElementById('pitchForm');
+            const fileInput = document.getElementById('pitchDeck');
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInfoContainer = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const removeFile = document.getElementById('removeFile');
+            const uploadProgress = document.getElementById('uploadProgress');
+            const progressContainer = uploadProgress.parentElement;
+            
+            // Character counters
+            const taglineCounter = document.getElementById('tagline-counter');
+            const problemCounter = document.getElementById('problem-counter');
+            const solutionCounter = document.getElementById('solution-counter');
+            const businessModelCounter = document.getElementById('businessModel-counter');
+            
+            const inputsToCount = [
+                { input: document.getElementById('tagline'), counter: taglineCounter, max: 60 },
+                { input: document.getElementById('problem'), counter: problemCounter, max: 500 },
+                { input: document.getElementById('solution'), counter: solutionCounter, max: 500 },
+                { input: document.getElementById('businessModel'), counter: businessModelCounter, max: 300 },
+            ];
+
+            inputsToCount.forEach(({input, counter, max}) => {
+                input.addEventListener('input', () => {
+                    counter.textContent = input.value.length;
+                    updateCounterStyle(counter, input.value.length, max);
+                });
+            });
+            
+            function updateCounterStyle(counterElement, currentLength, maxLength) {
+                counterElement.classList.remove('warning', 'danger');
+                if (currentLength > maxLength) {
+                    counterElement.classList.add('danger');
+                } else if (currentLength > maxLength * 0.9) {
+                    counterElement.classList.add('warning');
+                }
+            }
+
+            // File upload handling
+            uploadArea.addEventListener('click', () => fileInput.click());
+            
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                        alert('File size exceeds 10MB limit. Please choose a smaller file.');
+                        fileInput.value = ''; // Reset file input
+                        return;
+                    }
+                    fileName.textContent = `File selected: ${file.name}`;
+                    uploadArea.style.display = 'none';
+                    fileInfoContainer.style.display = 'block';
+                    progressContainer.style.display = 'none';
+                    uploadProgress.style.width = '0%';
+                }
+            });
+            
+            removeFile.addEventListener('click', () => {
+                fileInput.value = '';
+                uploadArea.style.display = 'block';
+                fileInfoContainer.style.display = 'none';
+            });
+
+            // Main logic gated by authentication state
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // User is logged in, enable form submission
+                    console.log('User authenticated:', {
+                        uid: user.uid,
+                        email: user.email,
+                        emailVerified: user.emailVerified,
+                        displayName: user.displayName
+                    });
+                    pitchForm.addEventListener('submit', handleSubmit(user));
+                } else {
+                    // User is not logged in, disable form and redirect
+                    console.log('User not authenticated, redirecting to login');
+                    alert('You must be logged in to submit a pitch.');
+                    window.location.href = 'login.html';
+                }
+            });
+
+            // Simulate file upload - no actual storage
+            function simulateFileUpload(file, userId) {
+                return new Promise((resolve) => {
+                    console.log('Simulating file upload for:', file.name);
+                    
+                    // Simulate upload progress
+                    let progress = 0;
+                    const progressInterval = setInterval(() => {
+                        progress += Math.random() * 20;
+                        if (progress > 95) progress = 95;
+                        uploadProgress.style.width = progress + '%';
+                    }, 150);
+                    
+                    // Simulate upload completion after 2-3 seconds
+                    setTimeout(() => {
+                        clearInterval(progressInterval);
+                        uploadProgress.style.width = '100%';
+                        
+                        // Return simulated upload result
+                        resolve({
+                            path: `simulated/pitches/${userId}/${file.name}`,
+                            url: `simulated://storage/pitches/${userId}/${file.name}`,
+                            fileName: file.name,
+                            fileSize: file.size,
+                            fileType: file.type,
+                            uploadedAt: new Date(),
+                            simulated: true // Flag to indicate this is simulated
+                        });
+                    }, 2000 + Math.random() * 1000);
+                });
+            }
+
+            function handleSubmit(user) {
+                return async (e) => {
+                    e.preventDefault();
+                    
+                    // Check if user is still authenticated
+                    if (!auth.currentUser) {
+                        alert('Your session has expired. Please log in again.');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    // Validate required text fields
+                    const requiredFields = ['companyName', 'industry', 'tagline', 'problem', 'solution', 'businessModel', 'fundingStage', 'fundingAmount'];
+                    const missingFields = requiredFields.filter(fieldId => {
+                        const field = document.getElementById(fieldId);
+                        return !field.value.trim();
+                    });
+                    
+                    if (missingFields.length > 0) {
+                        alert('Please fill in all required fields.');
+                        return;
+                    }
+                    
+                    // Refresh the user's token to ensure it's valid
+                    try {
+                        await auth.currentUser.getIdToken(true);
+                        console.log('User token refreshed successfully');
+                    } catch (tokenError) {
+                        console.error('Failed to refresh token:', tokenError);
+                        alert('Authentication error. Please log in again.');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+
+                    const submitBtn = pitchForm.querySelector('button[type="submit"]');
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = `
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Processing & Analyzing...
+                    `;
+                    
+                    // Show progress message
+                    const progressMessage = document.createElement('div');
+                    progressMessage.className = 'alert alert-info mt-3';
+                    progressMessage.innerHTML = `
+                        <i class="fas fa-brain me-2"></i>
+                        <strong>Analyzing your pitch text...</strong><br>
+                        <small>Our AI is evaluating your content across multiple criteria. This may take a few moments.</small>
+                    `;
+                    pitchForm.appendChild(progressMessage);
+
+                    try {
+                        // Get file info (if file was selected) for UI purposes only
+                        let fileInfo = null;
+                        if (fileInput.files.length > 0) {
+                            const file = fileInput.files[0];
+                            console.log('File selected for simulation:', {
+                                name: file.name,
+                                size: file.size,
+                                type: file.type
+                            });
+                            
+                            // Show progress bar
+                            progressContainer.style.display = 'block';
+                            
+                            // Simulate file upload
+                            fileInfo = await simulateFileUpload(file, user.uid);
+                            console.log('✅ File upload simulated:', fileInfo);
+                        }
+                        
+                        // Collect all text content for analysis
+                        const pitchText = collectPitchText();
+                        console.log('Collected pitch text for analysis:', pitchText);
+                        
+                        // Create pitch data (without real file storage)
+                        const pitchData = {
+                            userId: user.uid,
+                            companyName: document.getElementById('companyName').value,
+                            industry: document.getElementById('industry').value,
+                            tagline: document.getElementById('tagline').value,
+                            problem: document.getElementById('problem').value,
+                            solution: document.getElementById('solution').value,
+                            businessModel: document.getElementById('businessModel').value,
+                            fundingStage: document.getElementById('fundingStage').value,
+                            fundingAmount: parseFloat(document.getElementById('fundingAmount').value),
+                            revenue: document.getElementById('revenue').value ? 
+                                parseFloat(document.getElementById('revenue').value) : null,
+                            // Simulated file info (for UI consistency)
+                            fileUrl: fileInfo ? fileInfo.url : null,
+                            filePath: fileInfo ? fileInfo.path : null,
+                            fileName: fileInfo ? fileInfo.fileName : null,
+                            fileType: fileInfo ? fileInfo.fileType : null,
+                            fileSize: fileInfo ? fileInfo.fileSize : null,
+                            // Text content for analysis
+                            pitchText: pitchText,
+                            createdAt: new Date(),
+                            status: 'analyzing',
+                            simulated: true // Flag to indicate this is simulated
+                        };
+
+                        // Add document to 'pitches' collection
+                        const docRef = await addDoc(collection(db, 'pitches'), pitchData);
+                        console.log('Pitch document created:', docRef.id);
+                        
+                        // Perform AI analysis on text content only
+                        try {
+                            console.log('Starting AI analysis of text content...');
+                            const analysis = await performAnalysis(db, doc, updateDoc, pitchText, user.uid, docRef.id);
+                            
+                            // Update the pitch document with the analysis results
+                            await updateDoc(doc(db, 'pitches', docRef.id), {
+                                analysis: analysis,
+                                status: 'analyzed',
+                                analyzedAt: new Date()
+                            });
+                            
+                            console.log('✅ Analysis completed successfully');
+                            
+                            // Redirect to the analysis page
+                            window.location.href = `AI_analyzer.html?pitchId=${docRef.id}`;
+                            
+                        } catch (analysisError) {
+                            console.error('Analysis failed:', analysisError);
+                            
+                            // Update status to error
+                            await updateDoc(doc(db, 'pitches', docRef.id), {
+                                status: 'error',
+                                errorMessage: analysisError.message,
+                                analyzedAt: new Date()
+                            });
+                            
+                            // Show error message to user
+                            alert('Analysis failed. Your pitch has been submitted but analysis could not be completed. Please try again later.');
+                            window.location.href = `AI_analyzer.html?pitchId=${docRef.id}`;
+                        }
+                        
+                    } catch (error) {
+                        console.error('Error submitting pitch:', error);
+                        alert('An unexpected error occurred. Please try again.');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-chart-line me-2"></i> Analyze Pitch Text';
+                        
+                        // Remove progress message
+                        if (progressMessage && progressMessage.parentNode) {
+                            progressMessage.parentNode.removeChild(progressMessage);
+                        }
+                    }
+                };
+            }
+
+            // Collect all text content for analysis
+            function collectPitchText() {
+                const textParts = [];
+                
+                // Company information
+                textParts.push(`Company: ${document.getElementById('companyName').value}`);
+                textParts.push(`Industry: ${document.getElementById('industry').value}`);
+                textParts.push(`Tagline: ${document.getElementById('tagline').value}`);
+                
+                // Pitch essentials
+                textParts.push(`Problem: ${document.getElementById('problem').value}`);
+                textParts.push(`Solution: ${document.getElementById('solution').value}`);
+                textParts.push(`Business Model: ${document.getElementById('businessModel').value}`);
+                
+                // Financial information
+                textParts.push(`Funding Stage: ${document.getElementById('fundingStage').value}`);
+                textParts.push(`Funding Amount: $${document.getElementById('fundingAmount').value}`);
+                const revenue = document.getElementById('revenue').value;
+                if (revenue) {
+                    textParts.push(`Current Revenue: $${revenue}`);
+                }
+                
+                return textParts.join('\n\n');
+            }
+
+            // Initialize navigation
+            try {
+                const { initNavigation } = await import('./navigation.js');
+                initNavigation();
+            } catch (error) {
+                console.warn('Failed to load navigation:', error);
+            }
+        });
     </script>
 </body>
 

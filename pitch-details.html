@@ -403,37 +403,21 @@
     <script type="module">
         // Import Firebase configuration and functions
         import { 
-            firebaseConfig, 
-            auth as existingAuth,
-            db as existingDb
-        } from './firebase-config.js';
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-        import { 
-            getFirestore, 
+            auth,
+            db,
+            onAuthStateChanged,
             doc, 
             getDoc, 
             updateDoc,
             collection,
             addDoc,
-            Timestamp,
             query,
             where,
             getDocs,
             limit 
-        } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        } from './firebase-config.js';
 
-        // Use existing Firebase instances if available, otherwise initialize new ones
-        let auth, db;
-        try {
-            auth = existingAuth;
-            db = existingDb;
-        } catch (error) {
-            // If not available, initialize new instances
-            const app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-        }
+        // Firebase instances are already initialized in firebase-config.js
 
         // Get pitch ID from URL
         const urlParams = new URLSearchParams(window.location.search);

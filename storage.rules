@@ -2,84 +2,19 @@ rules_version = '2';
 
 service firebase.storage {
   match /b/{bucket}/o {
-    // Helper functions
-    function isAuthenticated() {
-      return request.auth != null;
+    // Allow all authenticated users to upload to pitches folder
+    match /pitches/{userId}/{fileName} {
+      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
     }
     
-    function isOwner(userId) {
-      return request.auth.uid == userId;
+    // Allow all authenticated users to upload to test folder (including subdirectories)
+    match /test/{allPaths=**} {
+      allow read, write, delete: if request.auth != null;
     }
     
-    function isValidFileType() {
-      return request.resource.contentType.matches('application/pdf') 
-          || request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.presentationml.presentation')
-          || request.resource.contentType.matches('application/vnd.ms-powerpoint');
-    }
-
-    function isValidLinkSubmission() {
-      return request.resource.metadata.isLink == true;
-    }
-
-    function hasValidEmail() {
-      return request.auth.token.email != null && request.auth.token.email_verified == true;
-    }
-
-    function isValidFileName() {
-      return request.resource.name.matches('.*\\.(pdf|ppt|pptx)$') || isValidLinkSubmission();
-    }
-
-    function isWithinSizeLimit() {
-      return request.resource.size < 10 * 1024 * 1024; // 10MB limit
-    }
-
-    // Pitches rules
-    match /pitches/{uid}/{fileName} {
-      allow read: if isAuthenticated() 
-                  && (isOwner(uid) || resource.metadata.isPublic == true);
-      allow write: if isAuthenticated() 
-                   && isOwner(uid) 
-                   && hasValidEmail()
-                   && isValidFileName()
-                   && (isValidFileType() || isValidLinkSubmission())
-                   && (isValidLinkSubmission() || isWithinSizeLimit());
-      allow delete: if isAuthenticated() && isOwner(uid);
-    }
-
-    // User profile images
-    match /profile_images/{uid}/{fileName} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated() 
-                   && isOwner(uid) 
-                   && hasValidEmail()
-                   && request.resource.contentType.matches('image/.*')
-                   && request.resource.size < 5 * 1024 * 1024; // 5MB limit for images
-      allow delete: if isAuthenticated() && isOwner(uid);
-    }
-
-    // Analysis results and reports
-    match /analysis_reports/{uid}/{fileName} {
-      allow read: if isAuthenticated() && isOwner(uid);
-      allow write: if isAuthenticated() 
-                   && isOwner(uid) 
-                   && hasValidEmail()
-                   && request.resource.contentType.matches('application/json')
-                   && request.resource.size < 1 * 1024 * 1024; // 1MB limit for reports
-      allow delete: if isAuthenticated() && isOwner(uid);
-    }
-
-    // System files (admin only)
-    match /system/{fileName} {
-      allow read, write: if false; // Only accessible via admin SDK
-    }
-
-    // Test folder for Firebase testing
-    match /test/{fileName} {
-      allow read, write: if isAuthenticated();
-    }
-
+    // Allow all authenticated users to upload anywhere (TEMPORARY - for testing)
     match /{allPaths=**} {
-      allow read, write: if false;  // Secure default rule
+      allow read, write, delete: if request.auth != null;
     }
   }
 }

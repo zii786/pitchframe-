@@ -1,4 +1,6 @@
-// Import the functions you need from the SDKs you need
+// Firebase Configuration and Services
+// Unified configuration for PitchFrame application
+
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { 
     getAuth,
@@ -29,9 +31,12 @@ import {
     where,
     orderBy,
     getDocs,
+    limit,
+    onSnapshot,
+    serverTimestamp,
     connectFirestoreEmulator
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+// Firebase Storage imports removed - using simulated uploads only
 
 // Environment configuration loader with fallbacks
 function loadFirebaseConfig() {
@@ -51,7 +56,7 @@ function loadFirebaseConfig() {
             // Check if all values are present
             const hasAllValues = Object.values(config).every(value => value && value !== 'your-firebase-api-key-here');
             if (hasAllValues) {
-                console.log('Using environment variables for Firebase configuration');
+                console.log('Using Vite environment variables for Firebase configuration');
                 return config;
             }
         }
@@ -74,6 +79,31 @@ function loadFirebaseConfig() {
                 return config;
             }
         }
+        
+        // Try to load from script tag with environment variables
+        const envScript = document.querySelector('script[type="application/json"][data-env]');
+        if (envScript) {
+            try {
+                const envData = JSON.parse(envScript.textContent);
+                const config = {
+                    apiKey: envData.VITE_FIREBASE_API_KEY || envData.FIREBASE_API_KEY,
+                    authDomain: envData.VITE_FIREBASE_AUTH_DOMAIN || envData.FIREBASE_AUTH_DOMAIN,
+                    projectId: envData.VITE_FIREBASE_PROJECT_ID || envData.FIREBASE_PROJECT_ID,
+                    storageBucket: envData.VITE_FIREBASE_STORAGE_BUCKET || envData.FIREBASE_STORAGE_BUCKET,
+                    messagingSenderId: envData.VITE_FIREBASE_MESSAGING_SENDER_ID || envData.FIREBASE_MESSAGING_SENDER_ID,
+                    appId: envData.VITE_FIREBASE_APP_ID || envData.FIREBASE_APP_ID
+                };
+                
+                // Check if all values are present
+                const hasAllValues = Object.values(config).every(value => value && value !== 'your-firebase-api-key-here');
+                if (hasAllValues) {
+                    console.log('Using script tag environment variables for Firebase configuration');
+                    return config;
+                }
+            } catch (error) {
+                console.warn('Failed to parse environment variables from script tag:', error);
+            }
+        }
     } catch (error) {
         console.warn('Failed to load environment variables:', error);
     }
@@ -84,7 +114,7 @@ function loadFirebaseConfig() {
         apiKey: "AIzaSyCKPLJWseR3pr6zH-ejWKV5LU2UXJhUNlE",
         authDomain: "pitchframe-ismail.firebaseapp.com",
         projectId: "pitchframe-ismail",
-        storageBucket: "pitchframe-ismail.firebasestorage.app",
+        storageBucket: "pitchframe-ismail.appspot.com",
         messagingSenderId: "912391061237",
         appId: "1:912391061237:web:26b27963efcc3f5ddf4fbc"
     };
@@ -112,14 +142,12 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firebase services
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
+// Storage removed - using simulated uploads only
 
-// Connect to emulators in development
+// Connect to emulators in development (only for local development)
 function isDevelopment() {
-    return location.hostname === 'localhost' || 
-           location.hostname === '127.0.0.1' ||
-           (typeof window !== 'undefined' && window.env && window.env.VITE_DEV_MODE === 'true') ||
-           (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_DEV_MODE === 'true');
+    return (location.hostname === 'localhost' || location.hostname === '127.0.0.1') &&
+           (typeof window !== 'undefined' && window.env && window.env.VITE_DEV_MODE === 'true');
 }
 
 if (isDevelopment()) {
@@ -130,6 +158,8 @@ if (isDevelopment()) {
     } catch (error) {
         console.log("Emulators already connected or not available");
     }
+} else {
+    console.log("Using production Firebase services");
 }
 
 // Authentication functions
@@ -295,47 +325,13 @@ async function updateMentorAvailability(userId, isAvailable = true) {
     }
 }
 
-// Storage functions
-export async function uploadFile(file, path) {
-    try {
-        const storageRef = ref(storage, path);
-        const uploadTask = uploadBytesResumable(storageRef, file);
-        
-        return new Promise((resolve, reject) => {
-            uploadTask.on('state_changed',
-                (snapshot) => {
-                    // Progress tracking
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log('Upload progress:', progress + '%');
-                },
-                (error) => {
-                    console.error('Upload error:', error);
-                    reject(error);
-                },
-                async () => {
-                    try {
-                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                        resolve(downloadURL);
-                    } catch (error) {
-                        reject(error);
-                    }
-                }
-            );
-        });
-    } catch (error) {
-        console.error('Error uploading file:', error);
-        throw error;
-    }
-}
+// Firebase Storage functions removed - using simulated uploads only
+// All file uploads are now simulated in the frontend for demonstration purposes
 
-// Export Firebase services and functions
+// Export Firebase services and functions (Storage removed)
 export {
   auth,
   db,
-  storage,
-  ref,
-  uploadBytes,
-  getDownloadURL,
   doc,
   setDoc,
   getDoc,
@@ -344,6 +340,10 @@ export {
   getDocs,
   query,
   where,
+  orderBy,
+  limit,
+  onSnapshot,
+  serverTimestamp,
   onAuthStateChanged,
   signOut,
   signInWithEmailAndPassword,

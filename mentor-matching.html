@@ -127,12 +127,12 @@
     <script type="application/json" data-env>
     {
   "OPENAI_API_KEY": "sk-proj-0123456789abcdef0123456789abcdef",
-  "FIREBASE_API_KEY": "AIzaSyCJq9qhMJlKISOtQNTidfg-5JYyAiyrhhM",
-  "FIREBASE_AUTH_DOMAIN": "pitchframe-6967a.firebaseapp.com",
-  "FIREBASE_PROJECT_ID": "pitchframe-6967a",
-  "FIREBASE_STORAGE_BUCKET": "pitchframe-6967a.firebasestorage.app",
-  "FIREBASE_MESSAGING_SENDER_ID": "801200566992",
-  "FIREBASE_APP_ID": "1:801200566992:web:9dc20d8ad085577eb724d5",
+  "FIREBASE_API_KEY": "AIzaSyCKPLJWseR3pr6zH-ejWKV5LU2UXJhUNlE",
+  "FIREBASE_AUTH_DOMAIN": "pitchframe-ismail.firebaseapp.com",
+  "FIREBASE_PROJECT_ID": "pitchframe-ismail",
+  "FIREBASE_STORAGE_BUCKET": "pitchframe-ismail.appspot.com",
+  "FIREBASE_MESSAGING_SENDER_ID": "912391061237",
+  "FIREBASE_APP_ID": "1:912391061237:web:9dc20d8ad085577eb724d5",
   "PORT": "3000",
   "NODE_ENV": "development",
   "MAX_FILE_SIZE": "52428800  # 50MB in bytes",
@@ -215,10 +215,10 @@
     
     <!-- Firebase -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { onAuthStateChanged } from './firebase-config.js';
         import { 
-            getFirestore, 
+            auth, 
+            db,
             collection, 
             query, 
             where, 
@@ -228,13 +228,7 @@
             getDoc,
             doc,
             serverTimestamp 
-        } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-        import { firebaseConfig } from './firebase-config.js';
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        } from './firebase-config.js';
 
         // Function to format date
         function formatDate(timestamp) {

@@ -20,7 +20,7 @@ function loadAIConfig() {
             
             // Check if we have valid values
             if (config.OPENAI_API_KEY && config.OPENAI_API_KEY !== 'your-openai-api-key-here') {
-                console.log('Using environment variables for AI configuration');
+                console.log('Using Vite environment variables for AI configuration');
                 return config;
             }
         }
@@ -43,6 +43,33 @@ function loadAIConfig() {
             if (config.OPENAI_API_KEY && config.OPENAI_API_KEY !== 'your-openai-api-key-here') {
                 console.log('Using injected environment variables for AI configuration');
                 return config;
+            }
+        }
+        
+        // Try to load from script tag with environment variables
+        const envScript = document.querySelector('script[type="application/json"][data-env]');
+        if (envScript) {
+            try {
+                const envData = JSON.parse(envScript.textContent);
+                const config = {
+                    OPENAI_API_KEY: envData.VITE_OPENAI_API_KEY || envData.OPENAI_API_KEY,
+                    OPENAI_API_URL: envData.VITE_OPENAI_API_URL || envData.OPENAI_API_URL,
+                    ANTHROPIC_API_KEY: envData.VITE_ANTHROPIC_API_KEY || envData.ANTHROPIC_API_KEY,
+                    ANTHROPIC_API_URL: envData.VITE_ANTHROPIC_API_URL || envData.ANTHROPIC_API_URL,
+                    USE_AI_SERVICE: envData.VITE_USE_AI_SERVICE || envData.USE_AI_SERVICE,
+                    MAX_CONTENT_LENGTH: parseInt(envData.VITE_MAX_CONTENT_LENGTH || envData.MAX_CONTENT_LENGTH),
+                    ANALYSIS_TIMEOUT: parseInt(envData.VITE_ANALYSIS_TIMEOUT || envData.ANALYSIS_TIMEOUT),
+                    DEV_MODE: envData.VITE_DEV_MODE === 'true' || envData.DEV_MODE === 'true',
+                    DEBUG_MODE: envData.VITE_DEBUG_MODE === 'true' || envData.DEBUG_MODE === 'true'
+                };
+                
+                // Check if we have valid values
+                if (config.OPENAI_API_KEY && config.OPENAI_API_KEY !== 'your-openai-api-key-here') {
+                    console.log('Using script tag environment variables for AI configuration');
+                    return config;
+                }
+            } catch (error) {
+                console.warn('Failed to parse AI environment variables from script tag:', error);
             }
         }
     } catch (error) {
